@@ -1,0 +1,2 @@
+Reference_Name	Position	Total	Consensus_Allele	Minority_Allele	Consensus_Count	Minority_Count	Consensus_Frequency	Minority_Frequency	Consensus_Average_Quality	Minority_Average_Quality	ConfidenceNotMacErr	PairedUB	QualityUB	Phase
+A_PB1	1928	298	C	T	264	28	0.885906040268456	0.0939597315436242	26.0075757575758	21.2857142857143	0.920843459709057	0.0198234210749081	0.0358264233937099	1

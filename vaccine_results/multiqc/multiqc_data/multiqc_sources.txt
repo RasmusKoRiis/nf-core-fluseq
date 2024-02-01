@@ -1,0 +1,12 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	252232567_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/10/252232567_N_fastqc.zip
+FastQC	all_sections	252303316B_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/11/252303316B_N_fastqc.zip
+FastQC	all_sections	252308239_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/12/252308239_N_fastqc.zip
+FastQC	all_sections	252308330_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/13/252308330_N_fastqc.zip
+FastQC	all_sections	252236587_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/3/252236587_N_fastqc.zip
+FastQC	all_sections	252233208_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/4/252233208_N_fastqc.zip
+FastQC	all_sections	252233210_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/5/252233210_N_fastqc.zip
+FastQC	all_sections	252234481_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/6/252234481_N_fastqc.zip
+FastQC	all_sections	252232865_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/7/252232865_N_fastqc.zip
+FastQC	all_sections	252303316_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/8/252303316_N_fastqc.zip
+FastQC	all_sections	252238148_N	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/69/296a6f54df0396cedce5470f50b7a1/9/252238148_N_fastqc.zip

@@ -22,6 +22,8 @@ process IRMA {
     tuple val(meta), path("$meta.id/*.vcf") , emit: vcf
     tuple val(meta), path("$meta.id/tables/*.txt") , emit: tables
     tuple val(meta), path("$meta.id/figures/*.pdf") , emit: figures
+    tuple val(meta), path("$meta.id/amended_consensus/*.fa") , emit: amended_consensus
+    tuple val(meta), path("$meta.id/secondary/*.fa") , emit: secondary
 
     when:
     task.ext.when == null || task.ext.when
