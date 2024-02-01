@@ -1,3 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
-1	9e/66897b	10381	FLUSEQ:AVIAN:CAT_FASTQ (sample06)	FAILED	127	2024-01-09 13:14:51.136	2.5s	2.4s	-	-	-	-	-
-2	e7/47dda2	10429	FLUSEQ:AVIAN:MULTIQC	COMPLETED	0	2024-01-09 13:14:53.677	7.4s	4.9s	81.4%	98.7 MB	1.2 GB	46.9 MB	2 MB

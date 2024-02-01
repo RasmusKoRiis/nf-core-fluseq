@@ -1,2 +1,0 @@
-Sample	Unique Reads	Duplicate Reads
-sample04	7314.0	686.0

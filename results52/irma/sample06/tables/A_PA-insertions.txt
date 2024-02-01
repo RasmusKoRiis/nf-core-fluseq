@@ -1,3 +1,0 @@
-Reference_Name	Upstream_Position	Insert	Context	Called	Count	Total	Frequency	Average_Quality	ConfidenceNotMacErr	PairedUB	QualityUB
-A_PA	52	A	tgcggAaaaaa	FALSE	2	25	0.08	22.5	0.929707334351206	0.210921996862086	0.222105139152218
-A_PA	72	G	aatatGgggga	FALSE	2	25	0.08	19.5	0.859747693212255	0.210921996862086	0.232784216293087

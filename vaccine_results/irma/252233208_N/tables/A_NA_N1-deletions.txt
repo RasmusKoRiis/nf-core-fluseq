@@ -1,3 +1,0 @@
-Reference_Name	Upstream_Position	Length	Context	Called	Count	Total	Frequency	PairedUB
-A_NA_N1	18	3	AAAAG---ATAAC	FALSE	2	3	0.666666666666667	1
-A_NA_N1	773	2	AGAAT--AGAAG	FALSE	2	4	0.5	0.970876366868069

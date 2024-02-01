@@ -1,2 +1,0 @@
-Sample	Unique Reads	Duplicate Reads
-sample06	9780.0	8203.0

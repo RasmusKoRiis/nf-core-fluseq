@@ -1,2 +1,0 @@
-Module	Section	Sample Name	Source
-FastQC	all_sections	sample06	/Users/rasmuskopperudriis/Coding/work_folder/fluseq/nf-core-fluseq/work/38/38c19f8343de80009bed7fcf97654f/3/sample06_fastqc.zip
