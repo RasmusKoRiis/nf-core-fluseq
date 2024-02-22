@@ -41,8 +41,6 @@ process AMINOACIDTRANSLATION {
     subtype=\$(cat ${subtype})
 
 
-
-
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))

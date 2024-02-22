@@ -1,2 +1,0 @@
-Sample	Unique Reads	Duplicate Reads
-sample01	34353.0	21647.0
