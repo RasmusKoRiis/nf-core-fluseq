@@ -170,16 +170,29 @@ workflow AVIAN {
     )
 
 
+    IRMA.out.amended_consensus
+    .join(SUBTYPEFINDER.out.subtype, by: [0]) // Assuming meta.id is the first element in the tuple
+    .map { items ->
+        def meta = items[0] // The common meta.id
+        def fasta = items[1] // The fasta file from IRMA_out_amended_consensus
+        def subtype = items[2] // The subtype file from SUBTYPEFINDER_out_subtype
+        return [meta, fasta, subtype]
+    }
+    .set { fasta_subtype }
 
+    fasta_subtype.view()
 
 
     //
     // MODULE: AMINO ACID TRANSLATION
     //
 
-    //AMINOACIDTRANSLATION (
-    //    IRMA_out_fasta
-    //)
+    
+    def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
+
+    AMINOACIDTRANSLATION (
+        IRMA_ha_na_fasta, fullPath_nextclade_dataset, fasta_subtype
+    )
 
     //AMINOACIDTRANSLATION.out.fasta.view()
 

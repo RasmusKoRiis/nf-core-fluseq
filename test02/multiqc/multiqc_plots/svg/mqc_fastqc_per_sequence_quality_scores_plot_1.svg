@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2024-02-22T13:42:16.904459</dc:date>
+    <dc:date>2024-02-22T20:04:44.573673</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -35,7 +35,7 @@ L 2506.7746 273.99006
 L 2506.7746 31.48286 
 L 740.293138 31.48286 
 z
-" clip-path="url(#p303fc23cab)" style="fill: #c3e6c3"/>
+" clip-path="url(#p4db4098364)" style="fill: #c3e6c3"/>
    </g>
    <g id="patch_3">
     <path d="M 544.01742 273.99006 
@@ -43,7 +43,7 @@ L 740.293138 273.99006
 L 740.293138 31.48286 
 L 544.01742 31.48286 
 z
-" clip-path="url(#p303fc23cab)" style="fill: #e6dcc3"/>
+" clip-path="url(#p4db4098364)" style="fill: #e6dcc3"/>
    </g>
    <g id="patch_4">
     <path d="M 53.328125 273.99006 
@@ -51,7 +51,7 @@ L 544.01742 273.99006
 L 544.01742 31.48286 
 L 53.328125 31.48286 
 z
-" clip-path="url(#p303fc23cab)" style="fill: #e6c3c3"/>
+" clip-path="url(#p4db4098364)" style="fill: #e6c3c3"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
@@ -706,7 +706,7 @@ z
      <g id="line2d_1">
       <path d="M 53.328125 273.99006 
 L 992.998125 273.99006 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
      </g>
      <g id="text_10">
       <!-- 0 -->
@@ -719,7 +719,7 @@ L 992.998125 273.99006
      <g id="line2d_2">
       <path d="M 53.328125 225.848478 
 L 992.998125 225.848478 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
      </g>
      <g id="text_11">
       <!-- 2000 -->
@@ -735,7 +735,7 @@ L 992.998125 225.848478
      <g id="line2d_3">
       <path d="M 53.328125 177.706897 
 L 992.998125 177.706897 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
      </g>
      <g id="text_12">
       <!-- 4000 -->
@@ -772,7 +772,7 @@ z
      <g id="line2d_4">
       <path d="M 53.328125 129.565315 
 L 992.998125 129.565315 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
      </g>
      <g id="text_13">
       <!-- 6000 -->
@@ -820,7 +820,7 @@ z
      <g id="line2d_5">
       <path d="M 53.328125 81.423733 
 L 992.998125 81.423733 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
      </g>
      <g id="text_14">
       <!-- 8000 -->
@@ -877,7 +877,7 @@ z
      <g id="line2d_6">
       <path d="M 53.328125 33.282152 
 L 992.998125 33.282152 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-linecap: square"/>
      </g>
      <g id="text_15">
       <!-- 10000 -->
@@ -952,12 +952,12 @@ L 887.499927 273.965989
 L 912.034391 273.99006 
 L 936.568856 273.99006 
 L 961.103321 273.965989 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #f0ad4e; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #f0ad4e; stroke-linecap: square"/>
    </g>
    <g id="line2d_8">
     <path d="M 53.328125 273.99006 
 L 992.998125 273.99006 
-" clip-path="url(#p303fc23cab)" style="fill: none; stroke: #dedede; stroke-width: 2; stroke-linecap: square"/>
+" clip-path="url(#p4db4098364)" style="fill: none; stroke: #dedede; stroke-width: 2; stroke-linecap: square"/>
    </g>
    <g id="text_17">
     <!-- FastQC: Per Sequence Quality Scores -->
@@ -1140,7 +1140,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p303fc23cab">
+  <clipPath id="p4db4098364">
    <rect x="53.328125" y="31.48286" width="939.67" height="242.5072"/>
   </clipPath>
  </defs>

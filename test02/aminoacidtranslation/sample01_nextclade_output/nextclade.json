@@ -1,0 +1,4556 @@
+{
+  "schemaVersion": "3.0.0",
+  "nextcladeAlgoVersion": "3.2.1",
+  "createdAt": "2024-02-22T20:04:32.748426007+00:00",
+  "cladeNodeAttrKeys": [],
+  "phenotypeAttrKeys": [],
+  "results": [
+    {
+      "index": 0,
+      "seqName": "A_HA_H5",
+      "substitutions": [
+        {
+          "pos": 8,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 14,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 17,
+          "refNuc": "T",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 30,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 32,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 35,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 80,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 92,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 101,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 119,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 152,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 173,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 180,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 185,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 194,
+          "refNuc": "T",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 197,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 205,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 206,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 236,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 248,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 262,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 263,
+          "refNuc": "T",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 278,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 291,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 292,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 296,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 299,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 305,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 328,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 329,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 330,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 335,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 357,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 359,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 374,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 386,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 391,
+          "refNuc": "A",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 398,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 404,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 410,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 414,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 416,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 417,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 426,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 428,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 432,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 433,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 444,
+          "refNuc": "T",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 449,
+          "refNuc": "A",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 465,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 466,
+          "refNuc": "G",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 468,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 491,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 510,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 532,
+          "refNuc": "G",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 551,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 553,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 554,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 563,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 567,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 584,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 588,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 590,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 593,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 594,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 599,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 601,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 614,
+          "refNuc": "G",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 620,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 621,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 638,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 644,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 650,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 659,
+          "refNuc": "A",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 660,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 671,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 676,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 699,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 714,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 722,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 728,
+          "refNuc": "G",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 743,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 752,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 753,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 765,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 767,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 850,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 852,
+          "refNuc": "T",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 863,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 864,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 878,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 887,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 891,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 896,
+          "refNuc": "G",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 905,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 932,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 944,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 962,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 968,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 976,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 977,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 980,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1007,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1012,
+          "refNuc": "A",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1019,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1021,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1022,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1040,
+          "refNuc": "A",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1043,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1052,
+          "refNuc": "T",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1054,
+          "refNuc": "T",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1061,
+          "refNuc": "T",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1091,
+          "refNuc": "A",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1112,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1145,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1160,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1181,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1199,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1223,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1232,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1244,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1265,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1277,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1286,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1316,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1334,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1349,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1355,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1364,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1367,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1373,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1400,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1404,
+          "refNuc": "C",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1407,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1445,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1454,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1493,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1499,
+          "refNuc": "C",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1502,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1517,
+          "refNuc": "G",
+          "qryNuc": "T"
+        },
+        {
+          "pos": 1550,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1559,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1565,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1571,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1578,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1592,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1615,
+          "refNuc": "T",
+          "qryNuc": "C"
+        },
+        {
+          "pos": 1619,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1644,
+          "refNuc": "G",
+          "qryNuc": "A"
+        },
+        {
+          "pos": 1679,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1688,
+          "refNuc": "A",
+          "qryNuc": "G"
+        },
+        {
+          "pos": 1706,
+          "refNuc": "A",
+          "qryNuc": "G"
+        }
+      ],
+      "totalSubstitutions": 152,
+      "deletions": [
+        {
+          "range": {
+            "begin": 1035,
+            "end": 1037
+          }
+        }
+      ],
+      "totalDeletions": 2,
+      "insertions": [],
+      "totalInsertions": 0,
+      "missing": [],
+      "totalMissing": 0,
+      "nonACGTNs": [],
+      "totalNonACGTNs": 0,
+      "nucleotideComposition": {
+        "T": 399,
+        "A": 589,
+        "C": 321,
+        "G": 396,
+        "-": 2
+      },
+      "frameShifts": [],
+      "totalFrameShifts": 0,
+      "aaSubstitutions": [
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 44,
+          "refAa": "D",
+          "qryAa": "N"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 52,
+          "refAa": "R",
+          "qryAa": "K"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 71,
+          "refAa": "N",
+          "qryAa": "R"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 81,
+          "refAa": "K",
+          "qryAa": "R"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 93,
+          "refAa": "N",
+          "qryAa": "S"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 94,
+          "refAa": "F",
+          "qryAa": "L"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 103,
+          "refAa": "L",
+          "qryAa": "M"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 114,
+          "refAa": "Q",
+          "qryAa": "L"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 122,
+          "refAa": "S",
+          "qryAa": "P"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 123,
+          "refAa": "D",
+          "qryAa": "N"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 126,
+          "refAa": "A",
+          "qryAa": "T"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 128,
+          "refAa": "S",
+          "qryAa": "L"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 132,
+          "refAa": "S",
+          "qryAa": "A"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 139,
+          "refAa": "R",
+          "qryAa": "A"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 140,
+          "refAa": "S",
+          "qryAa": "P"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 154,
+          "refAa": "N",
+          "qryAa": "D"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 161,
+          "refAa": "R",
+          "qryAa": "I"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 168,
+          "refAa": "Q",
+          "qryAa": "R"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 173,
+          "refAa": "V",
+          "qryAa": "I"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 180,
+          "refAa": "P",
+          "qryAa": "S"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 182,
+          "refAa": "D",
+          "qryAa": "N"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 184,
+          "refAa": "A",
+          "qryAa": "E"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 188,
+          "refAa": "K",
+          "qryAa": "N"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 191,
+          "refAa": "Q",
+          "qryAa": "K"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 209,
+          "refAa": "V",
+          "qryAa": "A"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 217,
+          "refAa": "K",
+          "qryAa": "Q"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 222,
+          "refAa": "S",
+          "qryAa": "R"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 226,
+          "refAa": "E",
+          "qryAa": "D"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 235,
+          "refAa": "N",
+          "qryAa": "D"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 239,
+          "refAa": "N",
+          "qryAa": "H"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 267,
+          "refAa": "E",
+          "qryAa": "G"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 268,
+          "refAa": "L",
+          "qryAa": "V"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 272,
+          "refAa": "N",
+          "qryAa": "H"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 281,
+          "refAa": "I",
+          "qryAa": "V"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 309,
+          "refAa": "R",
+          "qryAa": "K"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 321,
+          "refAa": "Q",
+          "qryAa": "L"
+        },
+        {
+          "cdsName": "A_H5_HA",
+          "pos": 324,
+          "refAa": "R",
+          "qryAa": "K"
+        },
+        {
+          "cdsName": "A_H5_HA2",
+          "pos": 6,
+          "refAa": "I",
+          "qryAa": "K"
+        },
+        {
+          "cdsName": "A_H5_HA2",
+          "pos": 181,
+          "refAa": "I",
+          "qryAa": "V"
+        },
+        {
+          "cdsName": "A_H5_HA2",
+          "pos": 193,
+          "refAa": "V",
+          "qryAa": "A"
+        },
+        {
+          "cdsName": "A_H5_HA2",
+          "pos": 203,
+          "refAa": "V",
+          "qryAa": "M"
+        }
+      ],
+      "totalAminoacidSubstitutions": 41,
+      "aaDeletions": [],
+      "totalAminoacidDeletions": 0,
+      "aaInsertions": [],
+      "totalAminoacidInsertions": 0,
+      "unknownAaRanges": [
+        {
+          "cdsName": "A_H5_HA2",
+          "character": "X",
+          "ranges": [
+            {
+              "range": {
+                "begin": 0,
+                "end": 1
+              },
+              "character": "X"
+            }
+          ],
+          "length": 1
+        }
+      ],
+      "totalUnknownAa": 1,
+      "aaChangesGroups": [
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 43,
+            "end": 46
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 43,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 177,
+              "refTriplet": "CTA",
+              "qryTriplet": "CTA",
+              "nucRanges": [
+                {
+                  "begin": 177,
+                  "end": 180
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 44,
+              "refAa": "D",
+              "qryAa": "N",
+              "nucPos": 180,
+              "refTriplet": "GAT",
+              "qryTriplet": "AAT",
+              "nucRanges": [
+                {
+                  "begin": 180,
+                  "end": 183
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 45,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 183,
+              "refTriplet": "GGA",
+              "qryTriplet": "GGG",
+              "nucRanges": [
+                {
+                  "begin": 183,
+                  "end": 186
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 180,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 185,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 51,
+            "end": 54
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 51,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 201,
+              "refTriplet": "TTA",
+              "qryTriplet": "TTA",
+              "nucRanges": [
+                {
+                  "begin": 201,
+                  "end": 204
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 52,
+              "refAa": "R",
+              "qryAa": "K",
+              "nucPos": 204,
+              "refTriplet": "AGA",
+              "qryTriplet": "AAG",
+              "nucRanges": [
+                {
+                  "begin": 204,
+                  "end": 207
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 53,
+              "refAa": "D",
+              "qryAa": "D",
+              "nucPos": 207,
+              "refTriplet": "GAT",
+              "qryTriplet": "GAT",
+              "nucRanges": [
+                {
+                  "begin": 207,
+                  "end": 210
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 205,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 206,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 70,
+            "end": 73
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 70,
+              "refAa": "I",
+              "qryAa": "I",
+              "nucPos": 258,
+              "refTriplet": "ATC",
+              "qryTriplet": "ATC",
+              "nucRanges": [
+                {
+                  "begin": 258,
+                  "end": 261
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 71,
+              "refAa": "N",
+              "qryAa": "R",
+              "nucPos": 261,
+              "refTriplet": "AAT",
+              "qryTriplet": "AGA",
+              "nucRanges": [
+                {
+                  "begin": 261,
+                  "end": 264
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 72,
+              "refAa": "V",
+              "qryAa": "V",
+              "nucPos": 264,
+              "refTriplet": "GTG",
+              "qryTriplet": "GTG",
+              "nucRanges": [
+                {
+                  "begin": 264,
+                  "end": 267
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 262,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 263,
+              "refNuc": "T",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 80,
+            "end": 83
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 80,
+              "refAa": "E",
+              "qryAa": "E",
+              "nucPos": 288,
+              "refTriplet": "GAG",
+              "qryTriplet": "GAG",
+              "nucRanges": [
+                {
+                  "begin": 288,
+                  "end": 291
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 81,
+              "refAa": "K",
+              "qryAa": "R",
+              "nucPos": 291,
+              "refTriplet": "AAG",
+              "qryTriplet": "CGG",
+              "nucRanges": [
+                {
+                  "begin": 291,
+                  "end": 294
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 82,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 294,
+              "refTriplet": "GCC",
+              "qryTriplet": "GCT",
+              "nucRanges": [
+                {
+                  "begin": 294,
+                  "end": 297
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 291,
+              "refNuc": "A",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 292,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 296,
+              "refNuc": "C",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 92,
+            "end": 96
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 92,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 324,
+              "refTriplet": "GGG",
+              "qryTriplet": "GGG",
+              "nucRanges": [
+                {
+                  "begin": 324,
+                  "end": 327
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 93,
+              "refAa": "N",
+              "qryAa": "S",
+              "nucPos": 327,
+              "refTriplet": "AAT",
+              "qryTriplet": "AGC",
+              "nucRanges": [
+                {
+                  "begin": 327,
+                  "end": 330
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 94,
+              "refAa": "F",
+              "qryAa": "L",
+              "nucPos": 330,
+              "refTriplet": "TTC",
+              "qryTriplet": "CTC",
+              "nucRanges": [
+                {
+                  "begin": 330,
+                  "end": 333
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 95,
+              "refAa": "N",
+              "qryAa": "N",
+              "nucPos": 333,
+              "refTriplet": "AAC",
+              "qryTriplet": "AAT",
+              "nucRanges": [
+                {
+                  "begin": 333,
+                  "end": 336
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 328,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 329,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 330,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 335,
+              "refNuc": "C",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 102,
+            "end": 105
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 102,
+              "refAa": "H",
+              "qryAa": "H",
+              "nucPos": 354,
+              "refTriplet": "CAC",
+              "qryTriplet": "CAC",
+              "nucRanges": [
+                {
+                  "begin": 354,
+                  "end": 357
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 103,
+              "refAa": "L",
+              "qryAa": "M",
+              "nucPos": 357,
+              "refTriplet": "CTA",
+              "qryTriplet": "ATG",
+              "nucRanges": [
+                {
+                  "begin": 357,
+                  "end": 360
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 104,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 360,
+              "refTriplet": "TTG",
+              "qryTriplet": "TTG",
+              "nucRanges": [
+                {
+                  "begin": 360,
+                  "end": 363
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 357,
+              "refNuc": "C",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 359,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 113,
+            "end": 116
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 113,
+              "refAa": "I",
+              "qryAa": "I",
+              "nucPos": 387,
+              "refTriplet": "ATT",
+              "qryTriplet": "ATT",
+              "nucRanges": [
+                {
+                  "begin": 387,
+                  "end": 390
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 114,
+              "refAa": "Q",
+              "qryAa": "L",
+              "nucPos": 390,
+              "refTriplet": "CAG",
+              "qryTriplet": "CTG",
+              "nucRanges": [
+                {
+                  "begin": 390,
+                  "end": 393
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 115,
+              "refAa": "I",
+              "qryAa": "I",
+              "nucPos": 393,
+              "refTriplet": "ATC",
+              "qryTriplet": "ATC",
+              "nucRanges": [
+                {
+                  "begin": 393,
+                  "end": 396
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 391,
+              "refNuc": "A",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 121,
+            "end": 125
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 121,
+              "refAa": "W",
+              "qryAa": "W",
+              "nucPos": 411,
+              "refTriplet": "TGG",
+              "qryTriplet": "TGG",
+              "nucRanges": [
+                {
+                  "begin": 411,
+                  "end": 414
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 122,
+              "refAa": "S",
+              "qryAa": "P",
+              "nucPos": 414,
+              "refTriplet": "TCC",
+              "qryTriplet": "CCA",
+              "nucRanges": [
+                {
+                  "begin": 414,
+                  "end": 417
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 123,
+              "refAa": "D",
+              "qryAa": "N",
+              "nucPos": 417,
+              "refTriplet": "GAT",
+              "qryTriplet": "AAT",
+              "nucRanges": [
+                {
+                  "begin": 417,
+                  "end": 420
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 124,
+              "refAa": "H",
+              "qryAa": "H",
+              "nucPos": 420,
+              "refTriplet": "CAT",
+              "qryTriplet": "CAT",
+              "nucRanges": [
+                {
+                  "begin": 420,
+                  "end": 423
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 414,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 416,
+              "refNuc": "C",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 417,
+              "refNuc": "G",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 125,
+            "end": 130
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 125,
+              "refAa": "E",
+              "qryAa": "E",
+              "nucPos": 423,
+              "refTriplet": "GAA",
+              "qryTriplet": "GAA",
+              "nucRanges": [
+                {
+                  "begin": 423,
+                  "end": 426
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 126,
+              "refAa": "A",
+              "qryAa": "T",
+              "nucPos": 426,
+              "refTriplet": "GCC",
+              "qryTriplet": "ACA",
+              "nucRanges": [
+                {
+                  "begin": 426,
+                  "end": 429
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 127,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 429,
+              "refTriplet": "TCA",
+              "qryTriplet": "TCA",
+              "nucRanges": [
+                {
+                  "begin": 429,
+                  "end": 432
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 128,
+              "refAa": "S",
+              "qryAa": "L",
+              "nucPos": 432,
+              "refTriplet": "TCA",
+              "qryTriplet": "CTA",
+              "nucRanges": [
+                {
+                  "begin": 432,
+                  "end": 435
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 129,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 435,
+              "refTriplet": "GGG",
+              "qryTriplet": "GGG",
+              "nucRanges": [
+                {
+                  "begin": 435,
+                  "end": 438
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 426,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 428,
+              "refNuc": "C",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 432,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 433,
+              "refNuc": "C",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 131,
+            "end": 134
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 131,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 441,
+              "refTriplet": "AGC",
+              "qryTriplet": "AGC",
+              "nucRanges": [
+                {
+                  "begin": 441,
+                  "end": 444
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 132,
+              "refAa": "S",
+              "qryAa": "A",
+              "nucPos": 444,
+              "refTriplet": "TCA",
+              "qryTriplet": "GCA",
+              "nucRanges": [
+                {
+                  "begin": 444,
+                  "end": 447
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 133,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 447,
+              "refTriplet": "GCA",
+              "qryTriplet": "GCT",
+              "nucRanges": [
+                {
+                  "begin": 447,
+                  "end": 450
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 444,
+              "refNuc": "T",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 449,
+              "refNuc": "A",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 138,
+            "end": 142
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 138,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 462,
+              "refTriplet": "GGA",
+              "qryTriplet": "GGA",
+              "nucRanges": [
+                {
+                  "begin": 462,
+                  "end": 465
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 139,
+              "refAa": "R",
+              "qryAa": "A",
+              "nucPos": 465,
+              "refTriplet": "AGG",
+              "qryTriplet": "GCG",
+              "nucRanges": [
+                {
+                  "begin": 465,
+                  "end": 468
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 140,
+              "refAa": "S",
+              "qryAa": "P",
+              "nucPos": 468,
+              "refTriplet": "TCC",
+              "qryTriplet": "CCC",
+              "nucRanges": [
+                {
+                  "begin": 468,
+                  "end": 471
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 141,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 471,
+              "refTriplet": "TCC",
+              "qryTriplet": "TCC",
+              "nucRanges": [
+                {
+                  "begin": 471,
+                  "end": 474
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 465,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 466,
+              "refNuc": "G",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 468,
+              "refNuc": "T",
+              "qryNuc": "C"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 153,
+            "end": 156
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 153,
+              "refAa": "N",
+              "qryAa": "N",
+              "nucPos": 507,
+              "refTriplet": "AAC",
+              "qryTriplet": "AAC",
+              "nucRanges": [
+                {
+                  "begin": 507,
+                  "end": 510
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 154,
+              "refAa": "N",
+              "qryAa": "D",
+              "nucPos": 510,
+              "refTriplet": "AAT",
+              "qryTriplet": "GAT",
+              "nucRanges": [
+                {
+                  "begin": 510,
+                  "end": 513
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 155,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 513,
+              "refTriplet": "GCA",
+              "qryTriplet": "GCA",
+              "nucRanges": [
+                {
+                  "begin": 513,
+                  "end": 516
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 510,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 160,
+            "end": 163
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 160,
+              "refAa": "K",
+              "qryAa": "K",
+              "nucPos": 528,
+              "refTriplet": "AAG",
+              "qryTriplet": "AAG",
+              "nucRanges": [
+                {
+                  "begin": 528,
+                  "end": 531
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 161,
+              "refAa": "R",
+              "qryAa": "I",
+              "nucPos": 531,
+              "refTriplet": "AGA",
+              "qryTriplet": "ATA",
+              "nucRanges": [
+                {
+                  "begin": 531,
+                  "end": 534
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 162,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 534,
+              "refTriplet": "AGC",
+              "qryTriplet": "AGC",
+              "nucRanges": [
+                {
+                  "begin": 534,
+                  "end": 537
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 532,
+              "refNuc": "G",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 167,
+            "end": 170
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 167,
+              "refAa": "N",
+              "qryAa": "N",
+              "nucPos": 549,
+              "refTriplet": "AAC",
+              "qryTriplet": "AAT",
+              "nucRanges": [
+                {
+                  "begin": 549,
+                  "end": 552
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 168,
+              "refAa": "Q",
+              "qryAa": "R",
+              "nucPos": 552,
+              "refTriplet": "CAA",
+              "qryTriplet": "CGG",
+              "nucRanges": [
+                {
+                  "begin": 552,
+                  "end": 555
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 169,
+              "refAa": "E",
+              "qryAa": "E",
+              "nucPos": 555,
+              "refTriplet": "GAA",
+              "qryTriplet": "GAA",
+              "nucRanges": [
+                {
+                  "begin": 555,
+                  "end": 558
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 551,
+              "refNuc": "C",
+              "qryNuc": "T"
+            },
+            {
+              "pos": 553,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 554,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 172,
+            "end": 175
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 172,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 564,
+              "refTriplet": "TTG",
+              "qryTriplet": "TTG",
+              "nucRanges": [
+                {
+                  "begin": 564,
+                  "end": 567
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 173,
+              "refAa": "V",
+              "qryAa": "I",
+              "nucPos": 567,
+              "refTriplet": "GTA",
+              "qryTriplet": "ATA",
+              "nucRanges": [
+                {
+                  "begin": 567,
+                  "end": 570
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 174,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 570,
+              "refTriplet": "CTG",
+              "qryTriplet": "CTG",
+              "nucRanges": [
+                {
+                  "begin": 570,
+                  "end": 573
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 567,
+              "refNuc": "G",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 179,
+            "end": 186
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 179,
+              "refAa": "H",
+              "qryAa": "H",
+              "nucPos": 585,
+              "refTriplet": "CAT",
+              "qryTriplet": "CAT",
+              "nucRanges": [
+                {
+                  "begin": 585,
+                  "end": 588
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 180,
+              "refAa": "P",
+              "qryAa": "S",
+              "nucPos": 588,
+              "refTriplet": "CCT",
+              "qryTriplet": "TCC",
+              "nucRanges": [
+                {
+                  "begin": 588,
+                  "end": 591
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 181,
+              "refAa": "N",
+              "qryAa": "N",
+              "nucPos": 591,
+              "refTriplet": "AAT",
+              "qryTriplet": "AAC",
+              "nucRanges": [
+                {
+                  "begin": 591,
+                  "end": 594
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 182,
+              "refAa": "D",
+              "qryAa": "N",
+              "nucPos": 594,
+              "refTriplet": "GAT",
+              "qryTriplet": "AAT",
+              "nucRanges": [
+                {
+                  "begin": 594,
+                  "end": 597
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 183,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 597,
+              "refTriplet": "GCG",
+              "qryTriplet": "GCA",
+              "nucRanges": [
+                {
+                  "begin": 597,
+                  "end": 600
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 184,
+              "refAa": "A",
+              "qryAa": "E",
+              "nucPos": 600,
+              "refTriplet": "GCA",
+              "qryTriplet": "GAA",
+              "nucRanges": [
+                {
+                  "begin": 600,
+                  "end": 603
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 185,
+              "refAa": "E",
+              "qryAa": "E",
+              "nucPos": 603,
+              "refTriplet": "GAG",
+              "qryTriplet": "GAG",
+              "nucRanges": [
+                {
+                  "begin": 603,
+                  "end": 606
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 588,
+              "refNuc": "C",
+              "qryNuc": "T"
+            },
+            {
+              "pos": 590,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 593,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 594,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 599,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 601,
+              "refNuc": "C",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 187,
+            "end": 190
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 187,
+              "refAa": "T",
+              "qryAa": "T",
+              "nucPos": 609,
+              "refTriplet": "ACA",
+              "qryTriplet": "ACA",
+              "nucRanges": [
+                {
+                  "begin": 609,
+                  "end": 612
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 188,
+              "refAa": "K",
+              "qryAa": "N",
+              "nucPos": 612,
+              "refTriplet": "AAG",
+              "qryTriplet": "AAT",
+              "nucRanges": [
+                {
+                  "begin": 612,
+                  "end": 615
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 189,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 615,
+              "refTriplet": "CTC",
+              "qryTriplet": "CTC",
+              "nucRanges": [
+                {
+                  "begin": 615,
+                  "end": 618
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 614,
+              "refNuc": "G",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 190,
+            "end": 193
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 190,
+              "refAa": "Y",
+              "qryAa": "Y",
+              "nucPos": 618,
+              "refTriplet": "TAT",
+              "qryTriplet": "TAC",
+              "nucRanges": [
+                {
+                  "begin": 618,
+                  "end": 621
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 191,
+              "refAa": "Q",
+              "qryAa": "K",
+              "nucPos": 621,
+              "refTriplet": "CAA",
+              "qryTriplet": "AAA",
+              "nucRanges": [
+                {
+                  "begin": 621,
+                  "end": 624
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 192,
+              "refAa": "N",
+              "qryAa": "N",
+              "nucPos": 624,
+              "refTriplet": "AAC",
+              "qryTriplet": "AAC",
+              "nucRanges": [
+                {
+                  "begin": 624,
+                  "end": 627
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 620,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 621,
+              "refNuc": "C",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 208,
+            "end": 211
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 208,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 672,
+              "refTriplet": "TTG",
+              "qryTriplet": "TTG",
+              "nucRanges": [
+                {
+                  "begin": 672,
+                  "end": 675
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 209,
+              "refAa": "V",
+              "qryAa": "A",
+              "nucPos": 675,
+              "refTriplet": "GTA",
+              "qryTriplet": "GCA",
+              "nucRanges": [
+                {
+                  "begin": 675,
+                  "end": 678
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 210,
+              "refAa": "P",
+              "qryAa": "P",
+              "nucPos": 678,
+              "refTriplet": "CCA",
+              "qryTriplet": "CCA",
+              "nucRanges": [
+                {
+                  "begin": 678,
+                  "end": 681
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 676,
+              "refNuc": "T",
+              "qryNuc": "C"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 216,
+            "end": 219
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 216,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 696,
+              "refTriplet": "TCC",
+              "qryTriplet": "TCC",
+              "nucRanges": [
+                {
+                  "begin": 696,
+                  "end": 699
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 217,
+              "refAa": "K",
+              "qryAa": "Q",
+              "nucPos": 699,
+              "refTriplet": "AAA",
+              "qryTriplet": "CAA",
+              "nucRanges": [
+                {
+                  "begin": 699,
+                  "end": 702
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 218,
+              "refAa": "V",
+              "qryAa": "V",
+              "nucPos": 702,
+              "refTriplet": "GTA",
+              "qryTriplet": "GTA",
+              "nucRanges": [
+                {
+                  "begin": 702,
+                  "end": 705
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 699,
+              "refNuc": "A",
+              "qryNuc": "C"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 221,
+            "end": 224
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 221,
+              "refAa": "Q",
+              "qryAa": "Q",
+              "nucPos": 711,
+              "refTriplet": "CAA",
+              "qryTriplet": "CAA",
+              "nucRanges": [
+                {
+                  "begin": 711,
+                  "end": 714
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 222,
+              "refAa": "S",
+              "qryAa": "R",
+              "nucPos": 714,
+              "refTriplet": "AGT",
+              "qryTriplet": "CGT",
+              "nucRanges": [
+                {
+                  "begin": 714,
+                  "end": 717
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 223,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 717,
+              "refTriplet": "GGA",
+              "qryTriplet": "GGA",
+              "nucRanges": [
+                {
+                  "begin": 717,
+                  "end": 720
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 714,
+              "refNuc": "A",
+              "qryNuc": "C"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 225,
+            "end": 228
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 225,
+              "refAa": "M",
+              "qryAa": "M",
+              "nucPos": 723,
+              "refTriplet": "ATG",
+              "qryTriplet": "ATG",
+              "nucRanges": [
+                {
+                  "begin": 723,
+                  "end": 726
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 226,
+              "refAa": "E",
+              "qryAa": "D",
+              "nucPos": 726,
+              "refTriplet": "GAG",
+              "qryTriplet": "GAC",
+              "nucRanges": [
+                {
+                  "begin": 726,
+                  "end": 729
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 227,
+              "refAa": "F",
+              "qryAa": "F",
+              "nucPos": 729,
+              "refTriplet": "TTC",
+              "qryTriplet": "TTC",
+              "nucRanges": [
+                {
+                  "begin": 729,
+                  "end": 732
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 728,
+              "refNuc": "G",
+              "qryNuc": "C"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 234,
+            "end": 237
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 234,
+              "refAa": "P",
+              "qryAa": "P",
+              "nucPos": 750,
+              "refTriplet": "CCG",
+              "qryTriplet": "CCA",
+              "nucRanges": [
+                {
+                  "begin": 750,
+                  "end": 753
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 235,
+              "refAa": "N",
+              "qryAa": "D",
+              "nucPos": 753,
+              "refTriplet": "AAT",
+              "qryTriplet": "GAT",
+              "nucRanges": [
+                {
+                  "begin": 753,
+                  "end": 756
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 236,
+              "refAa": "D",
+              "qryAa": "D",
+              "nucPos": 756,
+              "refTriplet": "GAT",
+              "qryTriplet": "GAT",
+              "nucRanges": [
+                {
+                  "begin": 756,
+                  "end": 759
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 752,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 753,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 238,
+            "end": 241
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 238,
+              "refAa": "I",
+              "qryAa": "I",
+              "nucPos": 762,
+              "refTriplet": "ATC",
+              "qryTriplet": "ATC",
+              "nucRanges": [
+                {
+                  "begin": 762,
+                  "end": 765
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 239,
+              "refAa": "N",
+              "qryAa": "H",
+              "nucPos": 765,
+              "refTriplet": "AAC",
+              "qryTriplet": "CAT",
+              "nucRanges": [
+                {
+                  "begin": 765,
+                  "end": 768
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 240,
+              "refAa": "F",
+              "qryAa": "F",
+              "nucPos": 768,
+              "refTriplet": "TTC",
+              "qryTriplet": "TTC",
+              "nucRanges": [
+                {
+                  "begin": 768,
+                  "end": 771
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 765,
+              "refNuc": "A",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 767,
+              "refNuc": "C",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 266,
+            "end": 270
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 266,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 846,
+              "refTriplet": "AGT",
+              "qryTriplet": "AGT",
+              "nucRanges": [
+                {
+                  "begin": 846,
+                  "end": 849
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 267,
+              "refAa": "E",
+              "qryAa": "G",
+              "nucPos": 849,
+              "refTriplet": "GAA",
+              "qryTriplet": "GGA",
+              "nucRanges": [
+                {
+                  "begin": 849,
+                  "end": 852
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 268,
+              "refAa": "L",
+              "qryAa": "V",
+              "nucPos": 852,
+              "refTriplet": "TTG",
+              "qryTriplet": "GTG",
+              "nucRanges": [
+                {
+                  "begin": 852,
+                  "end": 855
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 269,
+              "refAa": "E",
+              "qryAa": "E",
+              "nucPos": 855,
+              "refTriplet": "GAA",
+              "qryTriplet": "GAA",
+              "nucRanges": [
+                {
+                  "begin": 855,
+                  "end": 858
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 850,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 852,
+              "refNuc": "T",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 271,
+            "end": 274
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 271,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 861,
+              "refTriplet": "GGT",
+              "qryTriplet": "GGC",
+              "nucRanges": [
+                {
+                  "begin": 861,
+                  "end": 864
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 272,
+              "refAa": "N",
+              "qryAa": "H",
+              "nucPos": 864,
+              "refTriplet": "AAC",
+              "qryTriplet": "CAC",
+              "nucRanges": [
+                {
+                  "begin": 864,
+                  "end": 867
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 273,
+              "refAa": "C",
+              "qryAa": "C",
+              "nucPos": 867,
+              "refTriplet": "TGC",
+              "qryTriplet": "TGC",
+              "nucRanges": [
+                {
+                  "begin": 867,
+                  "end": 870
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 863,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 864,
+              "refNuc": "A",
+              "qryNuc": "C"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 280,
+            "end": 283
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 280,
+              "refAa": "P",
+              "qryAa": "P",
+              "nucPos": 888,
+              "refTriplet": "CCA",
+              "qryTriplet": "CCA",
+              "nucRanges": [
+                {
+                  "begin": 888,
+                  "end": 891
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 281,
+              "refAa": "I",
+              "qryAa": "V",
+              "nucPos": 891,
+              "refTriplet": "ATA",
+              "qryTriplet": "GTA",
+              "nucRanges": [
+                {
+                  "begin": 891,
+                  "end": 894
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 282,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 894,
+              "refTriplet": "GGG",
+              "qryTriplet": "GGT",
+              "nucRanges": [
+                {
+                  "begin": 894,
+                  "end": 897
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 891,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 896,
+              "refNuc": "G",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 308,
+            "end": 311
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 308,
+              "refAa": "N",
+              "qryAa": "N",
+              "nucPos": 972,
+              "refTriplet": "AAC",
+              "qryTriplet": "AAC",
+              "nucRanges": [
+                {
+                  "begin": 972,
+                  "end": 975
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 309,
+              "refAa": "R",
+              "qryAa": "K",
+              "nucPos": 975,
+              "refTriplet": "AGA",
+              "qryTriplet": "AAG",
+              "nucRanges": [
+                {
+                  "begin": 975,
+                  "end": 978
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 310,
+              "refAa": "L",
+              "qryAa": "L",
+              "nucPos": 978,
+              "refTriplet": "TTA",
+              "qryTriplet": "TTG",
+              "nucRanges": [
+                {
+                  "begin": 978,
+                  "end": 981
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 976,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 977,
+              "refNuc": "A",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 980,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 320,
+            "end": 323
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 320,
+              "refAa": "P",
+              "qryAa": "P",
+              "nucPos": 1008,
+              "refTriplet": "CCT",
+              "qryTriplet": "CCT",
+              "nucRanges": [
+                {
+                  "begin": 1008,
+                  "end": 1011
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 321,
+              "refAa": "Q",
+              "qryAa": "L",
+              "nucPos": 1011,
+              "refTriplet": "CAA",
+              "qryTriplet": "CTA",
+              "nucRanges": [
+                {
+                  "begin": 1011,
+                  "end": 1014
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 322,
+              "refAa": "R",
+              "qryAa": "R",
+              "nucPos": 1014,
+              "refTriplet": "AGA",
+              "qryTriplet": "AGA",
+              "nucRanges": [
+                {
+                  "begin": 1014,
+                  "end": 1017
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 1012,
+              "refNuc": "A",
+              "qryNuc": "T"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA",
+          "range": {
+            "begin": 323,
+            "end": 326
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 323,
+              "refAa": "E",
+              "qryAa": "E",
+              "nucPos": 1017,
+              "refTriplet": "GAG",
+              "qryTriplet": "GAA",
+              "nucRanges": [
+                {
+                  "begin": 1017,
+                  "end": 1020
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 324,
+              "refAa": "R",
+              "qryAa": "K",
+              "nucPos": 1020,
+              "refTriplet": "AGA",
+              "qryTriplet": "AAG",
+              "nucRanges": [
+                {
+                  "begin": 1020,
+                  "end": 1023
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA",
+              "pos": 325,
+              "refAa": "R",
+              "qryAa": "R",
+              "nucPos": 1023,
+              "refTriplet": "AGA",
+              "qryTriplet": "AGA",
+              "nucRanges": [
+                {
+                  "begin": 1023,
+                  "end": 1026
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 1019,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 1021,
+              "refNuc": "G",
+              "qryNuc": "A"
+            },
+            {
+              "pos": 1022,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA2",
+          "range": {
+            "begin": 5,
+            "end": 8
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 5,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 1050,
+              "refTriplet": "GCT",
+              "qryTriplet": "GCG",
+              "nucRanges": [
+                {
+                  "begin": 1050,
+                  "end": 1053
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 6,
+              "refAa": "I",
+              "qryAa": "K",
+              "nucPos": 1053,
+              "refTriplet": "ATA",
+              "qryTriplet": "AAA",
+              "nucRanges": [
+                {
+                  "begin": 1053,
+                  "end": 1056
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 7,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 1056,
+              "refTriplet": "GCA",
+              "qryTriplet": "GCA",
+              "nucRanges": [
+                {
+                  "begin": 1056,
+                  "end": 1059
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 1052,
+              "refNuc": "T",
+              "qryNuc": "G"
+            },
+            {
+              "pos": 1054,
+              "refNuc": "T",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA2",
+          "range": {
+            "begin": 180,
+            "end": 183
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 180,
+              "refAa": "S",
+              "qryAa": "S",
+              "nucPos": 1575,
+              "refTriplet": "TCA",
+              "qryTriplet": "TCA",
+              "nucRanges": [
+                {
+                  "begin": 1575,
+                  "end": 1578
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 181,
+              "refAa": "I",
+              "qryAa": "V",
+              "nucPos": 1578,
+              "refTriplet": "ATA",
+              "qryTriplet": "GTA",
+              "nucRanges": [
+                {
+                  "begin": 1578,
+                  "end": 1581
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 182,
+              "refAa": "G",
+              "qryAa": "G",
+              "nucPos": 1581,
+              "refTriplet": "GGA",
+              "qryTriplet": "GGA",
+              "nucRanges": [
+                {
+                  "begin": 1581,
+                  "end": 1584
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 1578,
+              "refNuc": "A",
+              "qryNuc": "G"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA2",
+          "range": {
+            "begin": 192,
+            "end": 195
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 192,
+              "refAa": "T",
+              "qryAa": "T",
+              "nucPos": 1611,
+              "refTriplet": "ACA",
+              "qryTriplet": "ACA",
+              "nucRanges": [
+                {
+                  "begin": 1611,
+                  "end": 1614
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 193,
+              "refAa": "V",
+              "qryAa": "A",
+              "nucPos": 1614,
+              "refTriplet": "GTG",
+              "qryTriplet": "GCG",
+              "nucRanges": [
+                {
+                  "begin": 1614,
+                  "end": 1617
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 194,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 1617,
+              "refTriplet": "GCG",
+              "qryTriplet": "GCA",
+              "nucRanges": [
+                {
+                  "begin": 1617,
+                  "end": 1620
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 1615,
+              "refNuc": "T",
+              "qryNuc": "C"
+            },
+            {
+              "pos": 1619,
+              "refNuc": "G",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        },
+        {
+          "name": "A_H5_HA2",
+          "range": {
+            "begin": 202,
+            "end": 205
+          },
+          "changes": [
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 202,
+              "refAa": "M",
+              "qryAa": "M",
+              "nucPos": 1641,
+              "refTriplet": "ATG",
+              "qryTriplet": "ATG",
+              "nucRanges": [
+                {
+                  "begin": 1641,
+                  "end": 1644
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 203,
+              "refAa": "V",
+              "qryAa": "M",
+              "nucPos": 1644,
+              "refTriplet": "GTG",
+              "qryTriplet": "ATG",
+              "nucRanges": [
+                {
+                  "begin": 1644,
+                  "end": 1647
+                }
+              ]
+            },
+            {
+              "cdsName": "A_H5_HA2",
+              "pos": 204,
+              "refAa": "A",
+              "qryAa": "A",
+              "nucPos": 1647,
+              "refTriplet": "GCT",
+              "qryTriplet": "GCT",
+              "nucRanges": [
+                {
+                  "begin": 1647,
+                  "end": 1650
+                }
+              ]
+            }
+          ],
+          "nucSubs": [
+            {
+              "pos": 1644,
+              "refNuc": "G",
+              "qryNuc": "A"
+            }
+          ],
+          "nucDels": []
+        }
+      ],
+      "nucToAaMuts": {
+        "1011": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 321,
+            "refAa": "Q",
+            "qryAa": "L"
+          }
+        ],
+        "1012": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 321,
+            "refAa": "Q",
+            "qryAa": "L"
+          }
+        ],
+        "1013": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 321,
+            "refAa": "Q",
+            "qryAa": "L"
+          }
+        ],
+        "1020": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 324,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "1021": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 324,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "1022": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 324,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "1053": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 6,
+            "refAa": "I",
+            "qryAa": "K"
+          }
+        ],
+        "1054": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 6,
+            "refAa": "I",
+            "qryAa": "K"
+          }
+        ],
+        "1055": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 6,
+            "refAa": "I",
+            "qryAa": "K"
+          }
+        ],
+        "1578": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 181,
+            "refAa": "I",
+            "qryAa": "V"
+          }
+        ],
+        "1579": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 181,
+            "refAa": "I",
+            "qryAa": "V"
+          }
+        ],
+        "1580": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 181,
+            "refAa": "I",
+            "qryAa": "V"
+          }
+        ],
+        "1614": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 193,
+            "refAa": "V",
+            "qryAa": "A"
+          }
+        ],
+        "1615": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 193,
+            "refAa": "V",
+            "qryAa": "A"
+          }
+        ],
+        "1616": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 193,
+            "refAa": "V",
+            "qryAa": "A"
+          }
+        ],
+        "1644": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 203,
+            "refAa": "V",
+            "qryAa": "M"
+          }
+        ],
+        "1645": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 203,
+            "refAa": "V",
+            "qryAa": "M"
+          }
+        ],
+        "1646": [
+          {
+            "cdsName": "A_H5_HA2",
+            "pos": 203,
+            "refAa": "V",
+            "qryAa": "M"
+          }
+        ],
+        "180": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 44,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "181": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 44,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "182": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 44,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "204": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 52,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "205": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 52,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "206": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 52,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "261": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 71,
+            "refAa": "N",
+            "qryAa": "R"
+          }
+        ],
+        "262": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 71,
+            "refAa": "N",
+            "qryAa": "R"
+          }
+        ],
+        "263": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 71,
+            "refAa": "N",
+            "qryAa": "R"
+          }
+        ],
+        "291": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 81,
+            "refAa": "K",
+            "qryAa": "R"
+          }
+        ],
+        "292": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 81,
+            "refAa": "K",
+            "qryAa": "R"
+          }
+        ],
+        "293": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 81,
+            "refAa": "K",
+            "qryAa": "R"
+          }
+        ],
+        "327": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 93,
+            "refAa": "N",
+            "qryAa": "S"
+          }
+        ],
+        "328": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 93,
+            "refAa": "N",
+            "qryAa": "S"
+          }
+        ],
+        "329": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 93,
+            "refAa": "N",
+            "qryAa": "S"
+          }
+        ],
+        "330": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 94,
+            "refAa": "F",
+            "qryAa": "L"
+          }
+        ],
+        "331": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 94,
+            "refAa": "F",
+            "qryAa": "L"
+          }
+        ],
+        "332": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 94,
+            "refAa": "F",
+            "qryAa": "L"
+          }
+        ],
+        "357": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 103,
+            "refAa": "L",
+            "qryAa": "M"
+          }
+        ],
+        "358": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 103,
+            "refAa": "L",
+            "qryAa": "M"
+          }
+        ],
+        "359": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 103,
+            "refAa": "L",
+            "qryAa": "M"
+          }
+        ],
+        "390": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 114,
+            "refAa": "Q",
+            "qryAa": "L"
+          }
+        ],
+        "391": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 114,
+            "refAa": "Q",
+            "qryAa": "L"
+          }
+        ],
+        "392": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 114,
+            "refAa": "Q",
+            "qryAa": "L"
+          }
+        ],
+        "414": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 122,
+            "refAa": "S",
+            "qryAa": "P"
+          }
+        ],
+        "415": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 122,
+            "refAa": "S",
+            "qryAa": "P"
+          }
+        ],
+        "416": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 122,
+            "refAa": "S",
+            "qryAa": "P"
+          }
+        ],
+        "417": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 123,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "418": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 123,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "419": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 123,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "426": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 126,
+            "refAa": "A",
+            "qryAa": "T"
+          }
+        ],
+        "427": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 126,
+            "refAa": "A",
+            "qryAa": "T"
+          }
+        ],
+        "428": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 126,
+            "refAa": "A",
+            "qryAa": "T"
+          }
+        ],
+        "432": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 128,
+            "refAa": "S",
+            "qryAa": "L"
+          }
+        ],
+        "433": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 128,
+            "refAa": "S",
+            "qryAa": "L"
+          }
+        ],
+        "434": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 128,
+            "refAa": "S",
+            "qryAa": "L"
+          }
+        ],
+        "444": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 132,
+            "refAa": "S",
+            "qryAa": "A"
+          }
+        ],
+        "445": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 132,
+            "refAa": "S",
+            "qryAa": "A"
+          }
+        ],
+        "446": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 132,
+            "refAa": "S",
+            "qryAa": "A"
+          }
+        ],
+        "465": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 139,
+            "refAa": "R",
+            "qryAa": "A"
+          }
+        ],
+        "466": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 139,
+            "refAa": "R",
+            "qryAa": "A"
+          }
+        ],
+        "467": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 139,
+            "refAa": "R",
+            "qryAa": "A"
+          }
+        ],
+        "468": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 140,
+            "refAa": "S",
+            "qryAa": "P"
+          }
+        ],
+        "469": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 140,
+            "refAa": "S",
+            "qryAa": "P"
+          }
+        ],
+        "470": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 140,
+            "refAa": "S",
+            "qryAa": "P"
+          }
+        ],
+        "510": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 154,
+            "refAa": "N",
+            "qryAa": "D"
+          }
+        ],
+        "511": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 154,
+            "refAa": "N",
+            "qryAa": "D"
+          }
+        ],
+        "512": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 154,
+            "refAa": "N",
+            "qryAa": "D"
+          }
+        ],
+        "531": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 161,
+            "refAa": "R",
+            "qryAa": "I"
+          }
+        ],
+        "532": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 161,
+            "refAa": "R",
+            "qryAa": "I"
+          }
+        ],
+        "533": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 161,
+            "refAa": "R",
+            "qryAa": "I"
+          }
+        ],
+        "552": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 168,
+            "refAa": "Q",
+            "qryAa": "R"
+          }
+        ],
+        "553": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 168,
+            "refAa": "Q",
+            "qryAa": "R"
+          }
+        ],
+        "554": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 168,
+            "refAa": "Q",
+            "qryAa": "R"
+          }
+        ],
+        "567": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 173,
+            "refAa": "V",
+            "qryAa": "I"
+          }
+        ],
+        "568": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 173,
+            "refAa": "V",
+            "qryAa": "I"
+          }
+        ],
+        "569": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 173,
+            "refAa": "V",
+            "qryAa": "I"
+          }
+        ],
+        "588": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 180,
+            "refAa": "P",
+            "qryAa": "S"
+          }
+        ],
+        "589": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 180,
+            "refAa": "P",
+            "qryAa": "S"
+          }
+        ],
+        "590": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 180,
+            "refAa": "P",
+            "qryAa": "S"
+          }
+        ],
+        "594": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 182,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "595": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 182,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "596": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 182,
+            "refAa": "D",
+            "qryAa": "N"
+          }
+        ],
+        "600": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 184,
+            "refAa": "A",
+            "qryAa": "E"
+          }
+        ],
+        "601": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 184,
+            "refAa": "A",
+            "qryAa": "E"
+          }
+        ],
+        "602": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 184,
+            "refAa": "A",
+            "qryAa": "E"
+          }
+        ],
+        "612": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 188,
+            "refAa": "K",
+            "qryAa": "N"
+          }
+        ],
+        "613": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 188,
+            "refAa": "K",
+            "qryAa": "N"
+          }
+        ],
+        "614": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 188,
+            "refAa": "K",
+            "qryAa": "N"
+          }
+        ],
+        "621": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 191,
+            "refAa": "Q",
+            "qryAa": "K"
+          }
+        ],
+        "622": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 191,
+            "refAa": "Q",
+            "qryAa": "K"
+          }
+        ],
+        "623": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 191,
+            "refAa": "Q",
+            "qryAa": "K"
+          }
+        ],
+        "675": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 209,
+            "refAa": "V",
+            "qryAa": "A"
+          }
+        ],
+        "676": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 209,
+            "refAa": "V",
+            "qryAa": "A"
+          }
+        ],
+        "677": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 209,
+            "refAa": "V",
+            "qryAa": "A"
+          }
+        ],
+        "699": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 217,
+            "refAa": "K",
+            "qryAa": "Q"
+          }
+        ],
+        "700": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 217,
+            "refAa": "K",
+            "qryAa": "Q"
+          }
+        ],
+        "701": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 217,
+            "refAa": "K",
+            "qryAa": "Q"
+          }
+        ],
+        "714": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 222,
+            "refAa": "S",
+            "qryAa": "R"
+          }
+        ],
+        "715": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 222,
+            "refAa": "S",
+            "qryAa": "R"
+          }
+        ],
+        "716": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 222,
+            "refAa": "S",
+            "qryAa": "R"
+          }
+        ],
+        "726": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 226,
+            "refAa": "E",
+            "qryAa": "D"
+          }
+        ],
+        "727": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 226,
+            "refAa": "E",
+            "qryAa": "D"
+          }
+        ],
+        "728": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 226,
+            "refAa": "E",
+            "qryAa": "D"
+          }
+        ],
+        "753": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 235,
+            "refAa": "N",
+            "qryAa": "D"
+          }
+        ],
+        "754": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 235,
+            "refAa": "N",
+            "qryAa": "D"
+          }
+        ],
+        "755": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 235,
+            "refAa": "N",
+            "qryAa": "D"
+          }
+        ],
+        "765": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 239,
+            "refAa": "N",
+            "qryAa": "H"
+          }
+        ],
+        "766": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 239,
+            "refAa": "N",
+            "qryAa": "H"
+          }
+        ],
+        "767": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 239,
+            "refAa": "N",
+            "qryAa": "H"
+          }
+        ],
+        "849": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 267,
+            "refAa": "E",
+            "qryAa": "G"
+          }
+        ],
+        "850": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 267,
+            "refAa": "E",
+            "qryAa": "G"
+          }
+        ],
+        "851": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 267,
+            "refAa": "E",
+            "qryAa": "G"
+          }
+        ],
+        "852": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 268,
+            "refAa": "L",
+            "qryAa": "V"
+          }
+        ],
+        "853": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 268,
+            "refAa": "L",
+            "qryAa": "V"
+          }
+        ],
+        "854": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 268,
+            "refAa": "L",
+            "qryAa": "V"
+          }
+        ],
+        "864": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 272,
+            "refAa": "N",
+            "qryAa": "H"
+          }
+        ],
+        "865": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 272,
+            "refAa": "N",
+            "qryAa": "H"
+          }
+        ],
+        "866": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 272,
+            "refAa": "N",
+            "qryAa": "H"
+          }
+        ],
+        "891": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 281,
+            "refAa": "I",
+            "qryAa": "V"
+          }
+        ],
+        "892": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 281,
+            "refAa": "I",
+            "qryAa": "V"
+          }
+        ],
+        "893": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 281,
+            "refAa": "I",
+            "qryAa": "V"
+          }
+        ],
+        "975": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 309,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "976": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 309,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ],
+        "977": [
+          {
+            "cdsName": "A_H5_HA",
+            "pos": 309,
+            "refAa": "R",
+            "qryAa": "K"
+          }
+        ]
+      },
+      "alignmentRange": {
+        "begin": 0,
+        "end": 1707
+      },
+      "alignmentScore": 4500,
+      "aaAlignmentRanges": {
+        "A_H5_HA": [
+          {
+            "begin": 0,
+            "end": 329
+          }
+        ],
+        "A_H5_HA2": [
+          {
+            "begin": 0,
+            "end": 221
+          }
+        ]
+      },
+      "aaUnsequencedRanges": {
+        "A_H5_HA": [],
+        "A_H5_HA2": []
+      },
+      "pcrPrimerChanges": [],
+      "totalPcrPrimerChanges": 0,
+      "clade": "",
+      "privateNucMutations": {
+        "privateSubstitutions": [],
+        "privateDeletions": [],
+        "reversionSubstitutions": [],
+        "labeledSubstitutions": [],
+        "unlabeledSubstitutions": [],
+        "totalPrivateSubstitutions": 0,
+        "totalPrivateDeletions": 0,
+        "totalReversionSubstitutions": 0,
+        "totalLabeledSubstitutions": 0,
+        "totalUnlabeledSubstitutions": 0
+      },
+      "privateAaMutations": {},
+      "warnings": [],
+      "missingCdses": [],
+      "divergence": 0.0,
+      "coverage": 1.0,
+      "qc": {
+        "missingData": null,
+        "mixedSites": null,
+        "privateMutations": null,
+        "snpClusters": null,
+        "frameShifts": null,
+        "stopCodons": null,
+        "overallScore": 0.0,
+        "overallStatus": "good"
+      },
+      "customNodeAttributes": {},
+      "nearestNodeId": 0,
+      "isReverseComplement": false,
+      "phenotypeValues": null,
+      "aaMotifs": {},
+      "aaMotifsChanges": {}
+    }
+  ],
+  "errors": []
+}
