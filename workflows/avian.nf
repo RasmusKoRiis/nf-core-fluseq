@@ -6,7 +6,6 @@
 
 include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
 
-
 def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
 def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
 def summary_params = paramsSummaryMap(workflow)
@@ -54,6 +53,8 @@ include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
 include { IRMA                        } from '../modules/local/irma/main'
 include { AMINOACIDTRANSLATION        } from '../modules/local/aminoacidtranslation/main'
 include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
+include { GENOTYPING                  } from '../modules/local/genotyping/main'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,25 +138,38 @@ workflow AVIAN {
     .filter { it != null }
     .set { IRMA_ha_na_fasta }
 
+    IRMA.out.amended_consensus
+    .map { meta, files -> 
+        def amended_consensus_files = files.findAll { it.getName().contains('.fa') }
+        return (amended_consensus_files) ? tuple(meta, amended_consensus_files) : null
+    }
+    .filter { it != null }
+    .set { IRMA_amended_consensus_files }
 
-    IRMA_ha_na_fasta.view()
-
-  
 
     //
     // MODULE: SUBTYPE FINDER
     //
-
-    ch_ha_database = params.ha_database  
-    ch_na_database = params.na_database 
-
+    def currentDir = System.getProperty('user.dir')
+    def fullPathHA = "${currentDir}/${params.ha_database}"
+    def fullPathNA = "${currentDir}/${params.na_database}"
 
 
     SUBTYPEFINDER (
-        IRMA_ha_na_fasta, ch_ha_database, ch_na_database
+        IRMA_ha_na_fasta, fullPathHA, fullPathNA
     )
 
-    SUBTYPEFINDER.out.subtype.view()
+    //
+    // MODULE: GENOTYPING
+    //
+
+    ch_genotype_database = params.genotype_database
+
+    GENOTYPING (
+        IRMA_amended_consensus_files, ch_genotype_database
+    )
+
+
 
 
 
