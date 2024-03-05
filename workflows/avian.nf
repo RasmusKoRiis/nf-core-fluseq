@@ -56,6 +56,8 @@ include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
 include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
+include { MUTATION                    } from '../modules/local/mutation/main'
+
 
 
 /*
@@ -211,14 +213,24 @@ workflow AVIAN {
     // MODULE: AMINO ACID TRANSLATION
     //
 
-
     def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
 
     AMINOACIDTRANSLATION (
         COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
     )
 
-    //AMINOACIDTRANSLATION.out.fasta.view()
+    //
+    // MODULE: MUTATION
+    //
+
+    def fullPath_references = "${currentDir}/${params.sequence_references}"
+    
+    MUTATION  (
+        AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references
+    )
+
+
+
 
 
     //

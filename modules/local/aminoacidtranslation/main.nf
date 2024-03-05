@@ -12,7 +12,7 @@ process AMINOACIDTRANSLATION {
 
     output:
     tuple val(meta), path("*.csv"), emit: nextclade_csv
-    tuple val(meta), path("*fasta"), emit: aminoacid_sequence
+    tuple val(meta), path("*translation*fasta"), path(subtype), emit: aminoacid_sequence
     path "versions.yml", emit: versions
 
     when:
@@ -40,7 +40,7 @@ process AMINOACIDTRANSLATION {
             mv "\$file" ./${meta.id}_\${basename}
         done
         
-        #hello222   2
+    
 
             
         subtype=\$(cat ${subtype})
