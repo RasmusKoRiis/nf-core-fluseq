@@ -1,5 +1,0 @@
-##gff-version 3
-##sequence-region MW626062.1 1 1752
-MW626062.1	feature	gene	49	1035	.	+	.	gene_name="A_H5_HA"
-MW626062.1	feature	gene	1036	1698	.	+	.	gene_name="A_H5_HA2"
-

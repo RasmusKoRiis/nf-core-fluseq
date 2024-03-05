@@ -6,14 +6,13 @@ process AMINOACIDTRANSLATION {
     //container logic as needed
 
     input:
-    tuple val(meta), path(fasta), path(na_fasta)
+    tuple val(meta), path(fasta), path(subtype)
     path(dataset)
-    tuple val(meta), path(ha_fasta), path(subtype)
+    
 
     output:
     tuple val(meta), path("*.csv"), emit: nextclade_csv
     tuple val(meta), path("*fasta"), emit: aminoacid_sequence
-    tuple val(meta), path("${meta.id}_nextclade_output"), emit: nextclade_output
     path "versions.yml", emit: versions
 
     when:
@@ -22,24 +21,30 @@ process AMINOACIDTRANSLATION {
 
     script:
     """
+    for fasta_file in ${fasta}; do
 
-    dataset=${dataset}/h5_ha
-    nextclade run \
-        --input-dataset "\$dataset" \
-        --output-all=${meta.id}_nextclade_output/ \
-        $fasta
-    
-    mv ${meta.id}_nextclade_output/nextclade.csv ${meta.id}_nextclade.csv
+        filename=\$(basename \$fasta_file)
+        filename_no_ext=\${filename%.*}  
+        segment_subtype=\${filename_no_ext#*-} 
+        segment=\${segment_subtype%-*}  
+        subtype_name=\${segment_subtype#*-}  
 
-    for file in ${meta.id}_nextclade_output/nextclade.cds_translation.*.fasta;
-    do
-        filename=\$(basename -- "\$file")
-        new_filename="${meta.id}_\${filename#nextclade.cds_translation.}"
-        mv "\$file" "\${new_filename}"
+        dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
+        nextclade run \
+            --input-dataset "\$dataset_sample" \
+            --output-all=${meta.id}_\${segment}_nextclade_output/ \
+            \$fasta_file
+        
+        for file in ${meta.id}_\${segment}_nextclade_output/*; do
+            basename=\$(basename \$file)
+            mv "\$file" ./${meta.id}_\${basename}
+        done
+        
+        #hello222   2
+
+            
+        subtype=\$(cat ${subtype})
     done
-
-    subtype=\$(cat ${subtype})
-
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

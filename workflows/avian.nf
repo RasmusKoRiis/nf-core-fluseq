@@ -54,6 +54,7 @@ include { IRMA                        } from '../modules/local/irma/main'
 include { AMINOACIDTRANSLATION        } from '../modules/local/aminoacidtranslation/main'
 include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
 include { GENOTYPING                  } from '../modules/local/genotyping/main'
+include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 
 
@@ -174,71 +175,6 @@ workflow AVIAN {
     }
     .set { fasta_subtype }
 
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def pb2 = files.findAll { it.getName().contains('_1') }
-        return (pb2) ? tuple(meta, pb2, subtype) : null
-    }
-    .filter { it != null }
-    .set { pb2_fasta }
-    
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def pb1 = files.findAll { it.getName().contains('_2') }
-        return (pb1) ? tuple(meta, pb1, subtype) : null
-    }
-    .filter { it != null }
-    .set { pb1_fasta }
-    
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def pa = files.findAll { it.getName().contains('_3') }
-        return (pa) ? tuple(meta, pa, subtype) : null
-    }
-    .filter { it != null }
-    .set { pa_fasta }
-    
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def ha = files.findAll { it.getName().contains('_4') }
-        return (ha) ? tuple(meta, ha, subtype) : null
-    }
-    .filter { it != null }
-    .set { ha_fasta }
-
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def np = files.findAll { it.getName().contains('_5') }
-        return (np) ? tuple(meta, np, subtype) : null
-    }
-    .filter { it != null }
-    .set { np_fasta }
-    
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def na = files.findAll { it.getName().contains('_6') }
-        return (na) ? tuple(meta, na, subtype) : null
-    }
-    .filter { it != null }
-    .set { na_fasta }
-    
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def m = files.findAll { it.getName().contains('_7') }
-        return (m) ? tuple(meta, m, subtype) : null
-    }
-    .filter { it != null }
-    .set { m_fasta }
-    
-    fasta_subtype
-    .map { meta, files, subtype -> 
-        def ns = files.findAll { it.getName().contains('_8') }
-        return (ns) ? tuple(meta, ns, subtype) : null
-    }
-    .filter { it != null }
-    .set { ns_fasta }
-
-
 
     //
     // MODULE: GENOTYPING
@@ -256,23 +192,30 @@ workflow AVIAN {
     //
 
     
-    FASTA_CONFIGURATION(
+    FASTA_CONFIGURATION (
          fasta_subtype 
     )
 
-    // FASTA_CONFIGURATION.out.fasta.view()
 
+    //
+    // MODULE: COVERAGE
+    //
+
+    
+    COVERAGE (
+         FASTA_CONFIGURATION.out.fasta
+    )
 
 
     //
     // MODULE: AMINO ACID TRANSLATION
     //
 
-    
+
     def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
 
     AMINOACIDTRANSLATION (
-        IRMA_ha_na_fasta, fullPath_nextclade_dataset, fasta_subtype
+        COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
     )
 
     //AMINOACIDTRANSLATION.out.fasta.view()
