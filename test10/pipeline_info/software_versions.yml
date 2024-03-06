@@ -1,0 +1,10 @@
+CAT_FASTQ:
+  cat: '8.30'
+CUSTOM_DUMPSOFTWAREVERSIONS:
+  python: 3.11.0
+  yaml: '6.0'
+FASTQC:
+  fastqc: 0.12.1
+Workflow:
+  Nextflow: 23.04.4
+  nf-core/fluseq: 1.0dev

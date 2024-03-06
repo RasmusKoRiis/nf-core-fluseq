@@ -2,7 +2,7 @@
 process MUTATION  {
     tag "$meta.id"
     label 'process_single'
-    debug true
+
 
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:latest'
@@ -17,7 +17,7 @@ process MUTATION  {
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*.csv"), emit: mutation_table
+    tuple val(meta), path("*.csv"), path(subtype), emit: mutation_list
     path "versions.yml", emit: versions
 
     when:
@@ -73,7 +73,6 @@ process MUTATION  {
             \$subtype_name \
             \$output_name\
 
-        #hello
         
     done
     

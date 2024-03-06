@@ -39,6 +39,7 @@ def find_differences(reference, seq):
         if best_alignment[0][i] != best_alignment[1][i]:
             differences.append(f"{best_alignment[0][i]}{i+1}{best_alignment[1][i]}")
     return ';'.join(differences)
+    
 
 
 def check_frameshift(seq):
@@ -73,7 +74,7 @@ df = pd.DataFrame(sequences)
 df['Differences'] = df.apply(process_differences, axis=1)
 
 # Split "ID" column into "sample" and "Ref_Name" columns
-#df[['sample', 'Ref_Name']] = df['ID'].str.split('_', n=1, expand=True)
+df[['sample', 'Ref_Name']] = df['ID'].str.split('|', n=1, expand=True)
 
 # Set the "Ref_Name" column to the 'segment' variable value
 #df['Ref_Name'] = segment
@@ -86,10 +87,12 @@ df['Differences'] = df.apply(process_differences, axis=1)
 #df['Ref_Name'] = segment
 
 # Drop the original "ID" column
-#df.drop(columns=['ID'], inplace=True)
+df.drop(columns=['Ref_Name'], inplace=True)
+df.drop(columns=['ID'], inplace=True)
+
 
 # Reorder the columns
-#df = df[['sample', 'Ref_Name', 'Differences', 'Frameshift/Poor Seq']]
+df = df[['sample', 'Differences']]
 
 # Save the final dataframe to a CSV file
 df.to_csv(output_file, index=False)
