@@ -11,13 +11,16 @@ reference_file = sys.argv[2]
 segment = sys.argv[3]
 subtype = sys.argv[4]
 output_file = sys.argv[5]
+type = sys.argv[6]
+
+print(type)
 
 
-reference_file = os.path.join(reference_file, subtype + '/' + segment + '.fasta')
+reference_file = os.path.join(reference_file, type + '/' + subtype + '/' + segment + '.fasta')
+print("python reference: {}".format(reference_file))
 
 print("python segment: {}".format(segment))
-print(sequence_file)
-print(reference_file)
+
 
 def find_differences(reference, seq):
     # Align the sequences
@@ -26,18 +29,30 @@ def find_differences(reference, seq):
     aligner.open_gap_score = -10
     alignments = aligner.align(reference, seq)
     
-    # Get the alignment with the highest score
-    #best_alignment = max(alignments, key=lambda x: x.score)
     best_alignment = max(alignments)
     print(best_alignment)
-
     
-    # Find the differences between the sequences
     differences = []
-    #for i in range(len(best_alignment)-1):
-    for i in range(len(best_alignment[1])):
-        if best_alignment[0][i] != best_alignment[1][i]:
-            differences.append(f"{best_alignment[0][i]}{i+1}{best_alignment[1][i]}")
+    ref_pos = 1  # Keep track of the position in the reference sequence
+    for i in range(len(best_alignment[0])):
+        ref_char = best_alignment[0][i]
+        seq_char = best_alignment[1][i]
+
+        if ref_char != seq_char:
+            if ref_char == '-':  # Insertion in sequence compared to reference
+                if differences and differences[-1].startswith(f"ins{ref_pos-1}"):
+                    # If the last difference was an insertion at the same position, append this char to it
+                    differences[-1] += seq_char
+                else:
+                    differences.append(f"ins{ref_pos-1}{seq_char}")  # Note the insertion point and the inserted char
+            elif seq_char == '-':  # Deletion in sequence compared to reference
+                differences.append(f"{ref_char}{ref_pos}del")  # Note the deletion
+            else:  # Mismatch
+                differences.append(f"{ref_char}{ref_pos}{seq_char}")
+
+        if ref_char != '-':  # Don't advance reference position on insertions to reference
+            ref_pos += 1
+
     return ';'.join(differences)
     
 
@@ -60,6 +75,7 @@ def process_differences(row):
 
 sequences = []
 
+print(sequence_file)
 for ref in SeqIO.parse(reference_file, 'fasta'):
     reference = Seq(str(ref.seq))
     for record in SeqIO.parse(sequence_file, 'fasta'):
@@ -70,6 +86,7 @@ for ref in SeqIO.parse(reference_file, 'fasta'):
 
 # Create a DataFrame from the sequences
 df = pd.DataFrame(sequences)
+
  
 df['Differences'] = df.apply(process_differences, axis=1)
 

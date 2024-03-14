@@ -2,6 +2,7 @@
 process MUTATION  {
     tag "$meta.id"
     label 'process_single'
+  
 
 
     //conda "bioconda::blast=2.15.0"
@@ -17,7 +18,9 @@ process MUTATION  {
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*.csv"), path(subtype), emit: mutation_list
+    tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
+    tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation
+
     path "versions.yml", emit: versions
 
     when:
@@ -40,6 +43,7 @@ process MUTATION  {
     """
     subtype_name=\$(cat ${subtype} )
 
+
     for fasta_file in ${fasta}; do
 
         filename=\$(basename \$fasta_file)
@@ -56,27 +60,50 @@ process MUTATION  {
         segment=\$(echo "\${segment_subtype}" | awk -F_ '{print \$NF}')
 
         # Make output name
-        output_name=${meta.id}_\${segment}"_mutation.csv"
+        output_name_mamailian=${meta.id}_\${segment}"_mamailian_mutation.csv"
+        output_name_inhibition=${meta.id}_\${segment}"_inhibtion_mutation.csv"
 
         reference_file=${sequence_references}
+        mamailian=mamailian
+        inhibition=inhibition
+
         
         echo "Segment: \${segment}"
         echo "Processing file: \${fasta_file}"
         echo "Reference: ${sequence_references}"
         echo "Subtype name: \${subtype_name}"
-        echo "Output name: \${output_name}"
+        echo "Output name: \${output_name_mamailian}"
+
+        
+        python /project-bin/mutation_finder.py \
+            \$fasta_file \
+            \$reference_file \
+            \${segment} \
+            \$subtype_name \
+            \$output_name_mamailian\
+            \$mamailian\
+
+        
+        #if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* ]]; then
+        if [[ "\${segment}" == *"NA"* ]]; then
+
+        echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
+
 
         python /project-bin/mutation_finder.py \
             \$fasta_file \
             \$reference_file \
             \${segment} \
             \$subtype_name \
-            \$output_name\
+            \$output_name_inhibition\
+            \$inhibition
 
+        else
+            echo "Skipping execution for a segment not containing 'NA' or 'PA' in its name: \${segment}"
+        fi
         
     done
     
-
 
 
 

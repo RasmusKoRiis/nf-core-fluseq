@@ -27,22 +27,26 @@ process AMINOACIDTRANSLATION {
         filename_no_ext=\${filename%.*}  
         segment_subtype=\${filename_no_ext#*-} 
         segment=\${segment_subtype%-*}  
-        subtype_name=\${segment_subtype#*-}  
+        subtype_name=\${segment_subtype#*-} 
+        
+    
+
 
         dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
+        echo "dataset_sample: \${dataset_sample}"
         nextclade run \
             --input-dataset "\$dataset_sample" \
             --output-all=${meta.id}_\${segment}_nextclade_output/ \
             \$fasta_file
         
         for file in ${meta.id}_\${segment}_nextclade_output/*; do
+            cat "\$file"
             basename=\$(basename \$file)
             mv "\$file" ./${meta.id}_\${basename}
         done
-        
-    
 
-            
+
+
         subtype=\$(cat ${subtype})
     done
 

@@ -14,6 +14,7 @@ process SUBTYPEFINDER {
     output:
     tuple val(meta), path("*.txt"), emit: subtype
     tuple val(meta), path("*.csv"), emit: subtype_file
+    tuple val(meta), path("*.tsv"), emit: subtype_file_test
     path "versions.yml", emit: versions
 
     when:
@@ -32,10 +33,10 @@ process SUBTYPEFINDER {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
-    blastn -query $ha_fasta -subject $ha_database -outfmt 6 -max_target_seqs 3 > "ha_${prefix}.tsv"
+    blastn -query $ha_fasta -subject $ha_database -outfmt 6   > "ha_${prefix}.tsv"
     subtype_ha=\$(awk -F '\t' '{split(\$2,a,\"_\"); print a[2]}' "ha_${prefix}.tsv" | head -n 1)
     
-    blastn -query $na_fasta -subject $na_database -outfmt 6 -max_target_seqs 3 > "na_${prefix}.tsv"
+    blastn -query $na_fasta -subject $na_database -outfmt 6   > "na_${prefix}.tsv"
     subtype_na=\$(awk -F '\t' '{split(\$2,a,\"_\"); print a[2]}' "na_${prefix}.tsv" | head -n 1)
 
     subtype=""$meta.id",\$subtype_ha\$subtype_na"
@@ -43,6 +44,8 @@ process SUBTYPEFINDER {
 
     echo \$subtype > ""$meta.id"_subtype.csv"
     echo \$subtype_txt > ""$meta.id"_subtype.txt"
+
+    
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))

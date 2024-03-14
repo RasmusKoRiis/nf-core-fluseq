@@ -2,6 +2,7 @@
 process COVERAGE {
     tag "$meta.id"
     label 'process_single'
+    errorStrategy 'ignore'
 
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:latest'
@@ -14,6 +15,7 @@ process COVERAGE {
     output:
     tuple val(meta), path("*.csv"), emit: coverage
     tuple val(meta), path("*fasta"), path(subtype), emit: filtered_fasta
+    tuple val(meta), path("*coverage.fa"), path(subtype), emit:  merged_filtered_fasta
     path "versions.yml", emit: versions
 
     when:
@@ -34,7 +36,6 @@ process COVERAGE {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
-    mkdir -p passed
     for fasta_file in ${sequences}; do
         filename=\$(basename \$fasta_file)
         echo "Processing \$filename"  
@@ -60,8 +61,9 @@ process COVERAGE {
         fi
     done
 
+    cat *.fasta > "${meta.id}_coverage.fa"
 
-    
+
 
 
 

@@ -57,6 +57,8 @@ include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
+include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
+
 
 
 
@@ -230,8 +232,15 @@ workflow AVIAN {
     )
 
 
+    //
+    // MODULE: TABLELOOKUP
+    //
 
-
+    def fullPath_tables = "${currentDir}/${params.mutation_tables}"
+    
+    TABLELOOKUP  (
+        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_tables
+    )
 
     //
     // MODULE: Run FastQC
