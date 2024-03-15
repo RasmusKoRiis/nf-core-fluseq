@@ -16,10 +16,13 @@ df2 = pd.read_csv(mutation_list)
 
 # We convert them into sets for easier comparison
 sample_mutations = set(';'.join(df1["Differences"].dropna()).split(';'))
+print(sample_mutations)
 list_mutations = set(';'.join(df2[type].dropna()).split(';'))
+print(list_mutations)
 
 # Find common mutations
 common_mutations = sample_mutations.intersection(list_mutations)
+print(common_mutations)
 
 # Convert the set of common mutations back to a string separated by ';' to store in a single DataFrame cell
 common_mutations_str = ';'.join(common_mutations)

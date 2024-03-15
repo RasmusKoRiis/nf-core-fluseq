@@ -2,6 +2,7 @@
 process GENOTYPING {
     tag "$meta.id"
     label 'process_single'
+    errorStrategy 'ignore'
 
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:latest'

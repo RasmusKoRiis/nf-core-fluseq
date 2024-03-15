@@ -2,6 +2,8 @@
 process TABLELOOKUP {
     tag "$meta.id"
     label 'process_single'
+    errorStrategy 'ignore'
+
     
     
 
@@ -80,7 +82,8 @@ process TABLELOOKUP {
 
         fi
 
-       
+
+
     done
 
     for mutation_file in ${inhibition_mutation}; do
