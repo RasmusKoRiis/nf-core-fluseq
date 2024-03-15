@@ -2,7 +2,7 @@
 process SUBTYPEFINDER {
     tag "$meta.id"
     label 'process_single'
-    debug true
+    errorStrategy 'ignore'
 
     conda "bioconda::blast=2.15.0"
     container 'docker.io/ncbi/blast:latest'
