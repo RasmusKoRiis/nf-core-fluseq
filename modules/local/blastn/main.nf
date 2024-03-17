@@ -2,7 +2,7 @@
 process SUBTYPEFINDER {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
+    debug true
 
     conda "bioconda::blast=2.15.0"
     container 'docker.io/ncbi/blast:latest'
@@ -13,9 +13,10 @@ process SUBTYPEFINDER {
     path(na_database)
 
     output:
-    tuple val(meta), path("*.txt"), emit: subtype
-    tuple val(meta), path("*.csv"), emit: subtype_file
+    tuple val(meta), path("*subtype.txt"), emit: subtype
+    tuple val(meta), path("*subtype.csv"), emit: subtype_file
     tuple val(meta), path("*.tsv"), emit: subtype_file_test
+    tuple val(meta), path("*_subtype_re.csv"), emit: subtype_all_fragments
     path "versions.yml", emit: versions
 
     when:
@@ -68,7 +69,6 @@ process SUBTYPEFINDER {
     fi
 
     na=\$(head -n 1 na.txt)
-    print(\$na)
     if [[ \$na =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_na_re=\${BASH_REMATCH[1]}
     else
@@ -82,6 +82,7 @@ process SUBTYPEFINDER {
         echo "Subtype not found."
     fi
 
+
     pb1=\$(head -n 1 pb1.txt)
     if [[ \$pb1 =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_pb1_re=\${BASH_REMATCH[1]}
@@ -90,8 +91,8 @@ process SUBTYPEFINDER {
     fi
 
     pb2=\$(head -n 1 pb2.txt)
-    if [[ \$pb1 =~ (H[0-9]+N[0-9]+) ]]; then
-        subtype_pb1_re=\${BASH_REMATCH[1]}
+    if [[ \$pb2 =~ (H[0-9]+N[0-9]+) ]]; then
+        subtype_pb2_re=\${BASH_REMATCH[1]}
     else
         echo "Subtype not found."
     fi
@@ -120,8 +121,6 @@ process SUBTYPEFINDER {
     subtype_re=""$meta.id",HA_\$subtype_ha_re,NA_\$subtype_na_re,PB2_\$subtype_pb2_re,PB1_\$subtype_pb1_re,PA_\$subtype_pa_re,NP_\$subtype_np_re,NS_\$subtype_ns_re,M_\$subtype_m_re,"
     echo \$subtype_re > ""$meta.id"_subtype_re.csv"
 
-
-    
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
