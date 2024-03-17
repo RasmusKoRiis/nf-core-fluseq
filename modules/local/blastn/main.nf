@@ -63,23 +63,22 @@ process SUBTYPEFINDER {
     # Use grep with Perl-compatible regular expressions to find patterns like HxNy
     if [[ \$ha =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_ha_re=\${BASH_REMATCH[1]}
-        echo \$subtype_ha_re
     else
-        echo "Subtype not found."
+        subtype_ha_re=Unknown
     fi
 
     na=\$(head -n 1 na.txt)
     if [[ \$na =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_na_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_na_re=Unknown
     fi
 
     pa=\$(head -n 1 pa.txt)
     if [[ \$pa =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_pa_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_pa_re=Unknown
     fi
 
 
@@ -87,35 +86,35 @@ process SUBTYPEFINDER {
     if [[ \$pb1 =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_pb1_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_pb1_re=Unknown
     fi
 
     pb2=\$(head -n 1 pb2.txt)
     if [[ \$pb2 =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_pb2_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_pb2_re=Unknown
     fi
 
     np=\$(head -n 1 np.txt)
     if [[ \$np =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_np_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_np_re=Unknown
     fi
 
     ns=\$(head -n 1 ns.txt)
     if [[ \$ns =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_ns_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_ns_re=Unknown
     fi
 
     m=\$(head -n 1 m.txt)
     if [[ \$m =~ (H[0-9]+N[0-9]+) ]]; then
         subtype_m_re=\${BASH_REMATCH[1]}
     else
-        echo "Subtype not found."
+        subtype_m_re=Unknown
     fi
 
     subtype_re=""$meta.id",HA_\$subtype_ha_re,NA_\$subtype_na_re,PB2_\$subtype_pb2_re,PB1_\$subtype_pb1_re,PA_\$subtype_pa_re,NP_\$subtype_np_re,NS_\$subtype_ns_re,M_\$subtype_m_re,"
