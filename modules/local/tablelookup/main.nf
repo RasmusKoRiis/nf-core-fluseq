@@ -4,11 +4,6 @@ process TABLELOOKUP {
     label 'process_single'
     errorStrategy 'ignore'
 
-    
-    
-
-   
-
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:latest'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
@@ -82,8 +77,6 @@ process TABLELOOKUP {
 
         fi
 
-
-
     done
 
     for mutation_file in ${inhibition_mutation}; do
@@ -124,8 +117,6 @@ process TABLELOOKUP {
         fi
        
     done
-
-    
 
 
 

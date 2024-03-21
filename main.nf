@@ -42,12 +42,25 @@ WorkflowMain.initialise(workflow, params, log)
 */
 
 include { AVIAN } from './workflows/avian'
+include { AVIANFASTA } from './workflows/avian-fasta'
 
 //
 // WORKFLOW: Run main nf-core/fluseq analysis pipeline
 //
 workflow FLUSEQ {
-    AVIAN ()
+    //
+    // WORKFLOW: FASTQ
+    //
+    if (params.file == 'fastq') {
+        AVIAN ()
+
+    //
+    // WORKFLOW: FASTA
+    //
+    } else if (params.file == 'fasta') {
+        AVIANFASTA ()
+    }
+
 }
 
 /*
