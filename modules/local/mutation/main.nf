@@ -2,7 +2,8 @@
 process MUTATION  {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
+    //errorStrategy 'ignore'
+   
   
 
 
@@ -21,6 +22,9 @@ process MUTATION  {
     //tuple val(meta), path("*.csv"), emit: genotype_file
     tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
     tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation
+    
+    path("*mamailian_mutation_report.csv"), emit: mamailian_mutation_report
+    path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report
 
     path "versions.yml", emit: versions
 

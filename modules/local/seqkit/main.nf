@@ -2,7 +2,8 @@
 process FASTA_CONFIGURATION {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
+  
+    //errorStrategy 'ignore'
 
     // TODO nf-core: List required Conda package(s).
     //               Software MUST be pinned to channel (i.e. "bioconda"), version (i.e. "1.10").
@@ -37,7 +38,10 @@ process FASTA_CONFIGURATION {
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
     for fasta_file in \$(ls ${fasta_files}); do
+       
+       
         id=\$(echo "\$fasta_file" | sed 's/_.*//')
+        
         number=\$(echo "\$fasta_file" | sed 's/.*_//' | sed 's/\\.fa//' | xargs printf "%02d")
         subtype=\$(cat ${subtype} )
 
@@ -53,6 +57,7 @@ process FASTA_CONFIGURATION {
             "08") segment="08-NS" ;;
             *) segment="Unknown" ;;
         esac
+
 
         # Prepare the new header
         new_header=">\${id}|\${segment}-\${subtype}"

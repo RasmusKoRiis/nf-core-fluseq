@@ -2,8 +2,7 @@
 process SEGMENTIFENTIFIER  {
     tag "$meta.id"
     label 'process_single'
-    debug true
-
+   
     conda "bioconda::blast=2.15.0"
     container 'docker.io/ncbi/blast:latest'
 
@@ -13,6 +12,7 @@ process SEGMENTIFENTIFIER  {
 
     output:
     tuple val(meta), path("*.fasta"), emit: fasta_segment
+    tuple val(meta), path("*.fa"), emit: fasta_configuration
     path "versions.yml", emit: versions
 
     when:
@@ -33,14 +33,56 @@ process SEGMENTIFENTIFIER  {
     """
     for fasta_file in ${fasta}; do
 
-    basename=\$(basename \$fasta_file)
+    basename=\$(basename \$fasta_file .fasta)
     blastn -query \$fasta_file -subject $reference -outfmt 6   > "\${fasta_file}_${prefix}.tsv"
     segment=\$(awk -F '\t' '{split(\$2,a,"_"); print a[3]}' "\${fasta_file}_${prefix}.tsv" | head -n 1)
-    mv \$fasta_file "\${basename}"_\${segment}.fasta
-    
+
+    # Assign a prefix based on the segment type
+    case \$segment in
+        PB2)
+            prefix_number="1"
+            ;;
+        PB1)
+            prefix_number="2"
+            ;;
+        PA)
+            prefix_number="3"
+            ;;
+        HA)
+            prefix_number="4"
+            ;;
+        NP)
+            prefix_number="5"
+            ;;
+        NA)
+            prefix_number="6"
+            ;;
+        MP)
+            prefix_number="7"
+            ;;
+        NS)
+            prefix_number="8"
+            ;;
+        *)
+            echo "Unknown segment type: \$segment"
+            prefix_number="unknown"
+            ;;
+    esac
+
+
+
+    # Version 1 of the fasta file with one naming convention
+    new_name_1="\${prefix_number}_\${segment}_\${basename}"
+    echo ">\${new_name_1}" > "\${segment}_\${basename}.fasta"
+    tail -n +2 \$fasta_file >> "\${segment}_\${basename}.fasta"
+
+    # Version 2 of the fasta file with another naming convention
+    new_name_2="\${basename}_\${prefix_number}"
+    echo ">\${new_name_2}" > "\${basename}_\${prefix_number}.fa"
+    tail -n +2 \$fasta_file >> "\${basename}_\${prefix_number}.fa"
+
     done
 
-   
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

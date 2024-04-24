@@ -250,6 +250,18 @@ workflow AVIAN {
     )
 
     //
+    // MODULE: REPORT
+    //
+    REPORT  (
+        SUBTYPEFINDER.out.subtype_report.collect(), 
+        GENOTYPING.out.genotype_report.collect(), 
+        COVERAGE.out.coverage_report.collect(), 
+        MUTATION.out.mamailian_mutation_report.collect(), 
+        MUTATION.out.inhibtion_mutation_report.collect(), 
+        TABLELOOKUP.out.lookup_report.collect()
+    )
+
+    //
     // MODULE: Run FastQC
     //
     FASTQC (

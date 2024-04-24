@@ -59,6 +59,8 @@ include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
+include { REPORT                      } from '../modules/local/report/main'
+
 
 
 
@@ -135,27 +137,28 @@ workflow AVIANFASTA {
     SEGMENTIFENTIFIER (
         ch_sample_information, fullPath_references
     )
-  
+
     /// SUBTYPE CHANNEL
     SEGMENTIFENTIFIER.out.fasta_segment
     .map { meta, files -> 
-        def ha_files = files.findAll { it.getName().contains('_HA') }
-        def na_files = files.findAll { it.getName().contains('_NA') }
-        def pa_files = files.findAll { it.getName().contains('_PA') }
-        def pb1_files = files.findAll { it.getName().contains('_PB1') }
-        def pb2_files = files.findAll { it.getName().contains('_PB2') }
-        def ns_files = files.findAll { it.getName().contains('_NS') }
-        def np_files = files.findAll { it.getName().contains('_NP') }
-        def m_files = files.findAll { it.getName().contains('_M') }
+        def ha_files = files.findAll { it.getName().contains('HA') }
+        def na_files = files.findAll { it.getName().contains('NA') }
+        def pa_files = files.findAll { it.getName().contains('PA') }
+        def pb1_files = files.findAll { it.getName().contains('PB1') }
+        def pb2_files = files.findAll { it.getName().contains('PB2') }
+        def ns_files = files.findAll { it.getName().contains('NS') }
+        def np_files = files.findAll { it.getName().contains('NP') }
+        def m_files = files.findAll { it.getName().contains('M') }
         return (ha_files && na_files && pa_files && pb1_files && pb2_files && ns_files && np_files && m_files) ? tuple(meta, ha_files, na_files, pa_files, pb1_files, pb2_files, ns_files, np_files, m_files) : null
     }
     .filter { it != null }
     .set { subtype_channel }
 
+
     /// GENOTYPING CHANNEL
     SEGMENTIFENTIFIER.out.fasta_segment
     .map { meta, files -> 
-        def amended_consensus_files = files.findAll { it.getName().contains('.fasta') }
+        def amended_consensus_files = files.findAll { it.getName().contains('.fa') }
         return (amended_consensus_files) ? tuple(meta, amended_consensus_files) : null
     }
     .filter { it != null }
@@ -172,8 +175,103 @@ workflow AVIANFASTA {
         subtype_channel, fullPathHA, fullPathNA
     )
 
+    /// MUTATION CHANNELS
+
+    SEGMENTIFENTIFIER.out.fasta_segment
+    .join(SUBTYPEFINDER.out.subtype, by: [0]) // Assuming meta.id is the first element in the tuple
+    .map { items ->
+        def meta = items[0] // The common meta.id
+        def fasta = items[1] // The fasta file from IRMA_out_amended_consensus
+        def subtype = items[2] // The subtype file from SUBTYPEFINDER_out_subtype
+        return [meta, fasta, subtype]
+    }
+    .set { fasta_subtype }
+
+
+    /// FASTACONFIG CHANNELS
+
+    SEGMENTIFENTIFIER.out.fasta_configuration
+    .join(SUBTYPEFINDER.out.subtype, by: [0]) // Assuming meta.id is the first element in the tuple
+    .map { items ->
+        def meta = items[0] // The common meta.id
+        def fasta = items[1] // The fasta file from IRMA_out_amended_consensus
+        def subtype = items[2] // The subtype file from SUBTYPEFINDER_out_subtype
+        return [meta, fasta, subtype]
+    }
+    .set { fastaconfig_subtype }
+
+
+    //
+    // MODULE: GENOTYPING
+    //
+
+    ch_genotype_database = params.genotype_database
+
+    GENOTYPING (
+        genotyping_channel, ch_genotype_database
+    )
+
+    //
+    // MODULE: FASTA CONFIGURATION
+    //
+
+    
+    FASTA_CONFIGURATION (
+         fastaconfig_subtype 
+    )
+
+    //
+    // MODULE: COVERAGE
+    //
+
+    
+    COVERAGE (
+         FASTA_CONFIGURATION.out.fasta
+    )
+
+    //
+    // MODULE: AMINO ACID TRANSLATION
+    //
+
+    def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
+
+    AMINOACIDTRANSLATION (
+        COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
+    )
+
+    //
+    // MODULE: MUTATION
+    //
+
+    def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
+    
+    MUTATION  (
+        AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references_2
+    )
  
-   
+    //
+    // MODULE: TABLELOOKUP
+    //
+
+    def fullPath_tables = "${currentDir}/${params.mutation_tables}"
+    
+    TABLELOOKUP  (
+        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_tables
+    )
+
+    //
+    // MODULE: REPORT
+    //
+    REPORT  (
+        SUBTYPEFINDER.out.subtype_report.collect(), 
+        GENOTYPING.out.genotype_report.collect(), 
+        COVERAGE.out.coverage_report.collect(), 
+        MUTATION.out.mamailian_mutation_report.collect(), 
+        MUTATION.out.inhibtion_mutation_report.collect(), 
+        TABLELOOKUP.out.lookup_report.collect()
+    )
+    
+
 }
 
 /*

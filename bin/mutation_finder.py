@@ -13,8 +13,6 @@ subtype = sys.argv[4]
 output_file = sys.argv[5]
 type = sys.argv[6]
 
-print(type)
-
 
 reference_file = os.path.join(reference_file, type + '/' + subtype + '/' + segment + '.fasta')
 print("python reference: {}".format(reference_file))
@@ -91,7 +89,7 @@ df = pd.DataFrame(sequences)
 df['Differences'] = df.apply(process_differences, axis=1)
 
 # Split "ID" column into "sample" and "Ref_Name" columns
-df[['sample', 'Ref_Name']] = df['ID'].str.split('|', n=1, expand=True)
+df[['Sample', 'Ref_Name']] = df['ID'].str.split('|', n=1, expand=True)
 
 # Set the "Ref_Name" column to the 'segment' variable value
 #df['Ref_Name'] = segment
@@ -109,7 +107,15 @@ df.drop(columns=['ID'], inplace=True)
 
 
 # Reorder the columns
-df = df[['sample', 'Differences']]
+df = df[['Sample', 'Differences']]
 
 # Save the final dataframe to a CSV file
 df.to_csv(output_file, index=False)
+
+output_file_report = output_file.replace('.csv', '_report.csv')
+
+new_name = segment + ' ' + 'Differences' + ' ' + type
+df.rename(columns={'Differences': new_name}, inplace=True)
+
+# Save the final dataframe to a CSV file
+df.to_csv(output_file_report, index=False)

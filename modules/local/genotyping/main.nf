@@ -4,6 +4,7 @@ process GENOTYPING {
     label 'process_single'
     errorStrategy 'ignore'
 
+
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:latest'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
@@ -17,6 +18,8 @@ process GENOTYPING {
     //tuple val(meta), path("*.csv"), emit: genotype_file
     tuple val(meta), path("*.tsv"), emit: genotype_table
     tuple val(meta), path("${meta.id}_geno.csv"), emit: genotype
+    path("${meta.id}_geno.csv"), emit: genotype_report
+    tuple val(meta),path("*fa"), emit: sequences
     path "versions.yml", emit: versions
 
     when:
@@ -39,13 +42,18 @@ process GENOTYPING {
     """
     cat ${sequences} > ${meta.id}_sequences.fa
 
-    blastn -query ${meta.id}_sequences.fa -subject ${genotype_database} -outfmt 6  > genotypes.tsv
+    blastn -query ${meta.id}_sequences.fa -subject ${genotype_database} -outfmt 6  > ${meta.id}_genotypes.tsv
 
-    python /project-bin/genotyping.py genotypes.tsv genotypes_highest_pident.tsv
+    python /project-bin/genotyping.py ${meta.id}_genotypes.tsv ${meta.id}_genotypes_highest_pident.tsv
 
-    python /project-bin/genotypeing02.py genotypes_highest_pident.tsv genotypes.txt
+    python /project-bin/genotypeing02.py ${meta.id}_genotypes_highest_pident.tsv ${meta.id}_genotypes.txt
 
-    sed "s/^/${meta.id},/" genotypes.txt > ${meta.id}_geno.csv
+    sed "s/^/${meta.id},/" ${meta.id}_genotypes.txt > ${meta.id}_geno.csv
+
+    echo "Sample, Genotype" | cat - ${meta.id}_geno.csv > temp && mv temp ${meta.id}_geno.csv
+
+
+
 
     
 

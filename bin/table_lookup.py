@@ -27,13 +27,19 @@ print(common_mutations)
 # Convert the set of common mutations back to a string separated by ';' to store in a single DataFrame cell
 common_mutations_str = ';'.join(common_mutations)
 
-mutations = f'{segment + type}  adaptation mutations'
+mutations = f"{segment} {type} adaptation mutations"
+
+df_output = pd.DataFrame({
+    'Sample': [id],
+    mutations: [common_mutations_str]
+})
+
 
 # Create a DataFrame with 'id' as the index and the common mutations string as the value in the specified column
-df_output = pd.DataFrame({mutations: [common_mutations_str]}, index=[id])
+#df_output = pd.DataFrame({mutations: [common_mutations_str]}, index=[id])
 
 # Save the DataFrame to a new CSV
-df_output.to_csv(output_file)
+df_output.to_csv(output_file, index=False)
 
 
 print(segment)

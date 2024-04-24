@@ -14,6 +14,7 @@ process COVERAGE {
 
     output:
     tuple val(meta), path("*.csv"), emit: coverage
+    path("*.csv"), emit: coverage_report
     tuple val(meta), path("*fasta"), path(subtype), emit: filtered_fasta
     tuple val(meta), path("*coverage.fa"), path(subtype), emit:  merged_filtered_fasta
     path "versions.yml", emit: versions
@@ -44,7 +45,13 @@ process COVERAGE {
         segment=\${segment_subtype%-*}  
         subtype_name=\${segment_subtype#*-} 
 
-        python /project-bin/coverage_finder.py "\$fasta_file" "${meta.id}_\${segment}_coverage.csv"  ${meta.id} \${segment}
+        output_csv="${meta.id}_\${segment}_coverage.csv"
+        python /project-bin/coverage_finder.py "\$fasta_file" \$output_csv ${meta.id} \${segment}
+
+        # Append "Coverage" to the second column header of the CSV
+        awk -F, 'NR == 1 {\$2 = \$2 " Coverage"; print; next} {print}' OFS=, \$output_csv  > temp.csv && mv temp.csv \$output_csv 
+
+
 
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
@@ -60,6 +67,8 @@ process COVERAGE {
             # Optionally, handle files that don't meet the criteria
         fi
     done
+
+
 
     cat *.fasta > "${meta.id}_coverage.fa"
 

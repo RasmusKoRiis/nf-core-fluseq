@@ -16,7 +16,8 @@ process TABLELOOKUP {
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*.csv"), emit: _mamalianadpation_mutations
+    tuple val(meta), path("*.csv"), emit: mamalianadpation_mutations
+    path("*.csv"), emit: lookup_report
     path "versions.yml", emit: versions
 
     when:

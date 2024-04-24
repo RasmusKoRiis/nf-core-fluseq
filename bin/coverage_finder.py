@@ -41,6 +41,7 @@ df = pd.DataFrame(data)
 # Pivot table to have one row per sample and separate columns for each 'id'
 df_pivot = df.pivot(index='Sample', columns='Segment', values='coverage')
 
+
 # Add 'coverage status' column
 #df_pivot['coverage status'] = df_pivot.apply(lambda row: 'fail' if any(row < 90) else 'ok', axis=1)
 
