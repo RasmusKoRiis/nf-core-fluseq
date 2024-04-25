@@ -273,16 +273,6 @@ workflow AVIAN {
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
 
-
-    //
-    // MODULE: REPORT
-    //
-
-
-
-
-
-
     //
     // MODULE: MultiQC
     //
