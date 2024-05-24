@@ -4,7 +4,7 @@ process REPORT {
 
 
     //conda "bioconda::blast=2.15.0"
-    container 'docker.io/rasmuskriis/blast_python_pandas:latest'
+    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
 
     input:

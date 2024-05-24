@@ -1,0 +1,4 @@
+##gff-version 3
+##sequence-region MW626062.1 1 1752
+MW626062.1	feature	gene	52	1032	.	+	.	gene_name="A_H1_HA"
+MW626062.1	feature	gene	1033	1698	.	+	.	gene_name="A_H1_HA2"

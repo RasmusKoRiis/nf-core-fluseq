@@ -71,6 +71,7 @@ process FASTA_CONFIGURATION {
 
         cat ${meta.id}_\${segment}-\${subtype}.fa >> ${meta.id}.fasta      
 
+
     done
 
 

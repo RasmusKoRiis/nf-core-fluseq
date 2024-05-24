@@ -58,6 +58,8 @@ include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
+include { REPORT                      } from '../modules/local/report/main'
+
 
 
 
@@ -74,17 +76,19 @@ def multiqc_report = []
 
 // Function to parse the sample sheet
 def parseSampleSheet(sampleSheetPath) {
-        return Channel
-            .fromPath(sampleSheetPath)
-            .splitCsv(header: true, sep: ',', strip: true)
-            .map { row ->
-                def sampleId = row.sample_id
-                def files = file("${params.samplesDir}/${row.barcode}/*.fastq.gz")
-                // Creating a metadata map
-                def meta = [ id: sampleId, single_end: true ]
-                return tuple(meta, files)
-            }
+    return Channel
+        .fromPath(sampleSheetPath)
+        .splitCsv(header: true, sep: ',', strip: true)
+        .map { row ->
+            // Replacing '-' with '!' in sampleId
+            def sampleId = row.sample_id.replace('-', '!')
+            def files = file("${params.samplesDir}/${row.barcode}/*.fastq.gz")
+            // Creating a metadata map
+            def meta = [ id: sampleId, single_end: true ]
+            return tuple(meta, files)
+        }
 }
+
 
 workflow AVIAN {
 
@@ -232,21 +236,26 @@ workflow AVIAN {
     // MODULE: MUTATION
     //
 
-    def fullPath_references = "${currentDir}/${params.sequence_references}"
+    def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
     MUTATION  (
-        AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references
+        AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references_2
     )
-
-
+ 
     //
     // MODULE: TABLELOOKUP
     //
 
     def fullPath_tables = "${currentDir}/${params.mutation_tables}"
+    def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
+    def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
+
+    
+
+
     
     TABLELOOKUP  (
-        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_tables
+        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
     )
 
     //
@@ -260,6 +269,8 @@ workflow AVIAN {
         MUTATION.out.inhibtion_mutation_report.collect(), 
         TABLELOOKUP.out.lookup_report.collect()
     )
+    
+
 
     //
     // MODULE: Run FastQC

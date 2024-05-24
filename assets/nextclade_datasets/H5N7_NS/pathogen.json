@@ -1,0 +1,18 @@
+{
+    "schemaVersion": "3.0.0",
+
+    "alignmentParams": {
+      "excessBandwidth": 9,
+      "terminalBandwidth": 100,
+      "allowedMismatches": 4,
+      "gapAlignmentSide": "right",
+      "minSeedCover": 0.1
+    },
+
+    "files": {
+        "reference": "reference.fasta",
+        "pathogenJson": "pathogen.json",
+        "genomeAnnotation": "genome_annotation.gff3"
+      }
+
+    }

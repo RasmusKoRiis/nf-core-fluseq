@@ -2,13 +2,13 @@
 process MUTATION  {
     tag "$meta.id"
     label 'process_single'
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
    
   
 
 
     //conda "bioconda::blast=2.15.0"
-    container 'docker.io/rasmuskriis/blast_python_pandas:latest'
+    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
 
     input:
@@ -89,8 +89,8 @@ process MUTATION  {
             \$mamailian\
 
         
-        #if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* ]]; then
-        if [[ "\${segment}" == *"NA"* ]]; then
+        if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* || "\${segment}" == *"M"* ]]; then
+        #if [[ "\${segment}" == *"NA"* ]]; then
 
         echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
 

@@ -22,5 +22,9 @@ for i, file in enumerate(csv_files):
 # Group by 'Sample' and combine the rows
 merged_data = merged_data.groupby('Sample', as_index=False).first()
 
+#NIPH spesific adustment
+#replace ! with - in the Sample column 
+merged_data['Sample'] = merged_data['Sample'].str.replace('!', '-')
+
 # Write the merged data to a new CSV file
 merged_data.to_csv('merged_report.csv', index=False)

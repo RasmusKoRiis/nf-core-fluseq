@@ -1,51 +1,71 @@
 import pandas as pd
 import sys
 
-mutation_file = sys.argv[1]
-mutation_list = sys.argv[2]
-output_file = sys.argv[3]
+# Arguments for file paths and criteria
+mutations_file = sys.argv[1]
+output_file = sys.argv[2]
+xlsx_file = sys.argv[3]
 segment = sys.argv[4]
-id = sys.argv[5]
-type = sys.argv[6]
+subtype = sys.argv[5]
+id = sys.argv[6]
+type = sys.argv[7]  # Used for naming the mutations column dynamically
 
-print(segment)
+# Read mutations data from a CSV file
+mutations_df = pd.read_csv(mutations_file)
+sample_mutations = mutations_df.iloc[0, 1].split(';')
+list_mutations_set = set(sample_mutations)
 
-# Read in the dataframes
-df1 = pd.read_csv(mutation_file)
-df2 = pd.read_csv(mutation_list)
+print("Predefined list of mutations:", list_mutations_set)
 
-# We convert them into sets for easier comparison
-sample_mutations = set(';'.join(df1["Differences"].dropna()).split(';'))
-print(sample_mutations)
-list_mutations = set(';'.join(df2[type].dropna()).split(';'))
-print(list_mutations)
+# Read in the DataFrame from the Excel file
+df = pd.read_excel(xlsx_file)
 
-# Find common mutations
-common_mutations = sample_mutations.intersection(list_mutations)
-print(common_mutations)
+# Filter DataFrame based on segment and subtype
+#filtered_df = df[(df['segment'] == segment) & (df['subtype'] == subtype)]
+filtered_df = df[(df['segment'] == segment)]
 
-# Convert the set of common mutations back to a string separated by ';' to store in a single DataFrame cell
-common_mutations_str = ';'.join(common_mutations)
+print(f"Number of rows in filtered DataFrame: {len(filtered_df)}")
 
-mutations = f"{segment} {type} adaptation mutations"
+# Initialize a dictionary to hold results
+results_dict = {}
 
-df_output = pd.DataFrame({
-    'Sample': [id],
-    mutations: [common_mutations_str]
-})
+# Loop through each row in the filtered DataFrame
+for index, row in filtered_df.iterrows():
+    mutations = row['mutation']
+    # Check if mutations is not NaN and then split; otherwise, set to an empty set
+    if pd.notna(mutations):
+        row_mutations_set = set(str(mutations).split(';'))
+    else:
+        row_mutations_set = set()
 
+    print(f"Processing row index {index} with mutations: {row_mutations_set}")
 
-# Create a DataFrame with 'id' as the index and the common mutations string as the value in the specified column
-#df_output = pd.DataFrame({mutations: [common_mutations_str]}, index=[id])
+    # Find the intersection of row mutations and predefined mutations
+    matching_mutations = row_mutations_set.intersection(list_mutations_set)
+    print(f"Matching mutations in row {index}: {matching_mutations}")
 
-# Save the DataFrame to a new CSV
+    if matching_mutations:
+        # Convert matching mutations to string
+        common_mutations_str = ';'.join(matching_mutations)
+        if id in results_dict:
+            results_dict[id].add(common_mutations_str)  # Add new mutations to the set
+        else:
+            results_dict[id] = set([common_mutations_str])  # Start a new set of mutations for the sample
+
+# Prepare results for DataFrame
+results = [{'Sample': k, f"{segment} {type} mutations": ';'.join(v)} for k, v in results_dict.items()]
+
+# Handle cases where no results are generated
+if not results:
+    df_output = pd.DataFrame([{
+        f"{segment} {type} mutations": 'No matching mutations found',
+        'Sample': mutations_df.iloc[0, 0]
+    }])
+else:
+    df_output = pd.DataFrame(results)
+
+df_output = df_output.drop_duplicates()
 df_output.to_csv(output_file, index=False)
 
-
-print(segment)
-print(mutations)
-print(common_mutations_str)
-
-
-
-
+print("Final results captured:")
+print(df_output)
