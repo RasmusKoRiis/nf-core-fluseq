@@ -12,7 +12,8 @@ type = sys.argv[7]  # Used for naming the mutations column dynamically
 
 # Read mutations data from a CSV file
 mutations_df = pd.read_csv(mutations_file)
-sample_mutations = mutations_df.iloc[0, 1].split(';')
+# Split and strip spaces from mutations
+sample_mutations = [mut.strip() for mut in mutations_df.iloc[0, 1].split(';')]
 list_mutations_set = set(sample_mutations)
 
 print("Predefined list of mutations:", list_mutations_set)
@@ -34,7 +35,7 @@ for index, row in filtered_df.iterrows():
     mutations = row['mutation']
     # Check if mutations is not NaN and then split; otherwise, set to an empty set
     if pd.notna(mutations):
-        row_mutations_set = set(str(mutations).split(';'))
+        row_mutations_set = set(mut.strip() for mut in str(mutations).split(';'))
     else:
         row_mutations_set = set()
 

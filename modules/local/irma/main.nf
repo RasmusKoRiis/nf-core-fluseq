@@ -37,6 +37,7 @@ process IRMA {
 
     script:
     """
-    IRMA FLU-minion $fastq ${meta.id}
+    #IRMA FLU-minion $fastq ${meta.id}
+    IRMA FLU-secondary $fastq ${meta.id}
     """
 }

@@ -139,6 +139,7 @@ workflow AVIANFASTA {
     )
 
     /// SUBTYPE CHANNEL
+    // SUBTYPE CHANNEL
     SEGMENTIFENTIFIER.out.fasta_segment
     .map { meta, files -> 
         def ha_files = files.findAll { it.getName().contains('HA') }
@@ -149,10 +150,10 @@ workflow AVIANFASTA {
         def ns_files = files.findAll { it.getName().contains('NS') }
         def np_files = files.findAll { it.getName().contains('NP') }
         def m_files = files.findAll { it.getName().contains('M') }
-        return (ha_files && na_files && pa_files && pb1_files && pb2_files && ns_files && np_files && m_files) ? tuple(meta, ha_files, na_files, pa_files, pb1_files, pb2_files, ns_files, np_files, m_files) : null
+        return tuple(meta, ha_files ?: [], na_files ?: [], pa_files ?: [], pb1_files ?: [], pb2_files ?: [], ns_files ?: [], np_files ?: [], m_files ?: [])
     }
-    .filter { it != null }
     .set { subtype_channel }
+
 
 
     /// GENOTYPING CHANNEL

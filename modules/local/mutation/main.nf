@@ -89,8 +89,8 @@ process MUTATION  {
             \$mamailian\
 
         
-        if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* || "\${segment}" == *"M"* ]]; then
-        #if [[ "\${segment}" == *"NA"* ]]; then
+        #if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* || "\${segment}" == *"M"* ]]; then
+        if [[ "\${segment}" == *"NA"* ]]; then
 
         echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
 
