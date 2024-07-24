@@ -102,10 +102,79 @@ process NEXTCLADE {
                     --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
                     --output-all=${meta.id}_\${segment}_nextclade_output/ \
                     \$fasta_file
+
+            else
+                echo "Segment \$segment not recognized for subtype H1"
+            fi
+
+        elif [[ "\$subtype_name" == *"H1"* ]]; then
+            if [[ "\$segment" == *"HA"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/ha/california-7-2009' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *"NA"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/na/wisconsin-588-2019' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+            
+            elif [[ "\$segment" == *"PB2"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/pb2' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *"PB1"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/pb1' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *"PA"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/pa' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *"NP"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/np' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *"NS"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/ns' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+            
+            elif [[ "\$segment" == *"M"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/h1n1pdm/mp' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
             
             
             else
-                echo "Segment \$segment not recognized for subtype H3"
+                echo "Segment \$segment not recognized for subtype H1"
             fi
         else
             echo "Subtype \$subtype_name not recognized or not handled."
