@@ -1,0 +1,34 @@
+process AMINOACIDTRANSLATION {
+    tag "${meta.id}"
+    label 'process_single'
+
+    //container "YOUR-TOOL-HERE"
+    //container logic as needed
+
+    input:
+    tuple val(meta), path(fasta), path(ha_fasta)
+
+    output:
+    tuple val(meta), path("${meta.id}_subtype.txt"), emit: fasta
+    path "versions.yml", emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+
+    script:
+    """
+    # Assuming ha_fasta contains only one file
+    #"ha_file=\$(echo \${ha_fasta} | tr ' ' '\\n' | head -n 1)"
+
+    # Extract the subtype from the HA file name
+    #"subtype=\$(basename \$ha_file | sed 's/.*HA_\(.*\).fasta/\\1/')"
+    #"echo "Found subtype: \$subtype""
+
+    # Use the subtype and all_fasta as needed for further processing
+    # "Additional processing steps can be added here"
+
+    #"echo \$subtype > ${meta.id}_subtype.txt"
+
+    """
+}

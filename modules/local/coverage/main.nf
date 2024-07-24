@@ -55,15 +55,15 @@ process COVERAGE {
 
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
-        # Use awk to check for numbers above 39 and capture any such number
-        number_above_39=\$(awk -F, '{for(i=1; i<=NF; i++) if(\$i+0 > 39) {print \$i; exit}}' "\$txt_filename")
+        # Use awk to check for numbers above 95 and capture any such number
+        number_above_95=\$(awk -F, '{for(i=1; i<=NF; i++) if(\$i+0 > 95) {print \$i; exit}}' "\$txt_filename")
     
-        if [ ! -z "\$number_above_39" ]; then
-            echo "Found a number above 39: \$number_above_39. Renaming \$fasta_file"
+        if [ ! -z "\$number_above_95" ]; then
+            echo "Found a number above 95: \$number_above_95. Renaming \$fasta_file"
             # Rename the FASTA file to indicate it has passed
             mv "\$fasta_file" "\${fasta_file%.*}.fasta"
         else
-            echo "No number above 39 found in \$fasta_file"
+            echo "No number above 95 found in \$fasta_file"
             # Optionally, handle files that don't meet the criteria
         fi
     done

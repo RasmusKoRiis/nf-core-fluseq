@@ -52,6 +52,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
 include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
 include { IRMA                        } from '../modules/local/irma/main'
 include { AMINOACIDTRANSLATION        } from '../modules/local/aminoacidtranslation/main'
+include { NEXTCLADE                   } from '../modules/local/nextclade/main'
 include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
 include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
@@ -88,7 +89,7 @@ def parseSampleSheet(sampleSheetPath) {
             }
 }
 
-workflow AVIAN {
+workflow HUMAN {
 
     //
     // INPUT PARSE
@@ -103,21 +104,6 @@ workflow AVIAN {
             tuple(meta, files.toList())
         }
     .set { read_input }
-
-    
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
-
-    //INPUT_CHECK (
-    //    file(params.input)
-    //)
-    //ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-
-
-    // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
-    // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
-    // ! There is currently no tooling to help you write a sample sheet schema
 
     //
     // MODULE: CAT_FASTQ
@@ -154,15 +140,6 @@ workflow AVIAN {
     .filter { it != null }
     .set { IRMA_ha_na_fasta }
 
-    /// GENOTYPING CHANNEL
-    IRMA.out.amended_consensus
-    .map { meta, files -> 
-        def amended_consensus_files = files.findAll { it.getName().contains('.fa') }
-        return (amended_consensus_files) ? tuple(meta, amended_consensus_files) : null
-    }
-    .filter { it != null }
-    .set { IRMA_amended_consensus_files }
-
     //
     // MODULE: SUBTYPE FINDER
     //
@@ -190,17 +167,6 @@ workflow AVIAN {
 
 
     //
-    // MODULE: GENOTYPING
-    //
-
-    ch_genotype_database = params.genotype_database
-
-    GENOTYPING (
-        IRMA_amended_consensus_files, ch_genotype_database
-    )
-
-
-    //
     // MODULE: FASTA CONFIGURATION
     //
 
@@ -225,10 +191,14 @@ workflow AVIAN {
     //
 
     def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
-
-    AMINOACIDTRANSLATION (
+    
+    NEXTCLADE (
         COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
     )
+
+    //AMINOACIDTRANSLATION (
+    //    COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
+    //)
 
     //
     // MODULE: MUTATION
@@ -236,9 +206,9 @@ workflow AVIAN {
 
     def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
-    MUTATION  (
-        AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references_2
-    )
+    //MUTATION  (
+    //    AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references_2
+    //)
  
     //
     // MODULE: TABLELOOKUP
@@ -252,21 +222,21 @@ workflow AVIAN {
 
 
     
-    TABLELOOKUP  (
-        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
-    )
+    //TABLELOOKUP  (
+    //    MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
+    //)
 
     //
     // MODULE: REPORT
     //
-    REPORT  (
-        SUBTYPEFINDER.out.subtype_report.collect(), 
-        GENOTYPING.out.genotype_report.collect(), 
-        COVERAGE.out.coverage_report.collect(), 
-        MUTATION.out.mamailian_mutation_report.collect(), 
-        MUTATION.out.inhibtion_mutation_report.collect(), 
-        TABLELOOKUP.out.lookup_report.collect()
-    )
+    //REPORT  (
+    //    SUBTYPEFINDER.out.subtype_report.collect(), 
+    //   GENOTYPING.out.genotype_report.collect(), 
+    //   COVERAGE.out.coverage_report.collect(), 
+    //   MUTATION.out.mamailian_mutation_report.collect(), 
+    //   MUTATION.out.inhibtion_mutation_report.collect(), 
+    //   TABLELOOKUP.out.lookup_report.collect()
+    //)
     
 
 

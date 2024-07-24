@@ -117,7 +117,7 @@ def parseFasta(String fastaFilePath) {
 }
 
 
-workflow AVIANFASTA {
+workflow HUMANFASTA {
 
     //
     // INPUT PARSE
