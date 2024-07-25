@@ -40,7 +40,7 @@ process NEXTCLADE {
         dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
         echo "dataset_sample: \${dataset_sample}"
 
-
+    #output-all=${meta.id}_\${segment}_nextclade_output/ \
     # Check for specific subtype and segment combinations
         if [[ "\$subtype_name" == *"H3"* ]]; then
             if [[ "\$segment" == *"HA"* ]]; then
@@ -48,7 +48,10 @@ process NEXTCLADE {
 
                 nextclade run \
                     --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
-                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    --input-ref="${dataset}/H3N2_HA"/reference.fasta \
+                    --output-csv=${meta.id}_\${segment}_nextclade_output/nextclade.csv \
+                    --output-tsv=${meta.id}_\${segment}_nextclade_output/nextclade.tsv \
+                    --output-translations=${meta.id}_\${segment}_nextclade_output/nextclade_CDS_{cds}.translation.fasta.zst \
                     \$fasta_file
 
             elif [[ "\$segment" == *"NA"* ]]; then

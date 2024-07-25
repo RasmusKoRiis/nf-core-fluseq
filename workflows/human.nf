@@ -190,7 +190,7 @@ workflow HUMAN {
     // MODULE: AMINO ACID TRANSLATION
     //
 
-    def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
+    def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"
     
     NEXTCLADE (
         COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
