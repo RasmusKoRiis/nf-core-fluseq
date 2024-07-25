@@ -2,10 +2,12 @@ process NEXTCLADE {
     tag "${meta.id}"
     label 'process_single'
     //errorStrategy 'ignore'
+    
  
 
 
-    container 'docker.io/nextstrain/nextclade:latest'
+    container 'docker.io/rasmuskriis/nextclade-python'
+    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
     //container logic as needed
 
     input:
@@ -14,8 +16,10 @@ process NEXTCLADE {
     
 
     output:
-    tuple val(meta), path("*.csv"), emit: nextclade_csv
+    tuple val(meta), path("*nextclade.csv"), emit: nextclade_csv
     tuple val(meta), path("*translation*fasta"), path(subtype), emit: aminoacid_sequence
+    tuple val(meta), path("*mutation.csv"), emit: nextclade_filtered
+    tuple val(meta), path("*summary.csv"), emit: nextclade_summary_rapport
     path "versions.yml", emit: versions
 
     when:
@@ -179,6 +183,8 @@ process NEXTCLADE {
         else
             echo "Subtype \$subtype_name not recognized or not handled."
         fi
+
+        # Save output files from Nextclade
         
         for file in ${meta.id}_\${segment}_nextclade_output/*; do
             cat "\$file"
@@ -189,6 +195,18 @@ process NEXTCLADE {
                 mv "\$file" ./${meta.id}_\$basename
         fi
         done
+
+        # Convert Nextclade output to mutations, frameshift and glyco files
+        type=drug
+        python3 /project-bin/nextclade_converter.py \
+            ./${meta.id}_\${segment}_nextclade.csv \
+            ${meta.id} \
+            \${segment} \
+            \${type} \
+        
+         #test34
+
+            
 
 
 

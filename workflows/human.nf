@@ -219,9 +219,6 @@ workflow HUMAN {
     def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
 
     
-
-
-    
     //TABLELOOKUP  (
     //    MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
     //)
