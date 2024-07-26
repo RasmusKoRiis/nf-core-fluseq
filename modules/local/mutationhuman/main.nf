@@ -1,5 +1,5 @@
 
-process MUTATION {
+process MUTATIONHUMAN  {
     tag "$meta.id"
     label 'process_single'
     //errorStrategy 'ignore'
@@ -20,11 +20,13 @@ process MUTATION {
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
+    tuple val(meta), path("*human_mutation.csv"), path(subtype), emit: mamailian_mutation
     tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation
+    tuple val(meta), path("*vaccine_mutation.csv"), emit: vaccine_mutation
     
-    path("*mamailian_mutation_report.csv"), emit: mamailian_mutation_report
+    path("*human_mutation_report.csv"), emit: mamailian_mutation_report
     path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report
+    path("*vaccine_mutation_report.csv"), emit: vaccine_mutation_report
 
     path "versions.yml", emit: versions
 
@@ -65,45 +67,72 @@ process MUTATION {
         segment=\$(echo "\${segment_subtype}" | awk -F_ '{print \$NF}')
 
         # Make output name
+        output_name_human=${meta.id}_\${segment}"_human_mutation.csv"
         output_name_mamailian=${meta.id}_\${segment}"_mamailian_mutation.csv"
         output_name_inhibition=${meta.id}_\${segment}"_inhibtion_mutation.csv"
+        output_name_vaccine=${meta.id}_\${segment}"_vaccine_mutation.csv"
 
         reference_file=${sequence_references}
         mamailian=mamailian
         inhibition=inhibition
+        human=human
+        inhibition_human=inhibition_human
+        human_vaccine=human_vaccine
 
         
         echo "Segment: \${segment}"
         echo "Processing file: \${fasta_file}"
         echo "Reference: ${sequence_references}"
         echo "Subtype name: \${subtype_name}"
-        echo "Output name: \${output_name_mamailian}"
+        echo "Output name: \${output_name_human}"
 
-        
-        python /project-bin/mutation_finder.py \
-            \$fasta_file \
-            \$reference_file \
-            \${segment} \
-            \$subtype_name \
-            \$output_name_mamailian\
-            \$mamalian\
 
-        
-        #if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* || "\${segment}" == *"M"* ]]; then
-        if [[ "\${segment}" == *"NA"* ]]; then
 
-        echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
+        # HUMAN MUTATIONS - DEFAULT
 
-        python /project-bin/mutation_finder.py \
-            \$fasta_file \
-            \$reference_file \
-            \${segment} \
-            \$subtype_name \
-            \$output_name_inhibition\
-            \$inhibition
+        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* ]]; then 
+
+            python /project-bin/mutation_finder.py \
+                \$fasta_file \
+                \$reference_file \
+                \${segment} \
+                \$subtype_name \
+                \$output_name_human\
+                \$human\
 
         else
-            echo "Skipping execution for a segment not containing 'NA' or 'PA' in its name: \${segment}"
+            echo "Skipping execution for a segment containing 'NEP' or 'PA-X' in its name: \${segment}"
+        fi
+        
+        # HUMAN MUTATIONS - INHIBTION
+        if [[ "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ]]; then
+
+            python /project-bin/mutation_finder.py \
+                \$fasta_file \
+                \$reference_file \
+                \${segment} \
+                \$subtype_name \
+                \$output_name_inhibition\
+                \$inhibition_human
+
+        else
+            echo "Skipping execution for a segment not containing 'NA', 'M' or 'PA' in its name: \${segment}"
+        fi
+
+
+        # HUMAN MUTATIONS - VACCINE
+        if [[ ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
+
+        python /project-bin/mutation_finder.py \
+            \$fasta_file \
+            \$reference_file \
+            \${segment} \
+            \$subtype_name \
+            \$output_name_vaccine\
+            \$human_vaccine
+
+        else
+            echo "Skipping execution for a segmentcontaining 'HA' or'NA' in its name: \${segment}"
         fi
         
     done

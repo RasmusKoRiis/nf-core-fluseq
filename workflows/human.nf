@@ -57,7 +57,7 @@ include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
 include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
-include { MUTATION                    } from '../modules/local/mutation/main'
+include { MUTATIONHUMAN               } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORT                      } from '../modules/local/report/main'
 
@@ -206,9 +206,9 @@ workflow HUMAN {
 
     def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
-    //MUTATION  (
-    //    AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references_2
-    //)
+    MUTATIONHUMAN  (
+       NEXTCLADE.out.aminoacid_sequence, fullPath_references_2
+    )
  
     //
     // MODULE: TABLELOOKUP

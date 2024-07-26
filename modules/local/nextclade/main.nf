@@ -3,9 +3,6 @@ process NEXTCLADE {
     label 'process_single'
     //errorStrategy 'ignore'
     
- 
-
-
     container 'docker.io/rasmuskriis/nextclade-python'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
     //container logic as needed
@@ -40,7 +37,6 @@ process NEXTCLADE {
         dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
         echo "dataset_sample: \${dataset_sample}"
 
-    #output-all=${meta.id}_\${segment}_nextclade_output/ \
     # Check for specific subtype and segment combinations
         if [[ "\$subtype_name" == *"H3"* ]]; then
             if [[ "\$segment" == *"HA"* ]]; then
@@ -48,10 +44,7 @@ process NEXTCLADE {
 
                 nextclade run \
                     --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
-                    --input-ref="${dataset}/H3N2_HA"/reference.fasta \
-                    --output-csv=${meta.id}_\${segment}_nextclade_output/nextclade.csv \
-                    --output-tsv=${meta.id}_\${segment}_nextclade_output/nextclade.tsv \
-                    --output-translations=${meta.id}_\${segment}_nextclade_output/nextclade_CDS_{cds}.translation.fasta.zst \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
                     \$fasta_file
 
             elif [[ "\$segment" == *"NA"* ]]; then
