@@ -89,6 +89,7 @@ process MUTATIONHUMAN  {
             echo "Skipping execution for a segment containing 'NEP' or 'PA-X' in its name: \${segment}"
         fi
         
+
         # HUMAN MUTATIONS - INHIBTION
 
         if [[ "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ]]; then
@@ -105,9 +106,8 @@ process MUTATIONHUMAN  {
             echo "Skipping execution for a segment not containing 'NA', 'M' or 'PA' in its name: \${segment}"
         fi
 
-
         # HUMAN MUTATIONS - VACCINE
-
+        
         if [[ ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
 
         python /project-bin/mutation_finder.py \
