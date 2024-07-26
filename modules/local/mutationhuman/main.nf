@@ -4,9 +4,6 @@ process MUTATIONHUMAN  {
     label 'process_single'
     //errorStrategy 'ignore'
    
-  
-
-
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
@@ -54,16 +51,12 @@ process MUTATIONHUMAN  {
     for fasta_file in ${fasta}; do
 
         filename=\$(basename \$fasta_file)
-        echo "Filename: \${filename}"
-
         filename_no_ext=\${filename%.*}  
-        echo "Filename no ext: \${filename_no_ext}"
 
-        # Extract 'A_H5_HA' assuming it's after the last '.' in the filename_no_ext
+        # Extract 'A_XX_XX' assuming it's after the last '.' in the filename_no_ext
         segment_subtype=\$(echo "\${filename_no_ext}" | awk -F. '{print \$NF}')
-        echo "Segment subtype: \${segment_subtype}"
-
-        # Extract 'HA' as the segment assuming it's after the last '_' in segment_subtype
+  
+        # Extract 'XX' as the segment assuming it's after the last '_' in segment_subtype
         segment=\$(echo "\${segment_subtype}" | awk -F_ '{print \$NF}')
 
         # Make output name
@@ -73,20 +66,12 @@ process MUTATIONHUMAN  {
         output_name_vaccine=${meta.id}_\${segment}"_vaccine_mutation.csv"
 
         reference_file=${sequence_references}
+
         mamailian=mamailian
         inhibition=inhibition
         human=human
         inhibition_human=inhibition_human
         human_vaccine=human_vaccine
-
-        
-        echo "Segment: \${segment}"
-        echo "Processing file: \${fasta_file}"
-        echo "Reference: ${sequence_references}"
-        echo "Subtype name: \${subtype_name}"
-        echo "Output name: \${output_name_human}"
-
-
 
         # HUMAN MUTATIONS - DEFAULT
 
@@ -105,6 +90,7 @@ process MUTATIONHUMAN  {
         fi
         
         # HUMAN MUTATIONS - INHIBTION
+
         if [[ "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ]]; then
 
             python /project-bin/mutation_finder.py \
@@ -121,6 +107,7 @@ process MUTATIONHUMAN  {
 
 
         # HUMAN MUTATIONS - VACCINE
+
         if [[ ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
 
         python /project-bin/mutation_finder.py \
@@ -137,8 +124,6 @@ process MUTATIONHUMAN  {
         
     done
     
-
-
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
