@@ -13,15 +13,14 @@ process MUTATIONHUMAN  {
     path(sequence_references)
    
     
-
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*human_mutation.csv"), path(subtype), emit: mamailian_mutation
+    tuple val(meta), path("*human_mutation.csv"), path(subtype), emit: human_mutation
     tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation
     tuple val(meta), path("*vaccine_mutation.csv"), emit: vaccine_mutation
     
-    path("*human_mutation_report.csv"), emit: mamailian_mutation_report
+    path("*human_mutation_report.csv"), emit: human_mutation_report
     path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report
     path("*vaccine_mutation_report.csv"), emit: vaccine_mutation_report
 
@@ -46,7 +45,7 @@ process MUTATIONHUMAN  {
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
     subtype_name=\$(cat ${subtype} )
-
+    #test01
 
     for fasta_file in ${fasta}; do
 

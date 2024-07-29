@@ -49,10 +49,17 @@ process COVERAGE {
         python /project-bin/coverage_finder.py "\$fasta_file" \$output_csv ${meta.id} \${segment}
 
         # Append "Coverage" to the second column header of the CSV
-        awk -F, 'NR == 1 {\$2 = \$2 " Coverage"; print; next} {print}' OFS=, \$output_csv  > temp.csv && mv temp.csv \$output_csv 
+        #awk -F, 'NR == 1 {\$2 = \$2 " Coverage"; print; next} {print}' OFS=, \$output_csv  > temp.csv && mv temp.csv \$output_csv 
+        # Append "Coverage" to the second column header of the CSV and rename the column
+        awk -F, 'NR == 1 {
+            split(\$2, a, "-"); 
+            \$2 = a[2] " Coverage"; 
+            print; 
+            next
+        } {print}' OFS=, \$output_csv > temp.csv && mv temp.csv \$output_csv 
 
 
-
+    
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
         # Use awk to check for numbers above 95 and capture any such number

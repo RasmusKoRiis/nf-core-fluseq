@@ -54,6 +54,7 @@ df = pd.DataFrame(data)
 df_pivot = df.pivot(index='Sample', columns='Segment', values='coverage')
 
 
+
 # Save DataFrame to CSV file
 txt_file = df_pivot.loc[name, segment]
 filename = name + '_' + segment + '_coverage.txt'

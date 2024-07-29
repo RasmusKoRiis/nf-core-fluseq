@@ -1,6 +1,10 @@
 import pandas as pd
 import sys
 
+def transform_string(s):
+    # Split the string by '-' and return the last part
+    return s.split('-')[-1]
+
 def process_file(input_file, meta_id, segment):
     # Read the CSV file with proper delimiter
     df = pd.read_csv(input_file, delimiter=';')
@@ -9,12 +13,12 @@ def process_file(input_file, meta_id, segment):
     # Rename columns in the DataFrame
     df.rename(columns={'seqName': 'Sample', 'aaSubstitutions': 'Differences'}, inplace=True)
 
-
+    
     # Filter the columns
     if 'HA' in segment:
         columns_to_keep = ['Sample', 'clade', 'subclade', 'glycosylation', 'coverage', 'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']
     elif 'NA' in segment:
-        columns_to_keep = ['Sample', 'clade', 'glycosylation', 'coverage', 'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']
+        columns_to_keep = ['Sample', 'clade', 'coverage', 'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']
     else:
         columns_to_keep = ['Sample', 'clade', 'coverage', 'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']
                            
@@ -31,8 +35,6 @@ def process_file(input_file, meta_id, segment):
         filtered_df['aaInsertions'] = filtered_df['aaInsertions'].fillna('No aaInsertions')
         summary_df = filtered_df.copy()
 
-
-
         # Split the Differences into separate columns
         filtered_df['HA1'] = filtered_df['Differences'].apply(lambda x: ','.join([i.replace('HA1:', '') for i in x.split(',') if 'HA1' in i]))
         filtered_df['HA2'] = filtered_df['Differences'].apply(lambda x: ','.join([i.replace('HA2:', '') for i in x.split(',') if 'HA2' in i]))            
@@ -43,15 +45,22 @@ def process_file(input_file, meta_id, segment):
         df_ha1.rename(columns={'HA1': 'Differences'}, inplace=True)
         columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage']
         df_ha1.drop(columns=columns_to_remove, inplace=True)
-        print(type)
+        #Renaming columns to segments spesific names
+        df_ha1.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
+        df_ha1.rename(columns={'aaDeletions': f'aaDeletions {segment}1'}, inplace=True)
+        df_ha1.rename(columns={'aaInsertions': f'aaInsertions {segment}1'}, inplace=True)
         df_ha1.to_csv(f'./{meta_id}_HA1_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered HA1 file saved as: ./{meta_id}_HA1_nextclade_mutation.csv")
-            
+
         # Filter and save the HA2 mutations
         df_ha2 = filtered_df[['Sample', 'clade', 'subclade', 'glycosylation', 'coverage', 'frameShifts', 'HA2', 'aaDeletions', 'aaInsertions']].copy()
         df_ha2.rename(columns={'HA2': 'Differences'}, inplace=True)
         columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage']
         df_ha2.drop(columns=columns_to_remove, inplace=True)
+        #Renaming columns to segments spesific names
+        df_ha2.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
+        df_ha2.rename(columns={'aaDeletions': f'aaDeletions {segment}1'}, inplace=True)
+        df_ha2.rename(columns={'aaInsertions': f'aaInsertions {segment}1'}, inplace=True)
         df_ha2.to_csv(f'./{meta_id}_HA2_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered HA2 file saved as: ./{meta_id}_HA2_nextclade_mutation.csv")
             
@@ -62,10 +71,14 @@ def process_file(input_file, meta_id, segment):
         df_sigpep.drop(columns=columns_to_remove, inplace=True)
         df_sigpep.to_csv(f'./{meta_id}_SigPep_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered SigPep file saved as: ./{meta_id}_SigPep_nextclade_mutation.csv")
-
+        
 
         # Make Sample Nextclade summary file
-        columns_to_remove = ['frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']
+        columns_to_remove = ['Differences', 'coverage', 'frameShifts','aaDeletions','aaInsertions']
+        #Renaming columns to segments spesific names
+        filtered_df.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
+        filtered_df.rename(columns={'aaDeletions': f'aaDeletions {segment}'}, inplace=True)
+        filtered_df.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
         summary_df.drop(columns=columns_to_remove, inplace=True)
         summary_df.to_csv(f'./{meta_id}_nextclade_summary.csv', index=False)      
 
@@ -85,7 +98,11 @@ def process_file(input_file, meta_id, segment):
         df_m1.rename(columns={'M1': 'Differences'}, inplace=True)
         columns_to_remove = ['clade', 'coverage']
         df_m1.drop(columns=columns_to_remove, inplace=True)
-        df_m1.to_csv(f'./{meta_id}_M1_nextclade_mutation.csv', index=False)
+        #Renaming columns to segments spesific names
+        df_m1.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
+        df_m1.rename(columns={'aaDeletions': f'aaDeletions {segment}1'}, inplace=True)
+        df_m1.rename(columns={'aaInsertions': f'aaInsertions {segment}1'}, inplace=True)
+        df_m1.to_csv(f'./{meta_id}_M1_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered M1 file saved as: ./{meta_id}_M1_nextclade_{type}_mutation.csv")
             
         # Filter and save the M2 mutations
@@ -93,21 +110,54 @@ def process_file(input_file, meta_id, segment):
         df_m2.rename(columns={'M2': 'Differences'}, inplace=True)
         columns_to_remove = ['clade', 'coverage']
         df_m2.drop(columns=columns_to_remove, inplace=True)
+        #Renaming columns to segments spesific names
+        df_m2.rename(columns={'frameShifts': f'frameShifts {segment}2'}, inplace=True)
+        df_m2.rename(columns={'aaDeletions': f'aaDeletions {segment}2'}, inplace=True)
+        df_m2.rename(columns={'aaInsertions': f'aaInsertions {segment}2'}, inplace=True)
         df_m2.to_csv(f'./{meta_id}_M2_nextclade_{type}_mutation.csv', index=False)
-        print(f"Filtered M2 file saved as: ./{meta_id}_M2_nextclade_mutation.csv")
-    else:
-
-        # Ensure no null values in ewmpty columns
+        print(f"Filtered M2 file saved as: ./{meta_id}_M2_nextclade_{type}_mutation.csv")
+    elif 'NA' in segment:
+         # Ensure no null values in empty columns
         filtered_df['Differences'] = filtered_df['Differences'].fillna('No mutations')
         filtered_df['frameShifts'] = filtered_df['frameShifts'].fillna('No frameShifts')
         filtered_df['aaDeletions'] = filtered_df['aaDeletions'].fillna('No aaDeletions')
-        filtered_df['aaInsertions'] = filtered_df['aaInsertions'].fillna('No aaInsertions')
+        filtered_df['aaInsertions'] = filtered_df['aaInsertions'].fillna('No aaInsertions')           
+
+        # Filter and save the M2 mutations
+        df_na = filtered_df[['Sample', 'clade',  'coverage', 'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']].copy()
+        columns_to_remove = ['coverage']
+        df_na.drop(columns=columns_to_remove, inplace=True)
+        #Renaming columns to segments spesific names
+        df_na.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
+        df_na.rename(columns={'aaDeletions': f'aaDeletions {segment}'}, inplace=True)
+        df_na.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
+        df_na.rename(columns={'clade': f'clade {segment}'}, inplace=True)
+        df_na.to_csv(f'./{meta_id}_NA_nextclade_{type}_mutation.csv', index=False)
+        print(f"Filtered NA file saved as: ./{meta_id}_M1_nextclade_{type}_mutation.csv")
+            
+    else:
+
+        # Ensure no null values in ewmpty columns
+        filtered_df['Differences'] = filtered_df[f'Differences'].fillna('No mutations')
+        filtered_df['frameShifts'] = filtered_df[f'frameShifts'].fillna('No frameShifts')
+        filtered_df['aaDeletions'] = filtered_df[f'aaDeletions'].fillna('No aaDeletions')
+        filtered_df['aaInsertions'] = filtered_df[f'aaInsertions'].fillna('No aaInsertions')
 
         # Remove everything before ':' in the Differences column
-        filtered_df['Differences'] = df['Differences'].str.replace(r'\b\w+:', '', regex=True)
+        if 'No mutations' not in filtered_df['Differences']:
+            filtered_df['Differences'] = filtered_df['Differences'].str.replace(r'\b\w+:', '', regex=True)
+        else:
+            print('No mutations')
 
         columns_to_remove = ['clade', 'coverage']
         filtered_df.drop(columns=columns_to_remove, inplace=True)
+
+
+        #Renaming columns to segments spesific names
+        filtered_df.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
+        filtered_df.rename(columns={'aaDeletions': f'aaDeletions {segment}'}, inplace=True)
+        filtered_df.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
+
 
 
         # Create the new filename
@@ -129,4 +179,5 @@ if __name__ == "__main__":
     segment = sys.argv[3]
     type = sys.argv[4]
 
+    segment = transform_string(segment)
     process_file(input_file, meta_id, segment)

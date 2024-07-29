@@ -59,7 +59,7 @@ include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATIONHUMAN               } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
-include { REPORT                      } from '../modules/local/report/main'
+include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
 
 
 
@@ -219,21 +219,22 @@ workflow HUMAN {
     def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
 
     
-    //TABLELOOKUP  (
-    //    MUTATION.out.human_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
-    //)
+    TABLELOOKUP  (
+        MUTATIONHUMAN.out.human_mutation, MUTATIONHUMAN.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
+    )
 
     //
     // MODULE: REPORT
     //
-    //REPORT  (
-    //    SUBTYPEFINDER.out.subtype_report.collect(), 
-    //   GENOTYPING.out.genotype_report.collect(), 
-    //   COVERAGE.out.coverage_report.collect(), 
-    //   MUTATION.out.mamailian_mutation_report.collect(), 
-    //   MUTATION.out.inhibtion_mutation_report.collect(), 
-    //   TABLELOOKUP.out.lookup_report.collect()
-    //)
+    REPORTHUMAN  (
+        SUBTYPEFINDER.out.subtype_report.collect(), 
+        COVERAGE.out.coverage_report.collect(), 
+        MUTATIONHUMAN.out.human_mutation_report.collect(), 
+        MUTATIONHUMAN.out.inhibtion_mutation_report.collect(), 
+        TABLELOOKUP.out.lookup_report.collect(),
+        NEXTCLADE.out.nextclade_summary_rapport.collect()
+
+    )
     
 
 
