@@ -16,22 +16,33 @@ process REPORTHUMAN {
     path(nextclade_summary_ha)
     path(nextclade_sample)
     path(mutation_vaccine)
+    val runid
+    path(filtered_fasta)
+    
+
 
     output:
 
-    path("*_report.csv"), emit: report
-    path("*.csv"), emit: all
+    path("${runid}.csv"), emit: report
+    path("${runid}.fasta"), emit: filtered_fasta
 
 
     when:
     task.ext.when == null || task.ext.when
 
-    //errorStrategy 'ignore'
 
     script:
     """ 
-    #test02
-    python /project-bin/report.py 
+    python /project-bin/report.py
+
+    #Add constant parameters to the report
+    awk -v runid=${runid} -v OFS=',' '{ if (NR == 1) { print \$0, "RunID" } else { print \$0, runid } }' merged_report.csv > ${runid}.csv
+
+    #Merge all filtered fasta files
+    cat ${filtered_fasta} > ${runid}.fasta
+    
+
+
     """
 
 }

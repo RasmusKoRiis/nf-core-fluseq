@@ -180,9 +180,10 @@ workflow HUMAN {
     // MODULE: COVERAGE
     //
 
-    
+    def seq_quality_thershold = params.seq_quality_thershold
+
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta
+         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
     )
 
 
@@ -195,10 +196,6 @@ workflow HUMAN {
     NEXTCLADE (
         COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
     )
-
-    //AMINOACIDTRANSLATION (
-    //    COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
-    //)
 
     //
     // MODULE: MUTATION
@@ -226,6 +223,9 @@ workflow HUMAN {
     //
     // MODULE: REPORT
     //
+
+    def runid = params.runid
+
     REPORTHUMAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
         COVERAGE.out.coverage_report.collect(), 
@@ -234,7 +234,10 @@ workflow HUMAN {
         TABLELOOKUP.out.lookup_report.collect(),
         NEXTCLADE.out.nextclade_summary_rapport.collect(),
         NEXTCLADE.out.nextclade_report.collect(),
-        MUTATIONHUMAN.out.vaccine_mutation_report.collect()
+        MUTATIONHUMAN.out.vaccine_mutation_report.collect(),
+        runid,
+        COVERAGE.out.filtered_fasta_report.collect()
+        
 
     )
     

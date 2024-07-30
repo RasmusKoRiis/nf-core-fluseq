@@ -31,7 +31,7 @@ merged_data['Sample'] = merged_data['Sample'].str.replace('!', '-')
 #ADD CALCULATED FILEDS
 
 #FILL COLUMNS NOT ANALYZED WITH NA
-keywords = {'mutation', 'Differences', 'frameShift', 'aaDeletions', 'aaInsertions', 'Subtype'}
+keywords = {'mutation', 'Differences', 'frameShift', 'aaDeletions', 'aaInsertions', 'Subtype', 'Nextclade QC' }
 columns_to_fill = [col for col in merged_data.columns if any(keyword in col for keyword in keywords)]
 merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
 
@@ -59,6 +59,7 @@ merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2
 #REMOVE UNESSESARY COLUMNS
 # Drop all columns that contain the word "mammalian"
 merged_data = merged_data[merged_data.columns.drop(list(merged_data.filter(regex='mammalian')))]
+
 
 #SORT DF BY COLUMNS
 merged_data = merged_data.sort_index(axis=1)

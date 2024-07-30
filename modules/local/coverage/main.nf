@@ -10,6 +10,7 @@ process COVERAGE {
 
     input:
     tuple val(meta), path(sequences), path(subtype)
+    val(seq_quality_thershold)
    
 
     output:
@@ -18,6 +19,8 @@ process COVERAGE {
     tuple val(meta), path("*fasta"), path(subtype), emit: filtered_fasta
     tuple val(meta), path("*coverage.fa"), path(subtype), emit:  merged_filtered_fasta
     path "versions.yml", emit: versions
+
+    path("*fa"), emit: filtered_fasta_report
 
     when:
     task.ext.when == null || task.ext.when
@@ -60,15 +63,15 @@ process COVERAGE {
 
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
-        # Use awk to check for numbers above 95 and capture any such number
-        number_above_95=\$(awk -F, '{for(i=1; i<=NF; i++) if(\$i+0 > 95) {print \$i; exit}}' "\$txt_filename")
+        # Use awk to check for numbers above XX and capture any such number
+        number_above_XX=\$(awk -F, '{for(i=1; i<=NF; i++) if(\$i+0 > ${seq_quality_thershold}) {print \$i; exit}}' "\$txt_filename")
     
-        if [ ! -z "\$number_above_95" ]; then
-            echo "Found a number above 95: \$number_above_95. Renaming \$fasta_file"
+        if [ ! -z "\$number_above_XX" ]; then
+            echo "Found a number above XX: \$number_above_XX. Renaming \$fasta_file"
             # Rename the FASTA file to indicate it has passed
             mv "\$fasta_file" "\${fasta_file%.*}.fasta"
         else
-            echo "No number above 95 found in \$fasta_file"
+            echo "No number above XX found in \$fasta_file"
             # Optionally, handle files that don't meet the criteria
         fi
     done

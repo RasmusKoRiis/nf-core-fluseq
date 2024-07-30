@@ -12,8 +12,16 @@ type = sys.argv[7]  # Used for naming the mutations column dynamically
 
 # Read mutations data from a CSV file
 mutations_df = pd.read_csv(mutations_file)
-# Split and strip spaces from mutations
-sample_mutations = [mut.strip() for mut in mutations_df.iloc[0, 1].split(';')]
+print(mutations_df)
+print(segment)
+
+# Check if the value in the mutations column is NaN
+if pd.notna(mutations_df.iloc[0, 1]):
+    # Split and strip spaces from mutations
+    sample_mutations = [mut.strip() for mut in mutations_df.iloc[0, 1].split(';')]
+else:
+    sample_mutations = []
+
 list_mutations_set = set(sample_mutations)
 
 print("Predefined list of mutations:", list_mutations_set)
@@ -22,8 +30,8 @@ print("Predefined list of mutations:", list_mutations_set)
 df = pd.read_excel(xlsx_file)
 
 # Filter DataFrame based on segment and subtype
-#filtered_df = df[(df['segment'] == segment) & (df['subtype'] == subtype)]
-filtered_df = df[(df['segment'] == segment)]
+filtered_df = df[(df['segment'] == segment) & (df['subtype'] == subtype)]
+#filtered_df = df[(df['segment'] == segment)]
 
 print(f"Number of rows in filtered DataFrame: {len(filtered_df)}")
 
