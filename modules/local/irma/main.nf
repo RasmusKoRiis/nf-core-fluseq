@@ -26,7 +26,7 @@ process IRMA {
     tuple val(meta), path("$meta.id/*.fasta") , emit: fasta
     tuple val(meta), path("$meta.id/*.bam"),  path("$meta.id/*.bai"), emit: bam
     tuple val(meta), path("$meta.id/*.vcf") , emit: vcf
-    tuple val(meta), path("$meta.id/tables/*.txt") , emit: tables
+    tuple val(meta), path("$meta.id/tables/READ_COUNTS.txt") , emit: read_count
     tuple val(meta), path("$meta.id/figures/*.pdf") , emit: figures
     tuple val(meta), path("$meta.id/amended_consensus/*.fa") , emit: amended_consensus
     tuple val(meta), path("$meta.id/secondary") , emit: secondary
