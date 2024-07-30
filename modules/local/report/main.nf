@@ -28,7 +28,7 @@ process REPORT {
 
     script:
     """  
-    python /project-bin/report.py 
+    python /project-bin/reportavian.py 
     """
 
 }

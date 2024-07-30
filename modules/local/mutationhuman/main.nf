@@ -74,7 +74,7 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - DEFAULT
 
-        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* ]]; then 
+        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* ]]; then 
 
             python /project-bin/mutation_finder.py \
                 \$fasta_file \

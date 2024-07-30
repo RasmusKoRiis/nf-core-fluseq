@@ -1,6 +1,8 @@
 import pandas as pd
 import glob
 
+#MERGE ALL DATA
+
 # Get a list of all CSV files in the current directory
 csv_files = glob.glob('*.csv')
 
@@ -25,6 +27,43 @@ merged_data = merged_data.groupby('Sample', as_index=False).first()
 #NIPH spesific adustment
 #replace ! with - in the Sample column 
 merged_data['Sample'] = merged_data['Sample'].str.replace('!', '-')
+
+#ADD CALCULATED FILEDS
+
+#FILL COLUMNS NOT ANALYZED WITH NA
+keywords = {'mutation', 'Differences', 'frameShift', 'aaDeletions', 'aaInsertions', 'Subtype'}
+columns_to_fill = [col for col in merged_data.columns if any(keyword in col for keyword in keywords)]
+merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
+
+
+# RESISTANCE COLUMN
+merged_data['DR_Res_Adamantine'] = merged_data['M2 inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Oseltamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Zanamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Peramivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Baloxavir'] = merged_data['PA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
+
+# Create DR_M2_Mut column
+merged_data['DR_M2_Mut'] = merged_data.apply(lambda x: 'NA' if x['M2 inhibtion mutations'] == 'NA' else (x['M2 inhibtion mutations'] if x['DR_Res_Adamantine'] == 'Review' else 'L26;V27;A30;S31;G34;L38'), axis=1)
+
+# Create DR_PA_Mut column
+merged_data['DR_PA_Mut'] = merged_data.apply(lambda x: 'NA' if x['PA inhibtion mutations'] == 'NA' else (x['PA inhibtion mutations'] if x['DR_Res_Baloxavir'] == 'Review' else 'E23;L28;K34;A36;A37;I38;E119;E198;E199'), axis=1)
+
+# Create DR_NA_Mut column
+merged_data['DR_NA_Mut'] = merged_data.apply(lambda x: 'NA' if x['NA inhibtion mutations'] == 'NA' else (x['NA inhibtion mutations'] if (x['DR_Res_Adamantine'] == 'Review' or x['DR_Res_Oseltamivir'] == 'Review' or x['DR_Res_Zanamivir'] == 'Review' or x['DR_Res_Peramivir'] == 'Review') else 'E119;Q136;T148;D151;I222;R224;N245;N245-;A246-;T247-;G248-;K249-;A250-;K249;E27'), axis=1)
+
+# SUBTYPE COLUMN
+merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2' if x == 'H3N2' else 'A/H1N1' if x == 'H1N1' else 'B/Victoria' if x == 'VICVIC' else x)
+
+
+#REMOVE UNESSESARY COLUMNS
+# Drop all columns that contain the word "mammalian"
+merged_data = merged_data[merged_data.columns.drop(list(merged_data.filter(regex='mammalian')))]
+
+#SORT DF BY COLUMNS
+merged_data = merged_data.sort_index(axis=1)
+columns = ['Sample', 'Sekvens_Resultat'] + [col for col in merged_data.columns if col not in ['Sample', 'Sekvens_Resultat']]
+merged_data = merged_data[columns]
 
 # Write the merged data to a new CSV file
 merged_data.to_csv('merged_report.csv', index=False)

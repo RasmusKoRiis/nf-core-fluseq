@@ -53,13 +53,11 @@ process COVERAGE {
         # Append "Coverage" to the second column header of the CSV and rename the column
         awk -F, 'NR == 1 {
             split(\$2, a, "-"); 
-            \$2 = a[2] " Coverage"; 
+            \$2 = "Coverage-" a[2]; 
             print; 
             next
-        } {print}' OFS=, \$output_csv > temp.csv && mv temp.csv \$output_csv 
+        } {print}' OFS=, \$output_csv > temp.csv && mv temp.csv \$output_csv
 
-
-    
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
         # Use awk to check for numbers above 95 and capture any such number

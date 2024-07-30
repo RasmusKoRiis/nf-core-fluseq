@@ -232,7 +232,9 @@ workflow HUMAN {
         MUTATIONHUMAN.out.human_mutation_report.collect(), 
         MUTATIONHUMAN.out.inhibtion_mutation_report.collect(), 
         TABLELOOKUP.out.lookup_report.collect(),
-        NEXTCLADE.out.nextclade_summary_rapport.collect()
+        NEXTCLADE.out.nextclade_summary_rapport.collect(),
+        NEXTCLADE.out.nextclade_report.collect(),
+        MUTATIONHUMAN.out.vaccine_mutation_report.collect()
 
     )
     

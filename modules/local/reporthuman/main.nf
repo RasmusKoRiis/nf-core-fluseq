@@ -14,6 +14,8 @@ process REPORTHUMAN {
     path(mutation_inhibtion)
     path(lookup)
     path(nextclade_summary_ha)
+    path(nextclade_sample)
+    path(mutation_vaccine)
 
     output:
 
@@ -27,7 +29,8 @@ process REPORTHUMAN {
     //errorStrategy 'ignore'
 
     script:
-    """  
+    """ 
+    #test02
     python /project-bin/report.py 
     """
 

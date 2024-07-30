@@ -19,7 +19,7 @@ process NEXTCLADE {
 
 
     path("*summary.csv"), emit: nextclade_summary_rapport
-    path("*mutation.csv"), emit: nextclade_report
+    path("*NC_mutation.csv"), emit: nextclade_report
     path "versions.yml", emit: versions
 
     when:
@@ -261,6 +261,7 @@ process NEXTCLADE {
                 mv "\$file" ./${meta.id}_\$basename
         fi
         done
+
 
         # Convert Nextclade output to mutations, frameshift and glyco files
         type=NC

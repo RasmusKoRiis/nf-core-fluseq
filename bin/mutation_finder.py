@@ -118,6 +118,8 @@ df.drop(columns=['ID'], inplace=True)
 # Reorder the columns
 df = df[['Sample', 'Differences']]
 
+
+
 # Save the final dataframe to a CSV file
 df.to_csv(output_file, index=False)
 

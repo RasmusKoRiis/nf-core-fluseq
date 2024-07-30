@@ -32,7 +32,7 @@ def calculate_coverage(sequence):
     
     sequence_upper = sequence.upper()  # Convert sequence to uppercase
     n_count = sequence_upper.count('N')  # Count 'N' which now includes both 'N' and 'n'
-    return (1 - n_count / length) * 100
+    return (length - n_count ) / length * 100
 
 # Read FASTA file
 fasta_file = fasta

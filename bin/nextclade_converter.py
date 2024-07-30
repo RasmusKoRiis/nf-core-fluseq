@@ -43,7 +43,7 @@ def process_file(input_file, meta_id, segment):
         # Filter and save the HA1 mutations
         df_ha1 = filtered_df[['Sample', 'clade', 'subclade', 'glycosylation', 'coverage', 'frameShifts', 'HA1', 'aaDeletions', 'aaInsertions']].copy()
         df_ha1.rename(columns={'HA1': 'Differences'}, inplace=True)
-        columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage']
+        columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage', 'Differences']
         df_ha1.drop(columns=columns_to_remove, inplace=True)
         #Renaming columns to segments spesific names
         df_ha1.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
@@ -55,7 +55,7 @@ def process_file(input_file, meta_id, segment):
         # Filter and save the HA2 mutations
         df_ha2 = filtered_df[['Sample', 'clade', 'subclade', 'glycosylation', 'coverage', 'frameShifts', 'HA2', 'aaDeletions', 'aaInsertions']].copy()
         df_ha2.rename(columns={'HA2': 'Differences'}, inplace=True)
-        columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage']
+        columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage', 'Differences']
         df_ha2.drop(columns=columns_to_remove, inplace=True)
         #Renaming columns to segments spesific names
         df_ha2.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
@@ -67,18 +67,22 @@ def process_file(input_file, meta_id, segment):
         # Filter and save the SigPep mutations
         df_sigpep = filtered_df[['Sample', 'clade', 'subclade', 'glycosylation', 'coverage', 'frameShifts', 'SigPep', 'aaDeletions', 'aaInsertions']].copy()
         df_sigpep.rename(columns={'SigPep': 'Differences'}, inplace=True)
-        columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage']
+        columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage', 'Differences']
         df_sigpep.drop(columns=columns_to_remove, inplace=True)
+        #Renaming columns to segments spesific names
+        df_sigpep.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
+        df_sigpep.rename(columns={'aaDeletions': f'aaDeletions {segment}1'}, inplace=True)
+        df_sigpep.rename(columns={'aaInsertions': f'aaInsertions {segment}1'}, inplace=True)
         df_sigpep.to_csv(f'./{meta_id}_SigPep_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered SigPep file saved as: ./{meta_id}_SigPep_nextclade_mutation.csv")
         
 
         # Make Sample Nextclade summary file
-        columns_to_remove = ['Differences', 'coverage', 'frameShifts','aaDeletions','aaInsertions']
+        columns_to_remove = ['Differences', 'coverage', 'frameShifts','aaDeletions','aaInsertions', 'Differences']
         #Renaming columns to segments spesific names
-        filtered_df.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
-        filtered_df.rename(columns={'aaDeletions': f'aaDeletions {segment}'}, inplace=True)
-        filtered_df.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
+        #filtered_df.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
+        #filtered_df.rename(columns={'aaDeletions': f'aaDeletions {segment}'}, inplace=True)
+        #filtered_df.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
         summary_df.drop(columns=columns_to_remove, inplace=True)
         summary_df.to_csv(f'./{meta_id}_nextclade_summary.csv', index=False)      
 
@@ -96,7 +100,7 @@ def process_file(input_file, meta_id, segment):
         # Filter and save the M2 mutations
         df_m1 = filtered_df[['Sample', 'clade', 'coverage', 'frameShifts', 'M1', 'aaDeletions', 'aaInsertions']].copy()
         df_m1.rename(columns={'M1': 'Differences'}, inplace=True)
-        columns_to_remove = ['clade', 'coverage']
+        columns_to_remove = ['clade', 'coverage', 'Differences']
         df_m1.drop(columns=columns_to_remove, inplace=True)
         #Renaming columns to segments spesific names
         df_m1.rename(columns={'frameShifts': f'frameShifts {segment}1'}, inplace=True)
@@ -108,7 +112,7 @@ def process_file(input_file, meta_id, segment):
         # Filter and save the M2 mutations
         df_m2 = filtered_df[['Sample', 'clade', 'coverage', 'frameShifts', 'M2', 'aaDeletions', 'aaInsertions']].copy()
         df_m2.rename(columns={'M2': 'Differences'}, inplace=True)
-        columns_to_remove = ['clade', 'coverage']
+        columns_to_remove = ['clade', 'coverage', 'Differences']
         df_m2.drop(columns=columns_to_remove, inplace=True)
         #Renaming columns to segments spesific names
         df_m2.rename(columns={'frameShifts': f'frameShifts {segment}2'}, inplace=True)
@@ -125,7 +129,7 @@ def process_file(input_file, meta_id, segment):
 
         # Filter and save the M2 mutations
         df_na = filtered_df[['Sample', 'clade',  'coverage', 'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions']].copy()
-        columns_to_remove = ['coverage']
+        columns_to_remove = ['coverage', 'Differences']
         df_na.drop(columns=columns_to_remove, inplace=True)
         #Renaming columns to segments spesific names
         df_na.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
@@ -149,7 +153,7 @@ def process_file(input_file, meta_id, segment):
         else:
             print('No mutations')
 
-        columns_to_remove = ['clade', 'coverage']
+        columns_to_remove = ['clade', 'coverage', 'Differences']
         filtered_df.drop(columns=columns_to_remove, inplace=True)
 
 
