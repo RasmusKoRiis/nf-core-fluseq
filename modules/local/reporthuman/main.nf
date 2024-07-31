@@ -18,6 +18,7 @@ process REPORTHUMAN {
     path(mutation_vaccine)
     val runid
     path(filtered_fasta)
+    path(irma_depth)
     
 
 

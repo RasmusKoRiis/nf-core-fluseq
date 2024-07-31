@@ -60,6 +60,8 @@ include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATIONHUMAN               } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
+include { TECHNICAL                   } from '../modules/local/technical/main'
+
 
 
 
@@ -121,6 +123,14 @@ workflow HUMAN {
 
     IRMA (
         CAT_FASTQ.out.reads
+    )
+
+    //
+    // MODULE: IRMA STAT
+    //
+
+    TECHNICAL (
+        IRMA.out.read_count
     )
 
 
@@ -236,7 +246,8 @@ workflow HUMAN {
         NEXTCLADE.out.nextclade_report.collect(),
         MUTATIONHUMAN.out.vaccine_mutation_report.collect(),
         runid,
-        COVERAGE.out.filtered_fasta_report.collect()
+        COVERAGE.out.filtered_fasta_report.collect(),
+        TECHNICAL.out.depth_files_report.collect()
         
 
     )

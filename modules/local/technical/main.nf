@@ -12,7 +12,8 @@ process TECHNICAL {
 
 
     output:
-    tuple val(meta), path("*.csv"), emit: depth_files
+    tuple val(meta), path("*irmastat.csv"), emit: depth_files
+    path("*irmastat.csv"), emit: depth_files_report
     path "versions.yml", emit: versions
 
     when:
@@ -31,10 +32,16 @@ process TECHNICAL {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
-    python /project-bin/table_lookup.py \
-        ${meta.id} \
+    #DEPTH CACULATION
+    # Make output name
+    output_name="${meta.id}_irmastat.csv"
 
+    python /project-bin/sequence_quality.py \
+        $irma_stat \
+        \$output_name \
+        ${meta.id} 
 
+    
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
