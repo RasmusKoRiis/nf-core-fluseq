@@ -18,7 +18,7 @@ process NEXTCLADE {
     tuple val(meta), path("*mutation.csv"), emit: nextclade_filtered
 
 
-    path("*summary.csv"), emit: nextclade_summary_rapport
+    path("*summary.csv"), emit: nextclade_summary_rapport, optional: true
     path("*NC_mutation.csv"), emit: nextclade_report
     path "versions.yml", emit: versions
 

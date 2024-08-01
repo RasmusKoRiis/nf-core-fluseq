@@ -16,13 +16,13 @@ process MUTATIONHUMAN  {
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*human_mutation.csv"), path(subtype), emit: human_mutation
-    tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation
-    tuple val(meta), path("*vaccine_mutation.csv"), emit: vaccine_mutation
+    tuple val(meta), path("*human_mutation.csv"), path(subtype), emit: human_mutation, optional: true
+    tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation, optional: true
+    tuple val(meta), path("*vaccine_mutation.csv"), emit: vaccine_mutation, optional: true
     
-    path("*human_mutation_report.csv"), emit: human_mutation_report
-    path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report
-    path("*vaccine_mutation_report.csv"), emit: vaccine_mutation_report
+    path("*human_mutation_report.csv"), emit: human_mutation_report, optional: true
+    path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report, optional: true
+    path("*vaccine_mutation_report.csv"), emit: vaccine_mutation_report, optional: true
 
     path "versions.yml", emit: versions
 
