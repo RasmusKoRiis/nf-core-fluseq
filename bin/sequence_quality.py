@@ -45,7 +45,7 @@ for col in irma_cols.columns[1:]:
 
 #FILL UNANLYZED COLUMNS WITH NA
 keywords = {'DEPTH_HA', 'DEPTH_NA', 'DEPTH_PB2', 'DEPTH_PB1', 'DEPTH_PA', 'DEPTH_NP', 'DEPTH_NS', 'DEPTH_MP' }
-columns_to_fill = [col for col in merged_data.columns if any(keyword in col for keyword in keywords)]
+columns_to_fill = [col for col in final_df.columns if any(keyword in col for keyword in keywords)]
 final_df[columns_to_fill] = final_df[columns_to_fill].fillna('NA')
 
 # Save to CSV

@@ -19,9 +19,8 @@ process REPORTHUMAN {
     val runid
     path(filtered_fasta)
     path(irma_depth)
+    val seq_instrument
     
-
-
     output:
 
     path("${runid}.csv"), emit: report
@@ -37,7 +36,15 @@ process REPORTHUMAN {
     python /project-bin/report.py
 
     #Add constant parameters to the report
-    awk -v runid=${runid} -v OFS=',' '{ if (NR == 1) { print \$0, "RunID" } else { print \$0, runid } }' merged_report.csv > ${runid}.csv
+    # Add RunID column
+    awk -v runid=${runid} -v OFS=',' '{ if (NR == 1) { print  \$0, "RunID" } else { print  \$0, runid } }' merged_report.csv > ${runid}_temp1.csv
+
+    # Add Instrument ID column
+    awk -v seq_instrument=${seq_instrument} -v OFS=',' '{ if (NR == 1) { print  \$0, "Instrument ID" } else { print  \$0, seq_instrument } }' ${runid}_temp1.csv > ${runid}_temp2.csv
+
+    # Rename the final file
+    mv ${runid}_temp2.csv ${runid}.csv
+
 
     #Merge all filtered fasta files
     cat ${filtered_fasta} > ${runid}.fasta

@@ -235,6 +235,7 @@ workflow HUMAN {
     //
 
     def runid = params.runid
+    def seq_instrument   = params.seq_instrument  
 
     REPORTHUMAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
@@ -247,7 +248,9 @@ workflow HUMAN {
         MUTATIONHUMAN.out.vaccine_mutation_report.collect(),
         runid,
         COVERAGE.out.filtered_fasta_report.collect(),
-        TECHNICAL.out.depth_files_report.collect()
+        TECHNICAL.out.depth_files_report.collect(),
+        seq_instrument
+
         
 
     )
