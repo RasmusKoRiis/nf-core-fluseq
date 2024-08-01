@@ -83,8 +83,8 @@ def parseSampleSheet(sampleSheetPath) {
             .fromPath(sampleSheetPath)
             .splitCsv(header: true, sep: ',', strip: true)
             .map { row ->
-                def sampleId = row.sample_id
-                def files = file("${params.samplesDir}/${row.barcode}/*.fastq.gz")
+                def sampleId = row.SequenceID
+                def files = file("${params.samplesDir}/${row.Barcode}/*.fastq.gz")
                 // Creating a metadata map
                 def meta = [ id: sampleId, single_end: true ]
                 return tuple(meta, files)
