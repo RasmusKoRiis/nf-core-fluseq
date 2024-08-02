@@ -135,7 +135,7 @@ workflow HUMAN {
 
 
     /// SUBTYPE CHANNEL
-    IRMA.out.fasta
+    IRMA.out.amended_consensus
     .map { meta, files -> 
         def ha_files = files.findAll { it.getName().contains('_HA') }
         def na_files = files.findAll { it.getName().contains('_NA') }
