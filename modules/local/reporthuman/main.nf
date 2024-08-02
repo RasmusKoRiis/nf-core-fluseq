@@ -45,7 +45,6 @@ process REPORTHUMAN {
     # Rename the final file
     mv ${runid}_temp2.csv ${runid}.csv
 
-
     #Merge all filtered fasta files
     cat ${filtered_fasta} > ${runid}.fasta
     

@@ -13,13 +13,13 @@ process NEXTCLADE {
     
 
     output:
-    tuple val(meta), path("*nextclade.csv"), emit: nextclade_csv
+    tuple val(meta), path("*nextclade.csv"), emit: nextclade_csv, optional: true
     tuple val(meta), path("*translation*fasta"), path(subtype), emit: aminoacid_sequence
-    tuple val(meta), path("*mutation.csv"), emit: nextclade_filtered
+    tuple val(meta), path("*mutation.csv"), emit: nextclade_filtered, optional: true
 
 
     path("*summary.csv"), emit: nextclade_summary_rapport, optional: true
-    path("*NC_mutation.csv"), emit: nextclade_report
+    path("*NC_mutation.csv"), emit: nextclade_report, optional: true
     path "versions.yml", emit: versions
 
     when:
@@ -215,17 +215,18 @@ process NEXTCLADE {
             done
         fi
 
-
-
         # Convert Nextclade output to mutations, frameshift and glyco files
         type=NC
-        python3 /project-bin/nextclade_converter.py \
-            ./${meta.id}_\${segment}_nextclade.csv \
-            ${meta.id} \
-            \${segment} \
-            \${type} \
-       
+        nextclade_csv="./${meta.id}_\${segment}_nextclade.csv"
+        if [[ -f "\$nextclade_csv" ]]; then
+            python3 /project-bin/nextclade_converter.py \
+                "\$nextclade_csv" \
+                ${meta.id} \
+                \${segment} \
+                \${type}
+        fi    
         subtype=\$(cat ${subtype})
+       
     done
 
     cat <<-END_VERSIONS > versions.yml

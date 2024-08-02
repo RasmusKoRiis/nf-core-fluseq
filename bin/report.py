@@ -31,7 +31,7 @@ merged_data['Sample'] = merged_data['Sample'].str.replace('!', '-')
 #ADD CALCULATED FILEDS
 
 #FILL COLUMNS NOT ANALYZED WITH NA
-keywords = {'mutation', 'Differences', 'frameShift', 'aaDeletions', 'aaInsertions', 'Subtype', 'Nextclade QC' }
+keywords = {'mutation', 'Differences', 'frameShift', 'aaDeletions', 'aaInsertions', 'Subtype', 'Nextclade QC','Clade','Subclade', 'clade NA'}
 columns_to_fill = [col for col in merged_data.columns if any(keyword in col for keyword in keywords)]
 merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
 
