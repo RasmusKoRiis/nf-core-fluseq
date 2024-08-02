@@ -203,15 +203,18 @@ process NEXTCLADE {
 
         # Save output files from Nextclade
         
-        for file in ${meta.id}_\${segment}_nextclade_output/*; do
-            cat "\$file"
-            basename=\$(basename \$file)
-            if [[ "\$file" == *.csv ]]; then
-                mv "\$file" ./${meta.id}_\${segment}_\$basename
-            else
-                mv "\$file" ./${meta.id}_\$basename
+        if compgen -G "${meta.id}_\${segment}_nextclade_output/*" > /dev/null; then
+            for file in ${meta.id}_\${segment}_nextclade_output/*; do
+                cat "\$file"
+                basename=\$(basename \$file)
+                if [[ "\$file" == *.csv ]]; then
+                    mv "\$file" ./${meta.id}_\${segment}_\$basename
+                else
+                    mv "\$file" ./${meta.id}_\$basename
+                fi
+            done
         fi
-        done
+
 
 
         # Convert Nextclade output to mutations, frameshift and glyco files
