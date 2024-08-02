@@ -116,6 +116,7 @@ workflow HUMAN {
     )
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
 
+
     
     //
     // MODULE: IRMA
@@ -149,7 +150,7 @@ workflow HUMAN {
     }
     .filter { it != null }
     .set { IRMA_ha_na_fasta }
-    
+
 
     //
     // MODULE: SUBTYPE FINDER
@@ -237,6 +238,8 @@ workflow HUMAN {
 
     def runid = params.runid
     def seq_instrument   = params.seq_instrument  
+    def samplesheet = "${currentDir}/assets/samplesheet.tsv"
+
 
     REPORTHUMAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
@@ -250,7 +253,8 @@ workflow HUMAN {
         runid,
         COVERAGE.out.filtered_fasta_report.collect(),
         TECHNICAL.out.depth_files_report.collect(),
-        seq_instrument
+        seq_instrument,
+        samplesheet
 
         
 
