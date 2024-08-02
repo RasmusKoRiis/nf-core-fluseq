@@ -56,7 +56,7 @@ merged_data['DR_PA_Mut'] = merged_data.apply(lambda x: 'NA' if x['PA inhibtion m
 merged_data['DR_NA_Mut'] = merged_data.apply(lambda x: 'NA' if x['NA inhibtion mutations'] == 'NA' else (x['NA inhibtion mutations'] if (x['DR_Res_Adamantine'] == 'Review' or x['DR_Res_Oseltamivir'] == 'Review' or x['DR_Res_Zanamivir'] == 'Review' or x['DR_Res_Peramivir'] == 'Review') else 'E119;Q136;T148;D151;I222;R224;N245;N245-;A246-;T247-;G248-;K249-;A250-;K249;E27'), axis=1)
 
 # SUBTYPE COLUMN
-merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2' if x == 'H3N2' else 'A/H1N1' if x == 'H1N1' else 'B/Victoria' if x == 'VICVIC' else x)
+merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2' if x == 'H3N2' else 'A/H1N1' if x == 'H1N1' else 'B/Victoria' if x == 'VICVIC' else 'B/Victoria' if x == 'VIC' else x)
 
 
 #REMOVE UNESSESARY COLUMNS
