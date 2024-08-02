@@ -63,6 +63,26 @@ merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2
 # Drop all columns that contain the word "mammalian"
 merged_data = merged_data[merged_data.columns.drop(list(merged_data.filter(regex='mammalian')))]
 
+required_columns = ['Sample', 'Sekvens_Resultat', 'Coverage-HA', 'Coverage-M', 'Coverage-NA', 'Coverage-NP', 'Coverage-NS', 'Coverage-PA', 
+                    'Coverage-PB1', 'Coverage-PB2', 'DEPTH_HA', 'DEPTH_MP', 'DEPTH_NA', 'DEPTH_NP', 'DEPTH_NS', 'DEPTH_PA', 'DEPTH_PB1', 
+                    'DEPTH_PB2', 'DR_M2_Mut', 'DR_NA_Mut', 'DR_PA_Mut', 'DR_Res_Adamantine', 'DR_Res_Baloxavir', 'DR_Res_Oseltamivir', 
+                    'DR_Res_Peramivir', 'DR_Res_Zanamivir', 'HA1 Differences human', 'HA1 Differences human_vaccine', 'HA2 Differences human', 
+                    'HA2 Differences human_vaccine', 'IRMA_altmatch', 'IRMA_chimeric', 'IRMA_failQC', 'IRMA_initial', 'IRMA_match', 
+                    'IRMA_nomatch', 'IRMA_passQC', 'M1 Differences human', 'M2 Differences human', 'M2 Differences inhibition_human', 
+                    'M2 inhibtion mutations', 'NA Differences human', 'NA Differences human_vaccine', 'NA Differences inhibition_human', 
+                    'NA inhibtion mutations', 'NP Differences human', 'NS1 Differences human', 'Nextclade QC HA1', 'Nextclade QC M1', 
+                    'Nextclade QC NA1', 'Nextclade QC NP1', 'Nextclade QC NS1', 'Nextclade QC PA1', 'Nextclade QC PB11', 'Nextclade QC PB21', 
+                    'PA Differences human', 'PA Differences inhibition_human', 'PA inhibtion mutations', 'PB1 Differences human', 
+                    'PB2 Differences human', 'SigPep Differences human', 'Subtype', 'aaDeletions HA1', 'aaDeletions M1', 'aaDeletions M2', 
+                    'aaDeletions NA', 'aaDeletions NP', 'aaDeletions NS', 'aaDeletions PA', 'aaDeletions PB1', 'aaDeletions PB2', 
+                    'aaInsertions HA1', 'aaInsertions M1', 'aaInsertions M2', 'aaInsertions NA', 'aaInsertions NP', 'aaInsertions NS', 
+                    'aaInsertions PA', 'aaInsertions PB1', 'aaInsertions PB2', 'clade', 'clade NA', 'frameShifts HA1', 'frameShifts M1', 
+                    'frameShifts M2', 'frameShifts NA', 'frameShifts NP', 'frameShifts NS', 'frameShifts PA', 'frameShifts PB1', 
+                    'frameShifts PB2', 'glycosylation', 'subclade', 'RunID', 'Instrument ID']
+
+for column in required_columns:
+    if column not in merged_data.columns:
+        merged_data[column] = 'NA'
 
 #SORT DF BY COLUMNS
 merged_data = merged_data.sort_index(axis=1)
