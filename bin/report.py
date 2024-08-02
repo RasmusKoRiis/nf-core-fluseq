@@ -31,12 +31,16 @@ merged_data['Sample'] = merged_data['Sample'].str.replace('!', '-')
 #ADD CALCULATED FILEDS
 
 #FILL COLUMNS NOT ANALYZED WITH NA
-keywords = {'mutation', 'Differences', 'frameShift', 'aaDeletions', 'aaInsertions', 'Subtype', 'Nextclade QC','clade','subclade', 'clade NA',
-            'Coverage-HA', 'Coverage-NA', 'Coverage-MP', 'Coverage-NS', 'Coverage-PA', 'Coverage-NP', 'Coverage-PB1', 'Coverage-PB2', 'glycosylation', 
-            'DEPTH-HA', 'DEPTH-NA', 'DEPTH-MP', 'DEPTH-NS', 'DEPTH-PA', 'DEPTH-NP', 'DEPTH-PB1', 'DEPTH-PB2' }
+keywords = {'mutation', 'differences', 'frameshift', 'aadeletions', 'aainsertions', 'subtype', 'nextclade qc', 'clade', 'subclade', 'clade na',
+            'coverage-ha', 'coverage-na', 'coverage-mp', 'coverage-ns', 'coverage-pa', 'coverage-np', 'coverage-pb1', 'coverage-pb2', 'glycosylation', 
+            'depth-ha', 'depth-na', 'depth-mp', 'depth-ns', 'depth-pa', 'depth-np', 'depth-pb1', 'depth-pb2'}
 
-columns_to_fill = [col for col in merged_data.columns if any(keyword in col for keyword in keywords)]
+# Convert the column names to lowercase and check if any keyword is in each column name
+columns_to_fill = [col for col in merged_data.columns if any(keyword in col.lower() for keyword in keywords)]
+
+# Fill NA values in the identified columns
 merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
+
 
 
 # RESISTANCE COLUMN
