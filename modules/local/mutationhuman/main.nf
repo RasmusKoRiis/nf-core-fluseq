@@ -45,8 +45,12 @@ process MUTATIONHUMAN  {
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
     subtype_name=\$(cat ${subtype} )
-    #test01
-
+  
+    #Subtype fix for B (not optimal)
+    if [[ "\$subtype_name" == "VIC" ]]; then
+        subtype_name="VICVIC"
+    fi
+    
     for fasta_file in ${fasta}; do
 
         filename=\$(basename \$fasta_file)

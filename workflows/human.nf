@@ -137,18 +137,19 @@ workflow HUMAN {
     /// SUBTYPE CHANNEL
     IRMA.out.amended_consensus
     .map { meta, files -> 
-        def ha_files = files.findAll { it.getName().contains('_HA') }
-        def na_files = files.findAll { it.getName().contains('_NA') }
-        def pa_files = files.findAll { it.getName().contains('_PA') }
-        def pb1_files = files.findAll { it.getName().contains('_PB1') }
-        def pb2_files = files.findAll { it.getName().contains('_PB2') }
-        def ns_files = files.findAll { it.getName().contains('_NS') }
-        def np_files = files.findAll { it.getName().contains('_NP') }
-        def m_files = files.findAll { it.getName().contains('_M') }
+        def ha_files = files.findAll { it.getName().contains('_4') }
+        def na_files = files.findAll { it.getName().contains('_6') }
+        def pa_files = files.findAll { it.getName().contains('_3') }
+        def pb1_files = files.findAll { it.getName().contains('_2') }
+        def pb2_files = files.findAll { it.getName().contains('_1') }
+        def ns_files = files.findAll { it.getName().contains('_7') }
+        def np_files = files.findAll { it.getName().contains('_5') }
+        def m_files = files.findAll { it.getName().contains('_8') }
         return (ha_files && na_files && pa_files && pb1_files && pb2_files && ns_files && np_files && m_files) ? tuple(meta, ha_files, na_files, pa_files, pb1_files, pb2_files, ns_files, np_files, m_files) : null
     }
     .filter { it != null }
     .set { IRMA_ha_na_fasta }
+    
 
     //
     // MODULE: SUBTYPE FINDER

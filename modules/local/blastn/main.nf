@@ -47,6 +47,7 @@ process SUBTYPEFINDER {
     echo \$subtype > ""$meta.id"_subtype.csv"
     echo "Sample,Subtype" | cat - "$meta.id"_subtype.csv > temp && mv temp "$meta.id"_subtype.csv
 
+
     echo \$subtype_txt > ""$meta.id"_subtype.txt"
 
 
