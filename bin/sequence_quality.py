@@ -43,6 +43,9 @@ final_df = pd.DataFrame({
 for col in irma_cols.columns[1:]:
     final_df[col] = irma_cols[col].values[0]
 
+# Caclulate a noise column
+final_df['IRMA_noise'] = final_df['IRMA_altmatch'] / final_df['IRMA_match']
+
 #FILL UNANLYZED COLUMNS WITH NA
 keywords = {'DEPTH_HA', 'DEPTH_NA', 'DEPTH_PB2', 'DEPTH_PB1', 'DEPTH_PA', 'DEPTH_NP', 'DEPTH_NS', 'DEPTH_MP' }
 columns_to_fill = [col for col in final_df.columns if any(keyword in col for keyword in keywords)]

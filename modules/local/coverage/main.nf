@@ -3,6 +3,7 @@ process COVERAGE {
     tag "$meta.id"
     label 'process_single'
     errorStrategy 'ignore'
+    debug true
 
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
@@ -47,6 +48,7 @@ process COVERAGE {
         segment_subtype=\${filename_no_ext#*-} 
         segment=\${segment_subtype%-*}  
         subtype_name=\${segment_subtype#*-} 
+        
 
         output_csv="${meta.id}_\${segment}_coverage.csv"
         python /project-bin/coverage_finder.py "\$fasta_file" \$output_csv ${meta.id} \${segment}

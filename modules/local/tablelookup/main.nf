@@ -3,7 +3,7 @@ process TABLELOOKUP {
     tag "$meta.id"
     label 'process_single'
     //errorStrategy 'ignore'
-    debug true  
+    
     
 
     //conda "bioconda::blast=2.15.0"
@@ -54,6 +54,8 @@ process TABLELOOKUP {
         #echo "Filename no ext: \${filename_no_ext}"
 
         segment=\$(echo "\${filename_no_ext}" | awk -F_ '{print \$2}')
+
+
 
         # Make output name
         output_name=${meta.id}_\${segment}"_mamalianadpation.csv"
