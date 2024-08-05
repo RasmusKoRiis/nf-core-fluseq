@@ -10,10 +10,16 @@ subtype = sys.argv[5]
 id = sys.argv[6]
 type = sys.argv[7]  # Used for naming the mutations column dynamically
 
+#If segment is NA change to NA1 because of excel formating of NA
+if segment == "NA":
+    segment = "NA1"
+
 # Read mutations data from a CSV file
 mutations_df = pd.read_csv(mutations_file)
 print(mutations_df)
 print(segment)
+print(subtype)
+print(type)
 
 # Check if the value in the mutations column is NaN
 if pd.notna(mutations_df.iloc[0, 1]):
@@ -28,10 +34,12 @@ print("Predefined list of mutations:", list_mutations_set)
 
 # Read in the DataFrame from the Excel file
 df = pd.read_excel(xlsx_file)
+print(df)
 
 # Filter DataFrame based on segment and subtype
 filtered_df = df[(df['segment'] == segment) & (df['subtype'] == subtype)]
 #filtered_df = df[(df['segment'] == segment)]
+print(filtered_df)
 
 print(f"Number of rows in filtered DataFrame: {len(filtered_df)}")
 

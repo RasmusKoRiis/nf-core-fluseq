@@ -3,6 +3,7 @@ process TABLELOOKUP {
     tag "$meta.id"
     label 'process_single'
     //errorStrategy 'ignore'
+    debug true  
     
 
     //conda "bioconda::blast=2.15.0"
@@ -68,6 +69,7 @@ process TABLELOOKUP {
 
     done
 
+
     for mutation_file in ${inhibition_mutation}; do
 
         type="inhibtion"
@@ -81,7 +83,10 @@ process TABLELOOKUP {
 
         # Make output name
         output_name=${meta.id}_\${segment}"_inhibtion.csv"
-   
+
+        echo "Segment: \${segment}"
+        echo "Subtype: \${subtype_name}"
+
         python /project-bin/table_lookup.py \
         \$mutation_file\
         \$output_name\
@@ -90,6 +95,9 @@ process TABLELOOKUP {
         \${subtype_name} \
         ${meta.id} \
         \${type} \
+
+
+
 
     done
 

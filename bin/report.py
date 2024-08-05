@@ -100,7 +100,7 @@ required_columns = ['Sample', 'Sekvens_Resultat', 'Coverage-HA', 'Coverage-M', '
                     'aaInsertions HA1', 'aaInsertions M1', 'aaInsertions M2', 'aaInsertions NA', 'aaInsertions NP', 'aaInsertions NS', 
                     'aaInsertions PA', 'aaInsertions PB1', 'aaInsertions PB2', 'clade', 'clade NA', 'frameShifts HA1', 'frameShifts M1', 
                     'frameShifts M2', 'frameShifts NA', 'frameShifts NP', 'frameShifts NS', 'frameShifts PA', 'frameShifts PB1', 
-                    'frameShifts PB2', 'glycosylation', 'subclade', 'RunID', 'Instrument ID']
+                    'frameShifts PB2', 'glycosylation', 'subclade']
 
 for column in required_columns:
     if column not in merged_data.columns:
