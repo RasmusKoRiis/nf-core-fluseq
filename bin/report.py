@@ -57,9 +57,9 @@ merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
 
 # RESISTANCE COLUMN
 merged_data['DR_Res_Adamantine'] = merged_data['M2 inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
-merged_data['DR_Res_Oseltamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
-merged_data['DR_Res_Zanamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
-merged_data['DR_Res_Peramivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Oseltamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Zanamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+merged_data['DR_Res_Peramivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
 merged_data['DR_Res_Baloxavir'] = merged_data['PA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
 
 # Create DR_M2_Mut column
