@@ -109,7 +109,7 @@ workflow HUMAN {
 
     //
     // MODULE: CAT_FASTQ
-    //
+    //Concatenate the fastq files into singel files for each sample as required by IRMA
 
     CAT_FASTQ (
         read_input
@@ -120,7 +120,7 @@ workflow HUMAN {
     
     //
     // MODULE: IRMA
-    //
+    //Run IRMA to get the consensus sequences
 
     IRMA (
         CAT_FASTQ.out.reads
@@ -128,7 +128,7 @@ workflow HUMAN {
 
     //
     // MODULE: IRMA STAT
-    //
+    //Get technical data from IRMA
 
     TECHNICAL (
         IRMA.out.read_count
