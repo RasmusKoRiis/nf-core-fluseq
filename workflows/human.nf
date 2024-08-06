@@ -136,6 +136,7 @@ workflow HUMAN {
 
 
     /// SUBTYPE CHANNEL
+    /// This channel is used to store the fasta files for each segment
     IRMA.out.amended_consensus
     .map { meta, files -> 
         def ha_files = files.findAll { it.getName().contains('_4') }
@@ -154,7 +155,8 @@ workflow HUMAN {
 
     //
     // MODULE: SUBTYPE FINDER
-    //
+    //Use BLAST on local database to find the subtype of the sequences
+
     def currentDir = System.getProperty('user.dir')
     def fullPathHA = "${currentDir}/${params.ha_database}"
     def fullPathNA = "${currentDir}/${params.na_database}"
@@ -166,6 +168,7 @@ workflow HUMAN {
 
 
     /// MUTATION CHANNELS
+    /// This channel is used to store the fasta files for each segment togheter with subtype and ID
 
     IRMA.out.amended_consensus
     .join(SUBTYPEFINDER.out.subtype, by: [0]) // Assuming meta.id is the first element in the tuple
@@ -180,7 +183,7 @@ workflow HUMAN {
 
     //
     // MODULE: FASTA CONFIGURATION
-    //
+    //Configure the fasta file names for reporting
 
     
     FASTA_CONFIGURATION (
@@ -190,8 +193,9 @@ workflow HUMAN {
 
     //
     // MODULE: COVERAGE
-    //
+    //Calculate the coverage of the sequences and filter out low quality sequences
 
+    /// Coverage threshold from the params/user
     def seq_quality_thershold = params.seq_quality_thershold
 
     COVERAGE (
@@ -201,7 +205,7 @@ workflow HUMAN {
 
     //
     // MODULE: AMINO ACID TRANSLATION
-    //
+    //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
     def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"
     
@@ -211,7 +215,7 @@ workflow HUMAN {
 
     //
     // MODULE: MUTATION
-    //
+    //Compare translated amino acid sequences to references to find mutations
 
     def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
@@ -221,7 +225,7 @@ workflow HUMAN {
  
     //
     // MODULE: TABLELOOKUP
-    //
+    //Check if mutations are annotated in mammalian and inhibition databases
 
     def fullPath_tables = "${currentDir}/${params.mutation_tables}"
     def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
@@ -234,7 +238,7 @@ workflow HUMAN {
 
     //
     // MODULE: REPORT
-    //
+    //Combine all data into a report
 
     def runid = params.runid
     def seq_instrument   = params.seq_instrument  
@@ -255,8 +259,6 @@ workflow HUMAN {
         TECHNICAL.out.depth_files_report.collect(),
         seq_instrument,
         samplesheet
-
-        
 
     )
     
