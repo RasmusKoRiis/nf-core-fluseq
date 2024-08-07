@@ -76,7 +76,6 @@ The output includes:
 - A report in CSV format.
 - A multiple FASTA file of sequences that passed quality filters.
 
-For a detailed explanation of the output files and reports, refer to the [output documentation](https://nf-co.re/fluseq/output).
 
 ## Credits
 
