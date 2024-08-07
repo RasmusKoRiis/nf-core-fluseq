@@ -59,11 +59,11 @@ nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
 
 ### Important Parameters
 
-- \`--input\` (default: \`assets/samplesheet.csv\`): Path to the samplesheet.
-- \`--seq_quality_threshold\` (default: 95): Coverage threshold for consensus sequences.
-- \`--samplesDir\` (default: \`../data\`): Directory containing the FASTQ files.
+- `--input\` (default: `assets/samplesheet.csv`): Path to the samplesheet.
+- `--seq_quality_threshold` (default: 95): Coverage threshold for consensus sequences.
+- `--samplesDir` (default: `../data`): Directory containing the FASTQ files.
 
-All parameters are detailed in the \`nextflow.config\` file.
+All parameters are detailed in the `nextflow.config` file.
 
 ## Pipeline Output
 
