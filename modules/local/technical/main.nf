@@ -36,7 +36,6 @@ process TECHNICAL {
     # Make output name
     output_name="${meta.id}_irmastat.csv"
     
-
     python /project-bin/sequence_quality.py \
         $irma_stat \
         \$output_name \

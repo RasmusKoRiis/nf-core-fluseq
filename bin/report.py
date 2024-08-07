@@ -3,7 +3,6 @@ import glob
 import sys
 
 #MERGE ALL DATA
-
 # Get a list of all CSV files in the current directory
 csv_files = glob.glob('*.csv')
 samplesheet = sys.argv[1]
@@ -15,8 +14,6 @@ samplesheet_df = pd.read_csv(samplesheet, sep='\t')
 samplesheet_df.rename(columns={'SequenceID': 'Sample'}, inplace=True)
 # Remove Barcode columns
 samplesheet_df = samplesheet_df.drop(columns=['Barcode'])
-
-
 
 # Initialize an empty DataFrame to store the merged data
 merged_data = None
@@ -52,8 +49,6 @@ columns_to_fill = [col for col in merged_data.columns if any(keyword in col.lowe
 
 # Fill NA values in the identified columns
 merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
-
-
 
 # RESISTANCE COLUMN
 merged_data['DR_Res_Adamantine'] = merged_data['M2 inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
@@ -124,8 +119,6 @@ merged_data = merged_data.reindex(columns=all_columns)
 
 # Fill all empty values in merged_data with NaN
 merged_data = merged_data.applymap(lambda x: 'NA' if pd.isna(x) else x)
-
-
 
 # Write the merged data to a new CSV file
 merged_data.to_csv('merged_report.csv', index=False)

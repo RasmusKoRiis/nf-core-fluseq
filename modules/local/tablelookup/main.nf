@@ -48,18 +48,12 @@ process TABLELOOKUP {
 
         type="mammalian"
         filename=\$(basename \$mutation_file)
-        #echo "Filename: \${filename}"
-
         filename_no_ext=\${filename%.*}  
-        #echo "Filename no ext: \${filename_no_ext}"
-
         segment=\$(echo "\${filename_no_ext}" | awk -F_ '{print \$2}')
-
-
 
         # Make output name
         output_name=${meta.id}_\${segment}"_mamalianadpation.csv"
-   
+
         python /project-bin/table_lookup.py \
         \$mutation_file\
         \$output_name\
@@ -76,18 +70,11 @@ process TABLELOOKUP {
 
         type="inhibtion"
         filename=\$(basename \$mutation_file)
-        #echo "Filename: \${filename}"
-
         filename_no_ext=\${filename%.*}  
-        #echo "Filename no ext: \${filename_no_ext}"
-
         segment=\$(echo "\${filename_no_ext}" | awk -F_ '{print \$2}')
 
         # Make output name
         output_name=${meta.id}_\${segment}"_inhibtion.csv"
-
-        echo "Segment: \${segment}"
-        echo "Subtype: \${subtype_name}"
 
         python /project-bin/table_lookup.py \
         \$mutation_file\
@@ -98,12 +85,7 @@ process TABLELOOKUP {
         ${meta.id} \
         \${type} \
 
-
-
-
     done
-
-
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

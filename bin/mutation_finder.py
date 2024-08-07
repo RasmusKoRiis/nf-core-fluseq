@@ -73,12 +73,6 @@ def check_frameshift(seq):
 def process_differences(row):
         return row['Differences']
     
-    #xs_count = sum([1 for x in row['Differences'].split(';') if 'X' in x])
-    #if xs_count > 20:
-    #    return 'Pos. FS ' + str(row['Frameshift/Poor Seq'])
-    #else:
-    #    return row['Differences']
-
 
 sequences = []
 
@@ -100,16 +94,6 @@ df['Differences'] = df.apply(process_differences, axis=1)
 # Split "ID" column into "sample" and "Ref_Name" columns
 df[['Sample', 'Ref_Name']] = df['ID'].str.split('|', n=1, expand=True)
 
-# Set the "Ref_Name" column to the 'segment' variable value
-#df['Ref_Name'] = segment
-
-# Combine the last character of the "sample" column with the first character of the "Ref_Name" column
-#df['sample'] = df['sample'] + '_' + df['Ref_Name'].str[:1]
-
-# Remove the first character of the "Ref_Name" column
-#df['Ref_Name'] = df['Ref_Name'].str[2:]
-#df['Ref_Name'] = segment
-
 # Drop the original "ID" column
 df.drop(columns=['Ref_Name'], inplace=True)
 df.drop(columns=['ID'], inplace=True)
@@ -117,7 +101,6 @@ df.drop(columns=['ID'], inplace=True)
 
 # Reorder the columns
 df = df[['Sample', 'Differences']]
-
 
 
 # Save the final dataframe to a CSV file

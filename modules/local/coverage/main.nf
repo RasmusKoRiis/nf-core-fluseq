@@ -3,7 +3,7 @@ process COVERAGE {
     tag "$meta.id"
     label 'process_single'
     errorStrategy 'ignore'
-    debug true
+  
 
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
@@ -53,8 +53,6 @@ process COVERAGE {
         output_csv="${meta.id}_\${segment}_coverage.csv"
         python /project-bin/coverage_finder.py "\$fasta_file" \$output_csv ${meta.id} \${segment}
 
-        # Append "Coverage" to the second column header of the CSV
-        #awk -F, 'NR == 1 {\$2 = \$2 " Coverage"; print; next} {print}' OFS=, \$output_csv  > temp.csv && mv temp.csv \$output_csv 
         # Append "Coverage" to the second column header of the CSV and rename the column
         awk -F, 'NR == 1 {
             split(\$2, a, "-"); 
@@ -78,14 +76,7 @@ process COVERAGE {
         fi
     done
 
-
-
     cat *.fasta > "${meta.id}_coverage.fa"
-
-
-
-
-
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -204,7 +204,7 @@ workflow HUMAN {
 
 
     //
-    // MODULE: AMINO ACID TRANSLATION
+    // MODULE: NEXTCLADE
     //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
     def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"

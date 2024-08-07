@@ -2,8 +2,7 @@
 process IRMA {
     tag "$meta.id"
     label 'process_medium'
-    //errorStrategy 'ignore'
-    //debug true
+   
 
 
     // TODO nf-core: List required Conda package(s).

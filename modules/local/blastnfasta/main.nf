@@ -69,8 +69,6 @@ process SEGMENTIFENTIFIER  {
             ;;
     esac
 
-
-
     # Version 1 of the fasta file with one naming convention
     new_name_1="\${prefix_number}_\${segment}_\${basename}"
     echo ">\${new_name_1}" > "\${segment}_\${basename}.fasta"

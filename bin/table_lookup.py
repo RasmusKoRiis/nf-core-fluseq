@@ -18,10 +18,6 @@ else:
 
 # Read mutations data from a CSV file
 mutations_df = pd.read_csv(mutations_file)
-print(mutations_df)
-print(segment)
-print(subtype)
-print(type)
 
 # Check if the value in the mutations column is NaN
 if pd.notna(mutations_df.iloc[0, 1]):
@@ -32,18 +28,15 @@ else:
 
 list_mutations_set = set(sample_mutations)
 
-print("Predefined list of mutations:", list_mutations_set)
 
 # Read in the DataFrame from the Excel file
 df = pd.read_excel(xlsx_file)
-print(df)
+
 
 # Filter DataFrame based on segment and subtype
 filtered_df = df[(df['segment'] == segment_look) & (df['subtype'] == subtype)]
 #filtered_df = df[(df['segment'] == segment)]
-print(filtered_df)
 
-print(f"Number of rows in filtered DataFrame: {len(filtered_df)}")
 
 # Initialize a dictionary to hold results
 results_dict = {}
@@ -57,11 +50,8 @@ for index, row in filtered_df.iterrows():
     else:
         row_mutations_set = set()
 
-    print(f"Processing row index {index} with mutations: {row_mutations_set}")
-
     # Find the intersection of row mutations and predefined mutations
     matching_mutations = row_mutations_set.intersection(list_mutations_set)
-    print(f"Matching mutations in row {index}: {matching_mutations}")
 
     if matching_mutations:
         # Convert matching mutations to string
@@ -86,5 +76,3 @@ else:
 df_output = df_output.drop_duplicates()
 df_output.to_csv(output_file, index=False)
 
-print("Final results captured:")
-print(df_output)

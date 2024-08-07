@@ -48,7 +48,6 @@ process MUTATION {
     """
     subtype_name=\$(cat ${subtype} )
 
-
     for fasta_file in ${fasta}; do
 
         filename=\$(basename \$fasta_file)
@@ -72,14 +71,6 @@ process MUTATION {
         mamailian=mamailian
         inhibition=inhibition
 
-        
-        echo "Segment: \${segment}"
-        echo "Processing file: \${fasta_file}"
-        echo "Reference: ${sequence_references}"
-        echo "Subtype name: \${subtype_name}"
-        echo "Output name: \${output_name_mamailian}"
-
-        
         python /project-bin/mutation_finder.py \
             \$fasta_file \
             \$reference_file \
@@ -89,7 +80,6 @@ process MUTATION {
             \$mamalian\
 
         
-        #if [[ "\${segment}" == *"NA"* || "\${segment}" == *"PA"* || "\${segment}" == *"M"* ]]; then
         if [[ "\${segment}" == *"NA"* ]]; then
 
         echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"

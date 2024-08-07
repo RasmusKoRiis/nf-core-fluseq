@@ -38,7 +38,6 @@ process NEXTCLADE {
         
     
         dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
-        echo "dataset_sample: \${dataset_sample}"
 
     # Check for specific subtype and segment combinations
         if [[ "\$subtype_name" == *"H3"* ]]; then

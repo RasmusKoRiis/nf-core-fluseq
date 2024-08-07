@@ -1,6 +1,6 @@
 process REPORTHUMAN {
     label 'process_single'
-    debug = true
+
 
 
     //conda "bioconda::blast=2.15.0"
@@ -34,31 +34,22 @@ process REPORTHUMAN {
 
     script:
     """ 
-    
     python /project-bin/report.py ${samplesheet}
 
-
     #Add constant parameters to the report
-
     # Add RunID column
     awk -v runid=${runid} -v OFS=',' '{ if (NR == 1) { print  \$0, "RunID" } else { print  \$0, runid } }' merged_report.csv > ${runid}_temp1.csv
 
     # Add Instrument ID column
     awk -v seq_instrument=${seq_instrument} -v OFS=',' '{ if (NR == 1) { print  \$0, "Instrument ID" } else { print  \$0, seq_instrument } }' ${runid}_temp1.csv > ${runid}_temp2.csv
 
-
     # Rename the final file to runID
     mv ${runid}_temp2.csv ${runid}.csv
-
-
-
 
 
     #Merge all filtered fasta files to one
     cat ${filtered_fasta} > ${runid}.fasta
     
-
-
     """
 
 }

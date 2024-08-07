@@ -166,8 +166,6 @@ def process_file(input_file, meta_id, segment):
         filtered_df.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
         filtered_df.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}1'}, inplace=True)
 
-
-
         # Create the new filename
         new_file_name = f"{meta_id}_{segment}_nextclade_{type}_mutation.csv"
 
