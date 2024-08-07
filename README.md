@@ -24,11 +24,10 @@ This pipeline processes FASTQ files from Nanopore sequencing of Influenza A and 
 
 Prepare a sample sheet (CSV or TSV) in the `assets` folder with the following format:
 
-\`\`\`plaintext
+```plaintext
 PCR-PlatePosition,SequenceID,Barcode,KonsCt
 A1*,sampleID,barcodeID,ct-value*
 *not compulsory
-\`\`\`
 
 Each row lists a sample to be analyzed. Samples not listed in the sheet will be excluded from the analysis.
 
@@ -36,7 +35,7 @@ Each row lists a sample to be analyzed. Samples not listed in the sheet will be 
 
 Ensure your directory structure is as follows:
 
-\`\`\`plaintext
+
 ./
   |-data
          |-barcode1
@@ -47,7 +46,7 @@ Ensure your directory structure is as follows:
                      |-samplesheet.csv
                      |-samplesheet.tsv
                |-...
-\`\`\`
+
 
 ### Running the Pipeline
 
@@ -82,23 +81,3 @@ For a detailed explanation of the output files and reports, refer to the [output
 
 nf-core/fluseq was originally written by Rasmus Kopperud Riis.
 
-## Contributions and Support
-
-To contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
-
-For further assistance, join the [Slack #fluseq channel](https://nfcore.slack.com/channels/fluseq) (you can join with [this invite](https://nf-co.re/join/slack)).
-
-## Citations
-
-If you use nf-core/fluseq for your analysis, please cite it using the following DOI: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX).
-
-You can also cite the nf-core publication as follows:
-
-> **The nf-core framework for community-curated bioinformatics pipelines.**
->
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
->
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
-
-An extensive list of references for the tools used by the pipeline can be found in the [CITATIONS.md](CITATIONS.md) file.
-"""
