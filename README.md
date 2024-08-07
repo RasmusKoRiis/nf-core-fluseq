@@ -1,4 +1,4 @@
-# ![nf-core/fluseq](docs/images/nf-core-fluseq_logo_light.png#gh-light-mode-only) ![nf-core/fluseq](docs/images/nf-core-fluseq_logo_dark.png#gh-dark-mode-only)
+# nf-core/fluseq :sneezing_face: 
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
@@ -59,7 +59,7 @@ nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
 
 ### Important Parameters
 
-- `--input\` (default: `assets/samplesheet.csv`): Path to the samplesheet.
+- `--input` (default: `assets/samplesheet.csv`): Path to the samplesheet.
 - `--seq_quality_threshold` (default: 95): Coverage threshold for consensus sequences.
 - `--samplesDir` (default: `../data`): Directory containing the FASTQ files.
 
