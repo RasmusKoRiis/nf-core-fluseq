@@ -24,7 +24,7 @@ This pipeline processes FASTQ files from Nanopore sequencing of Influenza A and 
 
 Prepare a sample sheet (CSV or TSV) in the `assets` folder with the following format:
 
-```plaintext
+
 PCR-PlatePosition,SequenceID,Barcode,KonsCt
 A1*,sampleID,barcodeID,ct-value*
 *not compulsory
