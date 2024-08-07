@@ -24,9 +24,10 @@ This pipeline processes FASTQ files from Nanopore sequencing of Influenza A and 
 
 Prepare a sample sheet (CSV or TSV) in the `assets` folder with the following format:
 
-
+```
 PCR-PlatePosition,SequenceID,Barcode,KonsCt
 A1*,sampleID,barcodeID,ct-value*
+```
 *not compulsory
 
 Each row lists a sample to be analyzed. Samples not listed in the sheet will be excluded from the analysis.
@@ -35,7 +36,7 @@ Each row lists a sample to be analyzed. Samples not listed in the sheet will be 
 
 Ensure your directory structure is as follows:
 
-
+```
 ./
   |-data
          |-barcode1
@@ -46,15 +47,15 @@ Ensure your directory structure is as follows:
                      |-samplesheet.csv
                      |-samplesheet.tsv
                |-...
-
+```
 
 ### Running the Pipeline
 
 Navigate to the `nf-core-fluseq` folder and execute the following command with default parameters:
 
-\`\`\`bash
+```bash
 nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
-\`\`\`
+```
 
 ### Important Parameters
 
