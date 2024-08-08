@@ -2,6 +2,7 @@
 process IRMA {
     tag "$meta.id"
     label 'process_medium'
+    errroStrategy 'ignore'
    
 
 
