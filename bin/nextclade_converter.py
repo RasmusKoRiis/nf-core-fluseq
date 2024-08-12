@@ -30,7 +30,7 @@ def process_file(input_file, meta_id, segment):
         # Ensure no null values in empty columns
         filtered_df['Differences'] = filtered_df['Differences'].fillna('No mutations')
         filtered_df['glycosylation'] = filtered_df['glycosylation'].fillna('No glycosylation')
-        filtered_df['frameShifts'] = filtered_df['glycosylation'].fillna('No frameShifts')
+        filtered_df['frameShifts'] = filtered_df['frameShifts'].fillna('No frameShifts')
         filtered_df['aaDeletions'] = filtered_df['aaDeletions'].fillna('No aaDeletions')
         filtered_df['aaInsertions'] = filtered_df['aaInsertions'].fillna('No aaInsertions')
         summary_df = filtered_df.copy()
