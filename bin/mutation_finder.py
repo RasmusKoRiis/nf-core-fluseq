@@ -101,7 +101,7 @@ df.drop(columns=['ID'], inplace=True)
 
 # Reorder the columns
 df = df[['Sample', 'Differences']]
-
+df['Differences'] = df['Differences'].replace('', 'No mutations found')
 
 # Save the final dataframe to a CSV file
 df.to_csv(output_file, index=False)
