@@ -50,20 +50,42 @@ columns_to_fill = [col for col in merged_data.columns if any(keyword in col.lowe
 # Fill NA values in the identified columns
 merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
 
+# Function to check if a column exists, and if not, create it with 'NA' values
+def ensure_column(df, column_name):
+    if column_name not in df.columns:
+        df[column_name] = 'NA'
+
+# Ensure required columns exist
+ensure_column(merged_data, 'M2 inhibtion mutations')
+ensure_column(merged_data, 'NA inhibtion mutations')
+ensure_column(merged_data, 'PA inhibtion mutations')
+
 # RESISTANCE COLUMN
+ensure_column(merged_data, 'DR_Res_Adamantine')
 merged_data['DR_Res_Adamantine'] = merged_data['M2 inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+
+ensure_column(merged_data, 'DR_Res_Oseltamivir')
 merged_data['DR_Res_Oseltamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+
+ensure_column(merged_data, 'DR_Res_Zanamivir')
 merged_data['DR_Res_Zanamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+
+ensure_column(merged_data, 'DR_Res_Peramivir')
 merged_data['DR_Res_Peramivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+
+ensure_column(merged_data, 'DR_Res_Baloxavir')
 merged_data['DR_Res_Baloxavir'] = merged_data['PA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
 
 # Create DR_M2_Mut column
+ensure_column(merged_data, 'DR_M2_Mut')
 merged_data['DR_M2_Mut'] = merged_data.apply(lambda x: 'NA' if x['M2 inhibtion mutations'] == 'NA' else (x['M2 inhibtion mutations'] if x['DR_Res_Adamantine'] == 'Review' else 'L26;V27;A30;S31;G34;L38'), axis=1)
 
 # Create DR_PA_Mut column
+ensure_column(merged_data, 'DR_PA_Mut')
 merged_data['DR_PA_Mut'] = merged_data.apply(lambda x: 'NA' if x['PA inhibtion mutations'] == 'NA' else (x['PA inhibtion mutations'] if x['DR_Res_Baloxavir'] == 'Review' else 'E23;L28;K34;A36;A37;I38;E119;E198;E199'), axis=1)
 
 # Create DR_NA_Mut column
+ensure_column(merged_data, 'DR_NA_Mut')
 merged_data['DR_NA_Mut'] = merged_data.apply(
     lambda x: 'NA' if x['NA inhibtion mutations'] == 'NA' else (
         x['NA inhibtion mutations'] if x['DR_Res_Oseltamivir'] == 'Review' or x['DR_Res_Zanamivir'] == 'Review' or x['DR_Res_Peramivir'] == 'Review' else 
@@ -71,6 +93,7 @@ merged_data['DR_NA_Mut'] = merged_data.apply(
     ), 
     axis=1
 )
+
 
 # SUBTYPE COLUMN
 merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2' if x == 'H3N2' else 'A/H1N1' if x == 'H1N1' else 'B/Victoria' if x == 'VICVIC' else 'B/Victoria' if x == 'VIC' else x)

@@ -3,6 +3,7 @@ process COVERAGE {
     tag "$meta.id"
     label 'process_single'
     errorStrategy 'ignore'
+    debug true
   
 
     //conda "bioconda::blast=2.15.0"
@@ -49,17 +50,18 @@ process COVERAGE {
         segment=\${segment_subtype%-*}  
         subtype_name=\${segment_subtype#*-} 
         
+        echo "Segment: \$segment"
 
         output_csv="${meta.id}_\${segment}_coverage.csv"
         python /project-bin/coverage_finder.py "\$fasta_file" \$output_csv ${meta.id} \${segment}
 
-        # Append "Coverage" to the second column header of the CSV and rename the column
-        awk -F, 'NR == 1 {
-            split(\$2, a, "-"); 
-            \$2 = "Coverage-" a[2]; 
+
+        awk -F, 'NR == 1 { 
+            \$2 = "Coverage-" \$2; 
             print; 
-            next
+            next 
         } {print}' OFS=, \$output_csv > temp.csv && mv temp.csv \$output_csv
+
 
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
