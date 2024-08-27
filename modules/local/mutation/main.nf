@@ -77,7 +77,7 @@ process MUTATION {
             \${segment} \
             \$subtype_name \
             \$output_name_mamailian\
-            \$mamalian\
+            \$mamailian\
 
         
         if [[ "\${segment}" == *"NA"* ]]; then

@@ -2,6 +2,7 @@ process AMINOACIDTRANSLATION {
     tag "${meta.id}"
     label 'process_single'
     errorStrategy 'ignore'
+    debug true
  
     container 'docker.io/nextstrain/nextclade:latest'
 

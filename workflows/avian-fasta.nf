@@ -225,10 +225,12 @@ workflow AVIANFASTA {
     // MODULE: COVERAGE
     //
 
-    
+    def seq_quality_thershold = params.seq_quality_thershold
+
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta
+         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
     )
+
 
     //
     // MODULE: AMINO ACID TRANSLATION
