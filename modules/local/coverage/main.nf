@@ -3,7 +3,6 @@ process COVERAGE {
     tag "$meta.id"
     label 'process_single'
     errorStrategy 'ignore'
-    debug true
   
 
     //conda "bioconda::blast=2.15.0"
@@ -57,10 +56,12 @@ process COVERAGE {
 
 
         awk -F, 'NR == 1 { 
+            sub(/.*-/, "", \$2); 
             \$2 = "Coverage-" \$2; 
             print; 
             next 
         } {print}' OFS=, \$output_csv > temp.csv && mv temp.csv \$output_csv
+
 
 
         txt_filename="${meta.id}_\${segment}_coverage.txt"
