@@ -30,10 +30,11 @@ def calculate_coverage(sequence):
         # Default length if no specific segment is found
         length = len(sequence)
     
+    raw_length = len(sequence)
     sequence_upper = sequence.upper()  # Convert sequence to uppercase
     n_count = sequence_upper.count('N')  # Count 'N' which now includes both 'N' and 'n'
-    print(f"Length: {length}, N count: {n_count}")
-    coverage = (length - n_count) / length * 100
+    print(f"Length: {length}, N count: {n_count}, Raw length: {raw_length}")
+    coverage = (raw_length - n_count) / length * 100
     if coverage < 0:
         coverage = 0
     return coverage
