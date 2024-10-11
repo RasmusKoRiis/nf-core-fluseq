@@ -111,7 +111,7 @@ required_columns = ['Sample', 'Sekvens_Resultat', 'Coverage-HA', 'Coverage-M', '
                     'IRMA_nomatch', 'IRMA_passQC', 'M1 Differences human', 'M2 Differences human', 'M2 Differences inhibition_human', 
                     'M2 inhibtion mutations', 'NA Differences human', 'NA Differences human_vaccine', 'NA Differences inhibition_human', 
                     'NA inhibtion mutations', 'NP Differences human', 'NS1 Differences human', 'Nextclade QC HA1', 'Nextclade QC M1', 
-                    'Nextclade QC NA1', 'Nextclade QC NP1', 'Nextclade QC NS1', 'Nextclade QC PA1', 'Nextclade QC PB11', 'Nextclade QC PB21', 
+                    'Nextclade QC NA', 'Nextclade QC NP', 'Nextclade QC NS', 'Nextclade QC PA', 'Nextclade QC PB1', 'Nextclade QC PB2', 
                     'PA Differences human', 'PA Differences inhibition_human', 'PA inhibtion mutations', 'PB1 Differences human', 
                     'PB2 Differences human', 'SigPep Differences human', 'Subtype', 'aaDeletions HA1', 'aaDeletions M1', 'aaDeletions M2', 
                     'aaDeletions NA', 'aaDeletions NP', 'aaDeletions NS', 'aaDeletions PA', 'aaDeletions PB1', 'aaDeletions PB2', 

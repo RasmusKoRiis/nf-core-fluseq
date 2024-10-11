@@ -225,8 +225,11 @@ process NEXTCLADE {
                 \${type}
         fi    
         subtype=\$(cat ${subtype})
-       
+
     done
+
+
+    
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
