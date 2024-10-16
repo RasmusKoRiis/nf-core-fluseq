@@ -10,26 +10,27 @@ segment = sys.argv[4]
 
 # Function to calculate coverage
 def calculate_coverage(sequence):
-    if 'HA' in sequence:
+    if 'HA-' in sequence:
         length = 1800
-    elif 'NA' in sequence:
+    elif 'NA-' in sequence:
         length = 1450
-    elif 'PB2' in sequence:
+    elif 'PB2-' in sequence:
         length = 2400
-    elif 'PB1' in sequence:
+    elif 'PB1-' in sequence:
         length = 2400
-    elif 'PA' in sequence:
+    elif 'PA-' in sequence:
         length = 2300
-    elif 'NP' in sequence:
+    elif 'NP-' in sequence:
         length = 1600
-    elif 'NS' in sequence:
+    elif 'NS-' in sequence:
         length = 920
-    elif 'M' in sequence:
+    elif 'M-' in sequence:
         length = 1100
     else:
         # Default length if no specific segment is found
         length = len(sequence)
     
+
     raw_length = len(sequence)
     sequence_upper = sequence.upper()  # Convert sequence to uppercase
     n_count = sequence_upper.count('N')  # Count 'N' which now includes both 'N' and 'n'

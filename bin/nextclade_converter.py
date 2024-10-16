@@ -80,7 +80,7 @@ def process_file(input_file, meta_id, segment):
         #df_sigpep.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
         #df_sigpep.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}'}, inplace=True)
         #df_sigpep.to_csv(f'./{meta_id}_SigPep_nextclade_{type}_mutation.csv', index=False)
-        #print(f"Filtered SigPep file saved as: ./{meta_id}_SigPep_nextclade_mutation.csv")
+        #lsprint(f"Filtered SigPep file saved as: ./{meta_id}_SigPep_nextclade_mutation.csv")
         
 
         # Make Sample Nextclade summary file

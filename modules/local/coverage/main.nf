@@ -64,6 +64,10 @@ process COVERAGE {
 
 
 
+
+
+
+
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
         # Use awk to check for numbers above XX and capture any such number
