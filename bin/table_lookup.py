@@ -16,6 +16,8 @@ if segment == "NA":
 else:
     segment_look = segment
 
+print(segment)
+
 # Read mutations data from a CSV file
 mutations_df = pd.read_csv(mutations_file)
 
@@ -23,6 +25,7 @@ mutations_df = pd.read_csv(mutations_file)
 if pd.notna(mutations_df.iloc[0, 1]):
     # Split and strip spaces from mutations
     sample_mutations = [mut.strip() for mut in mutations_df.iloc[0, 1].split(';')]
+    print(sample_mutations)
 else:
     sample_mutations = []
 
@@ -36,6 +39,7 @@ df = pd.read_excel(xlsx_file)
 # Filter DataFrame based on segment and subtype
 filtered_df = df[(df['segment'] == segment_look) & (df['subtype'] == subtype)]
 #filtered_df = df[(df['segment'] == segment)]
+print(filtered_df)
 
 
 # Initialize a dictionary to hold results

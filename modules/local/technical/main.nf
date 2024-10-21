@@ -2,6 +2,7 @@
 process TECHNICAL {
     tag "$meta.id"
     label 'process_single'
+    errorStrategy 'ignore'
    
 
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'

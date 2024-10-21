@@ -2,6 +2,7 @@
 process TABLELOOKUP {
     tag "$meta.id"
     label 'process_single'
+    debug true
     //errorStrategy 'ignore'
     
     
@@ -68,6 +69,8 @@ process TABLELOOKUP {
 
     for mutation_file in ${inhibition_mutation}; do
 
+        
+        
         type="inhibtion"
         filename=\$(basename \$mutation_file)
         filename_no_ext=\${filename%.*}  

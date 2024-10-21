@@ -69,23 +69,28 @@ def process_file(input_file, meta_id, segment):
         df_ha2.to_csv(f'./{meta_id}_HA2_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered HA2 file saved as: ./{meta_id}_HA2_nextclade_mutation.csv")
             
-        # Filter and save the SigPep mutations
-        #df_sigpep = filtered_df[['Sample', 'clade', 'subclade', 'glycosylation', 'coverage', 'frameShifts', 'SigPep', 'aaDeletions', 'aaInsertions', 'qc.overallStatus']].copy()
-        #df_sigpep.rename(columns={'SigPep': 'Differences'}, inplace=True)
-        #columns_to_remove = ['clade', 'subclade', 'glycosylation', 'coverage', 'Differences']
-        #df_sigpep.drop(columns=columns_to_remove, inplace=True)
-        #Renaming columns to segments spesific names
-        #df_sigpep.rename(columns={'frameShifts': f'frameShifts {segment}'}, inplace=True)
-        #df_sigpep.rename(columns={'aaDeletions': f'aaDeletions {segment}'}, inplace=True)
-        #df_sigpep.rename(columns={'aaInsertions': f'aaInsertions {segment}'}, inplace=True)
-        #df_sigpep.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}'}, inplace=True)
-        #df_sigpep.to_csv(f'./{meta_id}_SigPep_nextclade_{type}_mutation.csv', index=False)
-        #lsprint(f"Filtered SigPep file saved as: ./{meta_id}_SigPep_nextclade_mutation.csv")
-        
-
         # Make Sample Nextclade summary file
         columns_to_remove = ['Differences', 'coverage', 'frameShifts','aaDeletions','aaInsertions', 'Differences', 'qc.overallStatus', 'qc.mixedSites.totalMixedSites']
         summary_df.drop(columns=columns_to_remove, inplace=True)
+
+        #Function for splitting glycosylation column
+        def split_glycosylation(substitutions):
+            if pd.isna(substitutions) or substitutions == "No glycosylation":
+                return ["No glycosylation"] * 3
+            changes = substitutions.split(',')
+            changes = [c.strip() for c in changes]  # Ensure there are no leading/trailing spaces
+            if len(changes) <= 22:
+                return [",".join(changes), "", ""]
+            elif len(changes) <= 44:
+                return [",".join(changes[:22]), ",".join(changes[22:]), ""]
+            else:
+                return [",".join(changes[:22]), ",".join(changes[22:44]), ",".join(changes[44:])]
+
+       
+        # Split the glycosylation into separate columns
+        summary_df[['HA_glycosylation_1', 'HA_glycosylation_2', 'HA_glycosylation_3']] = \
+            pd.DataFrame(summary_df['glycosylation'].apply(split_glycosylation).tolist(), index=summary_df.index)
+
         summary_df.to_csv(f'./{meta_id}_nextclade_summary.csv', index=False)      
 
     elif 'M' in segment:

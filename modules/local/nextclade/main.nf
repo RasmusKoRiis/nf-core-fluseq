@@ -216,6 +216,7 @@ process NEXTCLADE {
 
         # Convert Nextclade output to mutations, frameshift and glyco files
         type=NC
+        
         nextclade_csv="./${meta.id}_\${segment}_nextclade.csv"
         if [[ -f "\$nextclade_csv" ]]; then
             python3 /project-bin/nextclade_converter.py \
