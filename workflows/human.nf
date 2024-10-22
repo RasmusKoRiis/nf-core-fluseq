@@ -233,7 +233,7 @@ workflow HUMAN {
 
     
     TABLELOOKUP  (
-        MUTATIONHUMAN.out.human_mutation, MUTATIONHUMAN.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
+        MUTATIONHUMAN.out.inhibtion_mutation, fullPath_inhibtion_mutation 
     )
 
     //
