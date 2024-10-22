@@ -21,7 +21,7 @@ process MUTATION {
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
     tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
-    tuple val(meta), path("*inhibtion_mutation.csv"), emit: inhibtion_mutation
+    tuple val(meta), path("*inhibtion_mutation.csv"), path(subtype), emit: inhibtion_mutation
     
     path("*mamailian_mutation_report.csv"), emit: mamailian_mutation_report
     path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report

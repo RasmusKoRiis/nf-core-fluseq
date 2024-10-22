@@ -12,15 +12,12 @@ process TABLELOOKUP {
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
 
     input:
-    tuple val(meta), path(mamailian_mutation), path(subtype)
-    tuple val(meta), path(inhibition_mutation)
-    path(mutation_table_mammalian)
+    tuple val(meta), path(inhibition_mutation), path(subtype)
     path(inhibtion_mutation_table)
 
     output:
     //tuple val(meta), path("*.txt"), emit: genotype
     //tuple val(meta), path("*.csv"), emit: genotype_file
-    tuple val(meta), path("*mamalianadpation.csv"), emit: mamalianadpation_mutations
     tuple val(meta), path("*inhibtion.csv"), emit: inhibtion_mutations
     path("*.csv"), emit: lookup_report
     path "versions.yml", emit: versions
@@ -45,32 +42,8 @@ process TABLELOOKUP {
     """
     subtype_name=\$(cat ${subtype} )
 
-    for mutation_file in ${mamailian_mutation}; do
-
-        type="mammalian"
-        filename=\$(basename \$mutation_file)
-        filename_no_ext=\${filename%.*}  
-        segment=\$(echo "\${filename_no_ext}" | awk -F_ '{print \$2}')
-
-        # Make output name
-        output_name=${meta.id}_\${segment}"_mamalianadpation.csv"
-
-        python /project-bin/table_lookup.py \
-        \$mutation_file\
-        \$output_name\
-        ${mutation_table_mammalian} \
-        \${segment} \
-        \${subtype_name} \
-        ${meta.id} \
-        \${type} \
-
-    done
-
-
     for mutation_file in ${inhibition_mutation}; do
 
-        
-        
         type="inhibtion"
         filename=\$(basename \$mutation_file)
         filename_no_ext=\${filename%.*}  
