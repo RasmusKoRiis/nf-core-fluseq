@@ -78,18 +78,18 @@ merged_data['DR_Res_Baloxavir'] = merged_data['PA inhibtion mutations'].apply(la
 
 # Create DR_M2_Mut column
 ensure_column(merged_data, 'DR_M2_Mut')
-merged_data['DR_M2_Mut'] = merged_data.apply(lambda x: 'NA' if x['M2 inhibtion mutations'] == 'NA' else (x['M2 inhibtion mutations'] if x['DR_Res_Adamantine'] == 'Review' else 'L26;V27;A30;S31;G34;L38'), axis=1)
+merged_data['DR_M2_Mut'] = merged_data.apply(lambda x: 'NA' if x['M2 inhibtion mutations'] == 'NA' else (x['M2 inhibtion mutations'] if x['DR_Res_Adamantine'] == 'Review' else 'No Mutations'), axis=1)
 
 # Create DR_PA_Mut column
 ensure_column(merged_data, 'DR_PA_Mut')
-merged_data['DR_PA_Mut'] = merged_data.apply(lambda x: 'NA' if x['PA inhibtion mutations'] == 'NA' else (x['PA inhibtion mutations'] if x['DR_Res_Baloxavir'] == 'Review' else 'E23;L28;K34;A36;A37;I38;E119;E198;E199'), axis=1)
+merged_data['DR_PA_Mut'] = merged_data.apply(lambda x: 'NA' if x['PA inhibtion mutations'] == 'NA' else (x['PA inhibtion mutations'] if x['DR_Res_Baloxavir'] == 'Review' else 'No Mutations'), axis=1)
 
 # Create DR_NA_Mut column
 ensure_column(merged_data, 'DR_NA_Mut')
 merged_data['DR_NA_Mut'] = merged_data.apply(
     lambda x: 'NA' if x['NA inhibtion mutations'] == 'NA' else (
         x['NA inhibtion mutations'] if x['DR_Res_Oseltamivir'] == 'Review' or x['DR_Res_Zanamivir'] == 'Review' or x['DR_Res_Peramivir'] == 'Review' else 
-        'E119;Q136;T148;D151;I222;R224;N245;N245-;A246-;T247-;G248-;K249-;A250-;K249;E27'
+        'No Mutations'
     ), 
     axis=1
 )
