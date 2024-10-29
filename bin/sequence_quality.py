@@ -30,13 +30,13 @@ irma_cols.insert(0, 'Sample', meta_id)
 # Create the final dataframe
 final_df = pd.DataFrame({
     'Sample': [meta_id],
-    'IRMA_initial': df.loc[df['Record'] == '1-initial', 'Reads'].values[0],
-    'IRMA_failQC': df.loc[df['Record'] == '2-failQC', 'Reads'].values[0],
-    'IRMA_passQC': df.loc[df['Record'] == '2-passQC', 'Reads'].values[0],
-    'IRMA_chimeric': df.loc[df['Record'] == '3-chimeric', 'Reads'].values[0],
-    'IRMA_nomatch': df.loc[df['Record'] == '3-nomatch', 'Reads'].values[0],
-    'IRMA_match': df.loc[df['Record'] == '3-match', 'Reads'].values[0],
-    'IRMA_altmatch': df.loc[df['Record'] == '3-altmatch', 'Reads'].values[0],
+    'IRMA_initial': df.loc[df['Record'] == '1-initial', 'Reads'].values[0] if '1-initial' in df['Record'].values else 0,
+    'IRMA_failQC': df.loc[df['Record'] == '2-failQC', 'Reads'].values[0] if '2-failQC' in df['Record'].values else 0,
+    'IRMA_passQC': df.loc[df['Record'] == '2-passQC', 'Reads'].values[0] if '2-passQC' in df['Record'].values else 0,
+    'IRMA_chimeric': df.loc[df['Record'] == '3-chimeric', 'Reads'].values[0] if '3-chimeric' in df['Record'].values else 0,
+    'IRMA_nomatch': df.loc[df['Record'] == '3-nomatch', 'Reads'].values[0] if '3-nomatch' in df['Record'].values else 0,
+    'IRMA_match': df.loc[df['Record'] == '3-match', 'Reads'].values[0] if '3-match' in df['Record'].values else 0,
+    'IRMA_altmatch': df.loc[df['Record'] == '3-altmatch', 'Reads'].values[0] if '3-altmatch' in df['Record'].values else 0,
 })
 
 # Append DEPTH columns

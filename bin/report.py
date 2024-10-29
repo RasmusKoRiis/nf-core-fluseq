@@ -73,6 +73,9 @@ merged_data['DR_Res_Zanamivir'] = merged_data['NA inhibtion mutations'].apply(la
 ensure_column(merged_data, 'DR_Res_Peramivir')
 merged_data['DR_Res_Peramivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
 
+ensure_column(merged_data, 'DR_Res_Laninamivir')
+merged_data['DR_Res_Laninamivir'] = merged_data['NA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANI' if 'No matching mutations' in x else 'Review'))
+
 ensure_column(merged_data, 'DR_Res_Baloxavir')
 merged_data['DR_Res_Baloxavir'] = merged_data['PA inhibtion mutations'].apply(lambda x: 'NA' if x == 'NA' else ('AANS' if 'No matching mutations' in x else 'Review'))
 
@@ -88,7 +91,7 @@ merged_data['DR_PA_Mut'] = merged_data.apply(lambda x: 'NA' if x['PA inhibtion m
 ensure_column(merged_data, 'DR_NA_Mut')
 merged_data['DR_NA_Mut'] = merged_data.apply(
     lambda x: 'NA' if x['NA inhibtion mutations'] == 'NA' else (
-        x['NA inhibtion mutations'] if x['DR_Res_Oseltamivir'] == 'Review' or x['DR_Res_Zanamivir'] == 'Review' or x['DR_Res_Peramivir'] == 'Review' else 
+        x['NA inhibtion mutations'] if x['DR_Res_Oseltamivir'] == 'Review' or x['DR_Res_Zanamivir'] == 'Review' or x['DR_Res_Peramivir'] == 'Review' or x['DR_Res_Laninamivir'] == 'Review' else 
         'No Mutations'
     ), 
     axis=1
@@ -153,11 +156,12 @@ merged_data["IRMA_noise"] = merged_data["IRMA_noise"].round(5)
 # Identify all columns that contain "Coverage" in their name
 coverage_columns = [col for col in merged_data.columns if "Coverage" in col]
 
-# Convert these columns to numeric and round to 5 decimal places
+# Convert these columns to numeric and round to 2 decimal places
 for col in coverage_columns:
     merged_data[col] = pd.to_numeric(merged_data[col], errors='coerce')
-    merged_data[col] = merged_data[col].round(5)
+    merged_data[col] = merged_data[col].round(2)
 
+merged_data[coverage_columns] = merged_data[coverage_columns].fillna('NA')
 
 
 # Write the merged data to a new CSV file
