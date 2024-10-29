@@ -146,6 +146,8 @@ merged_data = merged_data.applymap(lambda x: 'NA' if pd.isna(x) else x)
 # Ensure alle numeric columns have onlue 5 decimals
 numeric_cols = merged_data.select_dtypes(include='number').columns
 merged_data[numeric_cols] = merged_data[numeric_cols].round(5)
+merged_data["IRMA_noise"] = pd.to_numeric(merged_data["IRMA_noise"], errors='coerce')
+merged_data["IRMA_noise"] = merged_data["IRMA_noise"].round(5)
 
 # Write the merged data to a new CSV file
 merged_data.to_csv('merged_report.csv', index=False)
