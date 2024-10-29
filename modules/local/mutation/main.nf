@@ -82,7 +82,12 @@ process MUTATION {
         
         if [[ "\${segment}" == *"NA"* ]]; then
 
+
+
         echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
+
+
+
 
         python /project-bin/mutation_finder.py \
             \$fasta_file \

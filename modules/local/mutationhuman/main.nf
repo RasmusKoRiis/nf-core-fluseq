@@ -121,6 +121,8 @@ process MUTATIONHUMAN  {
             \$output_name_vaccine\
             \$human_vaccine
 
+
+
         else
             echo "Skipping execution for a segmentcontaining 'HA' or'NA' in its name: \${segment}"
         fi
