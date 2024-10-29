@@ -144,10 +144,21 @@ merged_data = merged_data.reindex(columns=all_columns)
 merged_data = merged_data.applymap(lambda x: 'NA' if pd.isna(x) else x)
 
 # Ensure alle numeric columns have onlue 5 decimals
+
 numeric_cols = merged_data.select_dtypes(include='number').columns
 merged_data[numeric_cols] = merged_data[numeric_cols].round(5)
 merged_data["IRMA_noise"] = pd.to_numeric(merged_data["IRMA_noise"], errors='coerce')
 merged_data["IRMA_noise"] = merged_data["IRMA_noise"].round(5)
+
+# Identify all columns that contain "Coverage" in their name
+coverage_columns = [col for col in merged_data.columns if "Coverage" in col]
+
+# Convert these columns to numeric and round to 5 decimal places
+for col in coverage_columns:
+    merged_data[col] = pd.to_numeric(merged_data[col], errors='coerce')
+    merged_data[col] = merged_data[col].round(5)
+
+
 
 # Write the merged data to a new CSV file
 merged_data.to_csv('merged_report.csv', index=False)
