@@ -35,19 +35,22 @@ process SUBTYPEFINDER {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    # Run BLAST for HA
     blastn -query $ha_fasta -subject $ha_database -outfmt 6 > "ha_${prefix}.tsv"
-    if awk -F '\t' '{if(\$3 > 94.9) exit 0; else exit 1}' "ha_${prefix}.tsv"; then
-        subtype_ha=\$(awk -F '\t' '{if(\$3 > 94.9) {split(\$2,a,"_"); print a[2]; exit}}' "ha_${prefix}.tsv")
+    if awk -F '\t' '{if(\$4 >= 0.9 * 1701) exit 0; else exit 1}' "ha_${prefix}.tsv"; then
+        subtype_ha=\$(awk -F '\t' '{if(\$4 >= 0.9 * 1701) {split(\$2, a, "_"); print a[2]; exit}}' "ha_${prefix}.tsv")
     else
         subtype_ha=""
     fi
 
+    # Run BLAST for NA
     blastn -query $na_fasta -subject $na_database -outfmt 6 > "na_${prefix}.tsv"
-    if awk -F '\t' '{if(\$3 > 94.9) exit 0; else exit 1}' "na_${prefix}.tsv"; then
-        subtype_na=\$(awk -F '\t' '{if(\$3 > 94.9) {split(\$2,a,"_"); print a[2]; exit}}' "na_${prefix}.tsv")
+    if awk -F '\t' '{if(\$4 >= 0.9 * 1410) exit 0; else exit 1}' "na_${prefix}.tsv"; then
+        subtype_na=\$(awk -F '\t' '{if(\$4 >= 0.9 * 1410) {split(\$2, a, "_"); print a[2]; exit}}' "na_${prefix}.tsv")
     else
         subtype_na=""
     fi
+
 
     subtype=""$meta.id",\$subtype_ha\$subtype_na"
     subtype_txt="\$subtype_ha\$subtype_na"

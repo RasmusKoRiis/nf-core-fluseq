@@ -51,8 +51,6 @@ process REPORTHUMAN {
 
 
 
-
-
     #Merge all filtered fasta files to one
     cat ${filtered_fasta} > ${runid}.fasta
     
