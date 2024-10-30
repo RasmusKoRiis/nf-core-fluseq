@@ -1,5 +1,6 @@
 import pandas as pd
 import sys
+import re
 import os.path
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -102,8 +103,14 @@ df.drop(columns=['ID'], inplace=True)
 # Reorder the columns
 df = df[['Sample', 'Differences']]
 
-# Remove the 'ins...' part if it appears at the end of the string
-df['Differences'] = df['Differences'].str.replace(r';ins[^\s]*$', '', regex=True)
+
+# Remove any instance of 'ins...' or 'del...' in the 'Differences' column
+df['Differences'] = df['Differences'].str.replace(r'\bins[^\s;]*;?|\bdel[^\s;]*;?', '', regex=True)
+
+# Remove any trailing or leading semicolons that may remain
+df['Differences'] = df['Differences'].str.strip(';')
+
+# Replace empty strings with 'No mutations found'
 df['Differences'] = df['Differences'].replace('', 'No mutations found')
 
 # Save the final dataframe to a CSV file
