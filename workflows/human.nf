@@ -61,6 +61,7 @@ include { MUTATIONHUMAN               } from '../modules/local/mutationhuman/mai
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
 include { TECHNICAL                   } from '../modules/local/technical/main'
+include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/main'
 
 
 
@@ -126,6 +127,17 @@ workflow HUMAN {
         CAT_FASTQ.out.reads
     )
 
+    
+    
+    //
+    // MODULE: DEPTH ANALYSIS
+    //
+
+    DEPTH_ANALYSIS (
+        IRMA.out.bam
+    )
+    
+    
     //
     // MODULE: IRMA STAT
     //Get technical data from IRMA
