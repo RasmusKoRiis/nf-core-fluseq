@@ -32,8 +32,7 @@ process MERGE_DEPTH {
 
     script:
     """
-    print("Hello")
-    #python3 /project-bin/depth_analysis_merge.py  
+    python3 /project-bin/depth_analysis_merge.py  
         
     """
 }

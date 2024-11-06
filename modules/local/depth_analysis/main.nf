@@ -25,14 +25,14 @@ process DEPTH_ANALYSIS {
    
 
     output:
-    tuple val(meta), path("*.csv") , emit: depth
-    path("*.csv") , emit: depth_report
+    path("*merged_depth_analysis.csv") , emit: depth_report
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     """
+
 
 
     python3 /project-bin/depth_analysis.py  \
