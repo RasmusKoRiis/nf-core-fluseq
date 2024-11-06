@@ -1,5 +1,5 @@
 
-process DEPTH_ANALYSIS {
+process MERGE_DEPTH {
     tag "$meta.id"
     label 'process_medium'
     debug false
@@ -21,23 +21,19 @@ process DEPTH_ANALYSIS {
         //'biocontainers/irma:1.0.3--pl5321hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(bam), path(bai)
+    path(csv)
    
 
     output:
-    tuple val(meta), path("*.csv") , emit: depth
-    path("*.csv") , emit: depth_report
+    path("*.csv") , emit: depth_report_merged
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     """
-
-
-    python3 /project-bin/depth_analysis.py  \
-                ${meta.id} 
-
-     
+    print("Hello")
+    #python3 /project-bin/depth_analysis_merge.py  
+        
     """
 }

@@ -62,6 +62,7 @@ include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
 include { TECHNICAL                   } from '../modules/local/technical/main'
 include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/main'
+include { MERGE_DEPTH                 } from '../modules/local/merge_depth/main'
 
 
 
@@ -135,6 +136,16 @@ workflow HUMAN {
 
     DEPTH_ANALYSIS (
         IRMA.out.bam
+    )
+
+
+    //
+    // MODULE: MDEPTH REPORT
+    //
+
+    MERGE_DEPTH (
+        DEPTH_ANALYSIS.out.depth_report.collect()
+    
     )
     
     
