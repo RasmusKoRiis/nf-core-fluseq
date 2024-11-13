@@ -16,6 +16,7 @@ process NEXTCLADE {
     tuple val(meta), path("*nextclade.csv"), emit: nextclade_csv, optional: true
     tuple val(meta), path("*translation*fasta"), path(subtype), emit: aminoacid_sequence
     tuple val(meta), path("*mutation.csv"), emit: nextclade_filtered, optional: true
+    
 
 
     path("*summary.csv"), emit: nextclade_summary_rapport, optional: true
@@ -230,12 +231,11 @@ process NEXTCLADE {
     done
 
 
-    
-
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        nextclade: \$(echo \$(nextclade --version 2>&1) | sed 's/^.*nextclade //; s/ .*\$//')
     END_VERSIONS
+
 
     """
 }

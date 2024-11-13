@@ -117,6 +117,7 @@ workflow HUMAN {
         read_input
     )
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
+    
 
 
     
@@ -127,7 +128,8 @@ workflow HUMAN {
     IRMA (
         CAT_FASTQ.out.reads
     )
-
+    
+    
     
     
     //
@@ -236,6 +238,8 @@ workflow HUMAN {
         COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
     )
 
+    ch_versions = ch_versions.mix(NEXTCLADE.out.versions.first())
+
     //
     // MODULE: MUTATION
     //Compare translated amino acid sequences to references to find mutations
@@ -313,6 +317,10 @@ workflow HUMAN {
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(NEXTCLADE.out.versions.first().ifEmpty(null))
+
+   
+  
 
     MULTIQC (
         ch_multiqc_files.collect(),

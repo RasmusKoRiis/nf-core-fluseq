@@ -2,7 +2,7 @@ process AMINOACIDTRANSLATION {
     tag "${meta.id}"
     label 'process_single'
     errorStrategy 'ignore'
-    debug true
+
  
     container 'docker.io/nextstrain/nextclade:latest'
 
@@ -49,7 +49,7 @@ process AMINOACIDTRANSLATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        nextclade: \$(echo \$(nextclade --version 2>&1) | sed 's/^.*nextclade //; s/ .*\$//')
     END_VERSIONS
 
     """

@@ -31,6 +31,7 @@ process IRMA {
     tuple val(meta), path("$meta.id/amended_consensus/*.fa") , emit: amended_consensus
     tuple val(meta), path("$meta.id/secondary") , emit: secondary
   
+  
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,5 +39,6 @@ process IRMA {
     script:
     """
     IRMA FLU-minion $fastq ${meta.id}
+
     """
 }
