@@ -13,7 +13,7 @@ process DEPTH_ANALYSIS {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
+    container 'docker.io/rasmuskriis/nextclade-python'
     containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

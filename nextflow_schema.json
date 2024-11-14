@@ -20,7 +20,8 @@
                     "pattern": "^\\S+\\.csv$",
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
                     "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/fluseq/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-file-csv",
+                    "default": "assets/samplesheet.csv"
                 },
                 "outdir": {
                     "type": "string",
@@ -280,6 +281,56 @@
         "samplesDir": {
             "type": "string",
             "default": "../data"
+        },
+        "season": {
+            "type": "string"
+        },
+        "runid": {
+            "type": "string",
+            "default": "Unknown"
+        },
+        "seq_instrument": {
+            "type": "string",
+            "default": "Nanopore-GN_GBX03008"
+        },
+        "seq_quality_thershold": {
+            "type": "integer",
+            "default": 20
+        },
+        "file": {
+            "type": "string",
+            "default": "human-fastq"
+        },
+        "ha_database": {
+            "type": "string",
+            "default": "assets/human_HA.fasta"
+        },
+        "na_database": {
+            "type": "string",
+            "default": "assets/human_NA.fasta"
+        },
+        "mamalian_mutation_db": {
+            "type": "string",
+            "default": "assets/Mammalian_Mutations_of_Intrest_2324.xlsx"
+        },
+        "inhibtion_mutation_db": {
+            "type": "string",
+            "default": "assets/Inhibtion_Mutations_of_Intrest_2324.xlsx"
+        },
+        "genotype_database": {
+            "type": "string"
+        },
+        "sequence_references": {
+            "type": "string",
+            "default": "assets/sequence_references"
+        },
+        "nextclade_dataset": {
+            "type": "string",
+            "default": "assets/nextclade_datasets/"
+        },
+        "mutation_tables": {
+            "type": "string",
+            "default": "assets/mutation_tables"
         }
     }
 }
