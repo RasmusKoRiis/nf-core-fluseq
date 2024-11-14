@@ -149,6 +149,8 @@ workflow HUMAN {
         DEPTH_ANALYSIS.out.depth_report.collect()
     
     )
+
+    ch_versions = ch_versions.mix(BASERATIO.out.versions.first())
     
     
     //
@@ -190,6 +192,8 @@ workflow HUMAN {
     SUBTYPEFINDER (
         IRMA_ha_na_fasta, fullPathHA, fullPathNA
     )
+
+    ch_versions = ch_versions.mix(SUBTYPEFINDER.out.versions.first())
 
 
     /// MUTATION CHANNELS
@@ -249,6 +253,8 @@ workflow HUMAN {
     MUTATIONHUMAN  (
        NEXTCLADE.out.aminoacid_sequence, fullPath_references_2
     )
+
+    ch_versions = ch_versions.mix(MUTATIONHUMAN.out.versions.first())
  
     //
     // MODULE: TABLELOOKUP
@@ -318,6 +324,10 @@ workflow HUMAN {
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(NEXTCLADE.out.versions.first().ifEmpty(null))
+    ch_multiqc_files = ch_multiqc_files.mix(SUBTYPEFINDER.out.versions.first().ifEmpty(null))
+    ch_multiqc_files = ch_multiqc_files.mix(MUTATIONHUMAN.out.versions.first().ifEmpty(null))
+    ch_multiqc_files = ch_multiqc_files.mix(BASERATIO.out.versions.first().ifEmpty(null))
+
 
    
   

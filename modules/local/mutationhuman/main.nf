@@ -130,9 +130,10 @@ process MUTATIONHUMAN  {
     done
     
 
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        python: \$(python --version 2>&1)
     END_VERSIONS
     """
 }

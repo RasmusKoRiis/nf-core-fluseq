@@ -14,6 +14,7 @@ process BASERATIO {
     output:
 
     path("*.csv"), emit: report
+    path "versions.yml", emit: versions
 
 
 
@@ -25,7 +26,11 @@ process BASERATIO {
     """ 
     python /project-bin/depth_analysis_merge.py 
 
-    
+        cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version 2>&1)
+    END_VERSIONS
+
     """
 
 }
