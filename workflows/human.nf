@@ -78,6 +78,12 @@ include { BASERATIO                   } from '../modules/local/baseratio/main'
 // Info required for completion email and summary
 def multiqc_report = []
 
+log.info "Checking file existence:"
+log.info "HA database path: ${params.ha_database}"
+log.info "HA database file exists: ${file(params.ha_database).exists()}"
+log.info "NA database path: ${params.na_database}"
+log.info "NA database file exists: ${file(params.na_database).exists()}"
+
 
 // Function to parse the sample sheet
 def parseSampleSheet(sampleSheetPath) {
