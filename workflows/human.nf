@@ -187,12 +187,15 @@ workflow HUMAN {
     def currentDir = System.getProperty('user.dir')
     //def fullPathHA = "${currentDir}/${params.ha_database}"
     //def fullPathNA = "${currentDir}/${params.na_database}"
-    def fullPathHA = "${params.ha_database}"
-    def fullPathNA = "${params.na_database}"
-    fullPathHA.view()
+
+    def fullPathHA = params.ha_database
+    def fullPathNA = params.na_database
+
+
 
 
     SUBTYPEFINDER (
+        //IRMA_ha_na_fasta, fullPathHA, fullPathNA
         IRMA_ha_na_fasta, fullPathHA, fullPathNA
     )
 
