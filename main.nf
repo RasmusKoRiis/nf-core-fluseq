@@ -11,6 +11,19 @@
 
 nextflow.enable.dsl = 2
 
+#!/usr/bin/env nextflow
+
+nextflow.enable.dsl = 2
+
+// Add these lines
+log.info "Checking database file existence:"
+log.info "HA database path: ${params.ha_database}"
+log.info "HA database file exists: ${file(params.ha_database).exists()}"
+log.info "NA database path: ${params.na_database}"
+log.info "NA database file exists: ${file(params.na_database).exists()}"
+
+// Your existing workflow code follows...
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     VALIDATE & PRINT PARAMETER SUMMARY
