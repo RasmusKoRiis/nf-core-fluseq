@@ -78,10 +78,6 @@ include { BASERATIO                   } from '../modules/local/baseratio/main'
 // Info required for completion email and summary
 def multiqc_report = []
 
-println "NA database exists: ${file(params.na_database).exists()}"
-println "HA database exists: ${file(params.ha_database).exists()}"
-
-
 
 // Function to parse the sample sheet
 def parseSampleSheet(sampleSheetPath) {
@@ -192,8 +188,8 @@ workflow HUMAN {
     //def fullPathHA = "${currentDir}/${params.ha_database}"
     //def fullPathNA = "${currentDir}/${params.na_database}"
 
-    def fullPathNA = file(params.na_database)
-    def fullPathHA = file(params.ha_database)
+    def fullPathHA = file(params.ha_database).absolutePath
+    def fullPathNA = file(params.na_database).absolutePath
 
 
 
