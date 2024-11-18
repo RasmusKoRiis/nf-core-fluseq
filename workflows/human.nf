@@ -189,6 +189,7 @@ workflow HUMAN {
     //def fullPathNA = "${currentDir}/${params.na_database}"
     def fullPathHA = "${params.ha_database}"
     def fullPathNA = "${params.na_database}"
+    fullPathHA.view()
 
 
     SUBTYPEFINDER (
