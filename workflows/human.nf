@@ -185,8 +185,10 @@ workflow HUMAN {
     //Use BLAST on local database to find the subtype of the sequences
 
     def currentDir = System.getProperty('user.dir')
-    def fullPathHA = "${currentDir}/${params.ha_database}"
-    def fullPathNA = "${currentDir}/${params.na_database}"
+    //def fullPathHA = "${currentDir}/${params.ha_database}"
+    //def fullPathNA = "${currentDir}/${params.na_database}"
+    def fullPathHA = "${params.ha_database}"
+    def fullPathNA = "${params.na_database}"
 
 
     SUBTYPEFINDER (
