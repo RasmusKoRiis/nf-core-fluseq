@@ -188,8 +188,8 @@ workflow HUMAN {
     //def fullPathHA = "${currentDir}/${params.ha_database}"
     //def fullPathNA = "${currentDir}/${params.na_database}"
 
-    def fullPathHA = params.ha_database
-    def fullPathNA = params.na_database
+    def fullPathNA = file(params.na_database)
+    def fullPathHA = file(params.ha_database)
 
 
 

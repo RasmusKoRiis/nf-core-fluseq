@@ -9,8 +9,8 @@ process SUBTYPEFINDER {
 
     input:
     tuple val(meta), path(ha_fasta), path(na_fasta),path(pa_fasta), path(pb1_fasta),path(pb2_fasta), path(np_fasta),path(ns_fasta), path(m_fasta)
-    val(ha_database)
-    val(na_database)
+    path(ha_database)
+    path(na_database)
 
     output:
     tuple val(meta), path("*subtype.txt"), emit: subtype
