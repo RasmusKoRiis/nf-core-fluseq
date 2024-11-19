@@ -46,6 +46,8 @@ process SUBTYPEFINDER {
     else
         subtype_ha=""
     fi
+    
+    echo "hello"
 
     # Run BLAST for NA
     blastn -query $na_fasta -subject $na_database -outfmt 6 > "na_${prefix}.tsv"
