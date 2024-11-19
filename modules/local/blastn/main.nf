@@ -2,6 +2,7 @@
 process SUBTYPEFINDER {
     tag "$meta.id"
     label 'process_single'
+    debug true
    
 
     conda "bioconda::blast=2.15.0"
@@ -35,6 +36,9 @@ process SUBTYPEFINDER {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+
+    echo $ha_fasta
+
     # Run BLAST for HA
     blastn -query $ha_fasta -subject $ha_database -outfmt 6 > "ha_${prefix}.tsv"
     if awk -F '\t' '{if(\$4 >= 0.9 * 1701) exit 0; else exit 1}' "ha_${prefix}.tsv"; then
