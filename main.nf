@@ -15,10 +15,7 @@ nextflow.enable.dsl = 2
 
 nextflow.enable.dsl = 2
 
-// Add these lines
-if (!file(params.ha_database).exists() || !file(params.na_database).exists()) {
-    error "One or both database files do not exist. Please check the paths and try again."
-}
+
 
 // Your existing workflow code follows...
 
