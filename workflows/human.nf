@@ -298,7 +298,7 @@ workflow HUMAN {
         COVERAGE.out.filtered_fasta_report.collect(),
         TECHNICAL.out.depth_files_report.collect(),
         seq_instrument,
-        Channel.value(file(params.input)
+        Channel.value(file(params.input))
 
     )
     
