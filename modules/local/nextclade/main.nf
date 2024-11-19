@@ -9,7 +9,6 @@ process NEXTCLADE {
 
     input:
     tuple val(meta), path(fasta), path(subtype)
-    path(dataset)
     
 
     output:
@@ -37,8 +36,6 @@ process NEXTCLADE {
         segment=\${segment_subtype%-*}  
         subtype_name=\${segment_subtype#*-} 
         
-    
-        dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
 
     # Check for specific subtype and segment combinations
         if [[ "\$subtype_name" == *"H3"* ]]; then

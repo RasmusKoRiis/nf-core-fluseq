@@ -245,7 +245,7 @@ workflow HUMAN {
     //def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"
     
     NEXTCLADE (
-        COVERAGE.out.filtered_fasta, Channel.value(file(params.nextclade_references))
+        COVERAGE.out.filtered_fasta
     )
 
     ch_versions = ch_versions.mix(NEXTCLADE.out.versions.first())
