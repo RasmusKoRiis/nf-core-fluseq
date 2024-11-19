@@ -196,7 +196,6 @@ workflow HUMAN {
 
 
     SUBTYPEFINDER (
-        //IRMA_ha_na_fasta, fullPathHA, fullPathNA
         IRMA_ha_na_fasta, Channel.value(file(params.ha_database)),Channel.value(file(params.na_database))
     )
 
@@ -243,10 +242,10 @@ workflow HUMAN {
     // MODULE: NEXTCLADE
     //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
-    def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"
+    //def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"
     
     NEXTCLADE (
-        COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
+        COVERAGE.out.filtered_fasta, Channel.value(file(params.nextclade_references))
     )
 
     ch_versions = ch_versions.mix(NEXTCLADE.out.versions.first())
@@ -255,10 +254,10 @@ workflow HUMAN {
     // MODULE: MUTATION
     //Compare translated amino acid sequences to references to find mutations
 
-    def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
+    //def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
     MUTATIONHUMAN  (
-       NEXTCLADE.out.aminoacid_sequence, fullPath_references_2
+       NEXTCLADE.out.aminoacid_sequence, Channel.value(file(params.sequence_references))
     )
 
     ch_versions = ch_versions.mix(MUTATIONHUMAN.out.versions.first())
@@ -267,13 +266,14 @@ workflow HUMAN {
     // MODULE: TABLELOOKUP
     //Check if mutations are annotated in mammalian and inhibition databases
 
-    def fullPath_tables = "${currentDir}/${params.mutation_tables}"
-    def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
-    def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
+    //def fullPath_tables = "${currentDir}/${params.mutation_tables}"
+    //def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
+    //def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
 
     
     TABLELOOKUP  (
-        MUTATIONHUMAN.out.inhibtion_mutation, fullPath_inhibtion_mutation 
+        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db))
+        
     )
 
     //
@@ -282,7 +282,7 @@ workflow HUMAN {
 
     def runid = params.runid
     def seq_instrument   = params.seq_instrument  
-    def samplesheet = "${currentDir}/assets/samplesheet.tsv"
+    //def samplesheet = "${currentDir}/assets/samplesheet.tsv"
 
 
     REPORTHUMAN  (
@@ -298,7 +298,7 @@ workflow HUMAN {
         COVERAGE.out.filtered_fasta_report.collect(),
         TECHNICAL.out.depth_files_report.collect(),
         seq_instrument,
-        samplesheet
+        Channel.value(file(params.input)
 
     )
     

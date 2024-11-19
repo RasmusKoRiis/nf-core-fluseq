@@ -34,7 +34,13 @@ process REPORTHUMAN {
 
     script:
     """ 
-    python /project-bin/report.py ${samplesheet}
+
+    #turn csv int tsv
+    sed 's/,/\t/g' ${samplesheet} > samplesheet.tsv
+
+
+    python /project-bin/report.py samplesheet.tsv 
+    #python /project-bin/report.py ${samplesheet}
 
     #Add constant parameters to the report
     # Add RunID column
