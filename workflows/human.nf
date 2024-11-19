@@ -189,8 +189,8 @@ workflow HUMAN {
     //def fullPathHA = "${currentDir}/${params.ha_database}"
     //def fullPathNA = "${currentDir}/${params.na_database}"
 
-    def fullPathNA = Channel.fromPath(params.na_database)
-    def fullPathHA = Channel.fromPath(params.ha_database)
+    //def fullPathNA = Channel.fromPath(params.na_database)
+    //def fullPathHA = Channel.fromPath(params.ha_database)
 
 
 
