@@ -2,7 +2,6 @@
 process TABLELOOKUP {
     tag "$meta.id"
     label 'process_single'
-    debug true
     //errorStrategy 'ignore'
     
     
