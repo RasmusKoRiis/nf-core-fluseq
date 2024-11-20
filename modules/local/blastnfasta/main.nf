@@ -2,6 +2,7 @@
 process SEGMENTIFENTIFIER  {
     tag "$meta.id"
     label 'process_single'
+    errorStrategy 'ignore'
    
     conda "bioconda::blast=2.15.0"
     container 'docker.io/ncbi/blast:latest'

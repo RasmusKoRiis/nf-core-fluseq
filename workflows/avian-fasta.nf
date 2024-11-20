@@ -60,6 +60,7 @@ include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORT                      } from '../modules/local/report/main'
+include { FLUMUT                      } from '../modules/local/flumut/main'
 
 
 
@@ -233,6 +234,15 @@ workflow AVIANFASTA {
 
 
     //
+    // MODULE: FLUMUT
+    //
+
+    FLUMUT (
+         FASTA_CONFIGURATION.out.fasta
+    )
+
+
+    //
     // MODULE: AMINO ACID TRANSLATION
     //
 
@@ -260,12 +270,8 @@ workflow AVIANFASTA {
     def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
     def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
 
-    
-
-
-    
     TABLELOOKUP  (
-        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
+        MUTATION.out.inhibtion_mutation, fullPath_inhibtion_mutation 
     )
 
     //
