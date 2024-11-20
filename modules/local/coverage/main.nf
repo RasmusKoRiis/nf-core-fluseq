@@ -54,19 +54,12 @@ process COVERAGE {
         output_csv="${meta.id}_\${segment}_coverage.csv"
         python /project-bin/coverage_finder.py "\$fasta_file" \$output_csv ${meta.id} \${segment}
 
-
         awk -F, 'NR == 1 { 
             sub(/.*-/, "", \$2); 
             \$2 = "Coverage-" \$2; 
             print; 
             next 
         } {print}' OFS=, \$output_csv > temp.csv && mv temp.csv \$output_csv
-
-
-
-
-
-
 
         txt_filename="${meta.id}_\${segment}_coverage.txt"
 
@@ -79,7 +72,6 @@ process COVERAGE {
             mv "\$fasta_file" "\${fasta_file%.*}.fasta"
         else
             echo "No number above XX found in \$fasta_file"
-            # Optionally, handle files that don't meet the criteria
         fi
     done
 
@@ -87,7 +79,7 @@ process COVERAGE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        python: \$(python --version 2>&1)
     END_VERSIONS
     """
 }

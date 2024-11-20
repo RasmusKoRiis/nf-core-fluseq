@@ -185,16 +185,6 @@ workflow HUMAN {
     // MODULE: SUBTYPE FINDER
     //Use BLAST on local database to find the subtype of the sequences
 
-    def currentDir = System.getProperty('user.dir')
-    //def fullPathHA = "${currentDir}/${params.ha_database}"
-    //def fullPathNA = "${currentDir}/${params.na_database}"
-
-    //def fullPathNA = Channel.fromPath(params.na_database)
-    //def fullPathHA = Channel.fromPath(params.ha_database)
-
-
-
-
     SUBTYPEFINDER (
         IRMA_ha_na_fasta, Channel.value(file(params.ha_database)),Channel.value(file(params.na_database))
     )
@@ -237,13 +227,13 @@ workflow HUMAN {
          FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
     )
 
+    ch_versions = ch_versions.mix(COVERAGE.out.versions.first())
+
 
     //
     // MODULE: NEXTCLADE
     //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
-    //def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_references}"
-    
     NEXTCLADE (
         COVERAGE.out.filtered_fasta
     )
@@ -266,11 +256,6 @@ workflow HUMAN {
     // MODULE: TABLELOOKUP
     //Check if mutations are annotated in mammalian and inhibition databases
 
-    //def fullPath_tables = "${currentDir}/${params.mutation_tables}"
-    //def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
-    //def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
-
-    
     TABLELOOKUP  (
         MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db))
         
@@ -282,8 +267,6 @@ workflow HUMAN {
 
     def runid = params.runid
     def seq_instrument   = params.seq_instrument  
-    //def samplesheet = "${currentDir}/assets/samplesheet.tsv"
-
 
     REPORTHUMAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
@@ -302,8 +285,6 @@ workflow HUMAN {
 
     )
     
-
-
     //
     // MODULE: Run FastQC
     //
@@ -336,8 +317,6 @@ workflow HUMAN {
     ch_multiqc_files = ch_multiqc_files.mix(BASERATIO.out.versions.first().ifEmpty(null))
 
 
-   
-  
 
     MULTIQC (
         ch_multiqc_files.collect(),
