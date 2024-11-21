@@ -135,7 +135,7 @@ workflow AVIANFASTA {
     // FIND SEGMENTS
     //
 
-    SEGMENTIFENTIFIER (
+     SEGMENTIFENTIFIER (
         ch_sample_information, fullPath_references
     )
 
@@ -176,7 +176,7 @@ workflow AVIANFASTA {
     SUBTYPEFINDER (
         subtype_channel, fullPathHA, fullPathNA
     )
-
+    
     /// MUTATION CHANNELS
 
     SEGMENTIFENTIFIER.out.fasta_segment
@@ -229,7 +229,7 @@ workflow AVIANFASTA {
     def seq_quality_thershold = params.seq_quality_thershold
 
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
+        FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
     )
 
 
@@ -238,7 +238,7 @@ workflow AVIANFASTA {
     //
 
     FLUMUT (
-         FASTA_CONFIGURATION.out.fasta
+        FASTA_CONFIGURATION.out.fasta_flumut
     )
 
 

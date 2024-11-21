@@ -12,7 +12,8 @@ process FLUMUT {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
-    container 'quay.io/biocontainers/flumu:0.6.3--pyhdfd78af_0'
+    container 'quay.io/biocontainers/flumut:0.6.3--pyhdfd78af_0'
+    
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         //'https://depot.galaxyproject.org/singularity/irma:1.0.3--pl5321hdfd78af_0':
@@ -24,7 +25,7 @@ process FLUMUT {
 
     output:
     tuple val(meta), path("${meta.id}_markers_output.tsv") , emit: markers
-    tuple val(meta), path("${meta.id}_mutations_output.tsv"),  path("$meta.id/*.bai"), emit: mutations
+    tuple val(meta), path("${meta.id}_mutations_output.tsv"), emit: mutations
     tuple val(meta), path("${meta.id}_literature_output.tsv") , emit: literature
 
 

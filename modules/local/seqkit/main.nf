@@ -2,8 +2,7 @@
 process FASTA_CONFIGURATION {
     tag "$meta.id"
     label 'process_single'
-  
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
 
     // TODO nf-core: List required Conda package(s).
     //               Software MUST be pinned to channel (i.e. "bioconda"), version (i.e. "1.10").
@@ -17,7 +16,8 @@ process FASTA_CONFIGURATION {
   
     output:
     tuple val(meta), path("*.fa"), path(subtype), emit: fasta
-    tuple val(meta), path("*.fasta"), emit: fasta_merge
+    tuple val(meta), path("${meta.id}.fasta"), emit: fasta_merge
+    tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
     
 
 
@@ -41,7 +41,7 @@ process FASTA_CONFIGURATION {
        
        
         id=\$(echo "\$fasta_file" | sed 's/_.*//')
-        
+
         number=\$(echo "\$fasta_file" | sed 's/.*_//' | sed 's/\\.fa//' | xargs printf "%02d")
         subtype=\$(cat ${subtype} )
 
@@ -58,7 +58,6 @@ process FASTA_CONFIGURATION {
             *) segment="Unknown" ;;
         esac
 
-
         # Prepare the new header
         new_header=">\${id}|\${segment}-\${subtype}"
 
@@ -69,7 +68,26 @@ process FASTA_CONFIGURATION {
         # Replace the original file with the modified one
         mv temp_file.fa ${meta.id}_\${segment}-\${subtype}.fa
 
-        cat ${meta.id}_\${segment}-\${subtype}.fa >> ${meta.id}.fasta      
+        cat ${meta.id}_\${segment}-\${subtype}.fa >> ${meta.id}.fasta  
+
+
+        ## FLUMUT SPECIFIC CODE
+        # Extract `id_flumut`: the part before the `|`
+        id_flumut=\$(echo "\$fasta_file" | cut -d'|' -f1)
+
+        # Extract `segment_flumut`: the part after the `-` and before `_`
+        segment_flumut=\$(echo "\$fasta_file" | cut -d'-' -f2 | cut -d'_' -f1)
+
+        # If `segment_flumut` is equal to "M", change it to "MP"
+        if [ "\$segment_flumut" = "M" ]; then
+            segment_flumut="MP"
+        fi
+
+        # Create the header using the extracted values
+        flumut_header=">\${id_flumut}_\${segment_flumut}"
+
+        # Create an additional file with modified headers for flumut.fasta
+        awk -v flumut_header="\$flumut_header" 'NR == 1 {print flumut_header; next} {print}' "\$fasta_file" >> ${meta.id}_flumut.fasta
 
 
     done
