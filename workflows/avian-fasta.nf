@@ -59,8 +59,10 @@ include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
-include { REPORT                      } from '../modules/local/report/main'
+include { TABLELOOKUP_MAMMALIAN       } from '../modules/local/tablelookup_mammalian/main'
+include { REPORT_AVIAN                } from '../modules/local/report_avian/main'
 include { FLUMUT                      } from '../modules/local/flumut/main'
+include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion/main'
 
 
 
@@ -139,7 +141,6 @@ workflow AVIANFASTA {
         ch_sample_information, fullPath_references
     )
 
-    /// SUBTYPE CHANNEL
     // SUBTYPE CHANNEL
     SEGMENTIFENTIFIER.out.fasta_segment
     .map { meta, files -> 
@@ -241,6 +242,15 @@ workflow AVIANFASTA {
         FASTA_CONFIGURATION.out.fasta_flumut
     )
 
+        
+    //
+    // MODULE: FLUMUT
+    //
+
+    FLUMUT_CONVERSION (
+        FLUMUT.out.markers
+    )
+
 
     //
     // MODULE: AMINO ACID TRANSLATION
@@ -266,24 +276,28 @@ workflow AVIANFASTA {
     // MODULE: TABLELOOKUP
     //
 
-    def fullPath_tables = "${currentDir}/${params.mutation_tables}"
     def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
     def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
 
     TABLELOOKUP  (
-        MUTATION.out.inhibtion_mutation, fullPath_inhibtion_mutation 
+        MUTATION.out.inhibtion_mutation, fullPath_inhibtion_mutation
+    )
+
+    TABLELOOKUP_MAMMALIAN  (
+        MUTATION.out.mamailian_mutation, fullPath_mammalian_mutation
     )
 
     //
     // MODULE: REPORT
     //
-    REPORT  (
+    REPORT_AVIAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
         GENOTYPING.out.genotype_report.collect(), 
         COVERAGE.out.coverage_report.collect(), 
         MUTATION.out.mamailian_mutation_report.collect(), 
         MUTATION.out.inhibtion_mutation_report.collect(), 
-        TABLELOOKUP.out.lookup_report.collect()
+        TABLELOOKUP.out.lookup_report.collect(),
+        TABLELOOKUP_MAMMALIAN.out.lookup_report.collect()
     )
     
 

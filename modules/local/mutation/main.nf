@@ -18,8 +18,6 @@ process MUTATION {
     
 
     output:
-    //tuple val(meta), path("*.txt"), emit: genotype
-    //tuple val(meta), path("*.csv"), emit: genotype_file
     tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
     tuple val(meta), path("*inhibtion_mutation.csv"), path(subtype), emit: inhibtion_mutation
     
@@ -85,7 +83,6 @@ process MUTATION {
 
 
         echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
-
 
 
 

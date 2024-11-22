@@ -59,7 +59,7 @@ include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
-include { REPORT                      } from '../modules/local/report/main'
+include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
 
 
 

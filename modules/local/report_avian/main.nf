@@ -1,4 +1,4 @@
-process REPORT {
+process REPORT_AVIAN {
     label 'process_single'
     debug = true
 
@@ -14,6 +14,7 @@ process REPORT {
     path(mutation_mamilian)
     path(mutation_inhibtion)
     path(lookup)
+    path(lookup_mammalian)
 
     output:
 

@@ -35,8 +35,10 @@ process SEGMENTIFENTIFIER  {
     for fasta_file in ${fasta}; do
 
     basename=\$(basename \$fasta_file .fasta)
-    blastn -query \$fasta_file -subject $reference -outfmt 6   > "\${fasta_file}_${prefix}.tsv"
-    segment=\$(awk -F '\t' '{split(\$2,a,"_"); print a[3]}' "\${fasta_file}_${prefix}.tsv" | head -n 1)
+    blastn -query \$fasta_file -subject $reference -outfmt 6 -max_target_seqs 1   > "\${fasta_file}_${prefix}.tsv"
+    awk 'NR==1' "\${fasta_file}_${prefix}.tsv" > "\${fasta_file}_${prefix}_filtered.tsv"
+
+    segment=\$(awk -F '\t' '{split(\$2,a,"_"); print a[3]}' "\${fasta_file}_${prefix}_filtered.tsv" | head -n 1)
 
     # Assign a prefix based on the segment type
     case \$segment in
