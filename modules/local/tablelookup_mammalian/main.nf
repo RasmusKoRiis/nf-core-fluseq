@@ -52,7 +52,7 @@ process TABLELOOKUP_MAMMALIAN {
         # Make output name
         output_name=${meta.id}_\${segment}"_mammalian.csv"
 
-        python /project-bin/table_lookup.py \
+        python /project-bin/table_lookup_mammalian.py \
         \$mutation_file\
         \$output_name\
         ${mammalian_mutation_table} \
