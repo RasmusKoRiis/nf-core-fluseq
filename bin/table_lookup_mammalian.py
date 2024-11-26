@@ -30,7 +30,7 @@ list_mutations_set = set(sample_mutations)
 df = pd.read_excel(xlsx_file)
 
 # Filter DataFrame based on segment
-filtered_df = df[(df['segment'] == segment_look)
+filtered_df = df[(df['segment'] == segment_look)]
 
 # Initialize a dictionary to hold results
 results_dict = {}
