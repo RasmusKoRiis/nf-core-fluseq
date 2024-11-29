@@ -39,9 +39,9 @@ Ensure your directory structure is as follows:
 ```
 ./
   |-data
-         |-barcode1
-               |-XXXX_pass_barcode01_XXXX.fastq.gz
-               |-YYYY_pass_barcode01_YYYY.fastq.gz
+         |-barcode2
+               |-XXXX_pass_barcode02_XXXX.fastq.gz
+               |-YYYY_pass_barcode02_YYYY.fastq.gz
   |-nf-core-fluseq
                |-assets
                      |-samplesheet.csv

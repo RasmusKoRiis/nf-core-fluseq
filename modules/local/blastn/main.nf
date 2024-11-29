@@ -45,6 +45,9 @@ process SUBTYPEFINDER {
         subtype_ha=""
     fi
 
+
+
+
     # Run BLAST for NA
     blastn -query $na_fasta -subject $na_database -outfmt 6 -max_target_seqs 1 > "na_${prefix}.tsv"
     head -n 1 "na_${prefix}.tsv" > "na_${prefix}_filtered.tsv"
