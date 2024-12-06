@@ -137,21 +137,20 @@ workflow HUMAN {
     // MODULE: DEPTH ANALYSIS
     //
 
-    DEPTH_ANALYSIS (
-        IRMA.out.bam
-    )
+   // DEPTH_ANALYSIS (
+   //     IRMA.out.bam
+    //)
 
 
     //
     // MODULE: MDEPTH REPORT
     //
 
-    BASERATIO (
-        DEPTH_ANALYSIS.out.depth_report.collect()
-    
-    )
+    //BASERATIO (
+    //    DEPTH_ANALYSIS.out.depth_report.collect()
+    //)
 
-    ch_versions = ch_versions.mix(BASERATIO.out.versions.first())
+    //ch_versions = ch_versions.mix(BASERATIO.out.versions.first())
     
     
     //
@@ -314,7 +313,7 @@ workflow HUMAN {
     ch_multiqc_files = ch_multiqc_files.mix(NEXTCLADE.out.versions.first().ifEmpty(null))
     ch_multiqc_files = ch_multiqc_files.mix(SUBTYPEFINDER.out.versions.first().ifEmpty(null))
     ch_multiqc_files = ch_multiqc_files.mix(MUTATIONHUMAN.out.versions.first().ifEmpty(null))
-    ch_multiqc_files = ch_multiqc_files.mix(BASERATIO.out.versions.first().ifEmpty(null))
+    
 
 
 
