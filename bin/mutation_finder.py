@@ -21,48 +21,39 @@ print("python reference: {}".format(reference_file))
 print("python segment: {}".format(segment))
 
 
+# Function to align sequences and find differences
 def find_differences(reference, seq):
-    # Align the sequences
-    from Bio.Align import PairwiseAligner
     aligner = PairwiseAligner()
     aligner.mode = 'global'
-    aligner.open_gap_score = -10
+    aligner.open_gap_score = -10  # Penalty for opening a gap
+    aligner.extend_gap_score = -1  # Penalty for extending a gap
     alignments = aligner.align(reference, seq)
     
-    best_alignment = max(alignments)
-    print(best_alignment)
-    
+    # Take the best alignment
+    best_alignment = alignments[0]
     differences = []
-    ref_pos = 1  # Start from 1 to match biological sequence indexing conventions
-    
+    ref_pos = 1  # Biological indexing starts at 1
+
     for i in range(len(best_alignment[0])):
         ref_char = best_alignment[0][i]
         seq_char = best_alignment[1][i]
 
         if ref_char != seq_char:
-            if ref_char == '-':  # Insertion in sequence compared to reference
+            if ref_char == "-":  # Insertion
                 if differences and differences[-1].startswith(f"ins{ref_pos}"):
-                    # If the last difference was an insertion at the same position, append this char to it
                     differences[-1] += seq_char
                 else:
-                    # Append the insertion at the current position and adjust ref_pos backwards by one
                     differences.append(f"ins{ref_pos}{seq_char}")
-                    ref_pos += 1  # Move back ref_pos as we are inserting, not moving along the reference
-            elif seq_char == '-':  # Deletion in sequence compared to reference
-                # Note the deletion at the current position without adjustment
+            elif seq_char == "-":  # Deletion
                 differences.append(f"del{ref_pos}{ref_char}")
-                ref_pos -= 1  # Move back ref_pos as we are inserting, not moving along the reference
-            else:  # Mismatch
-                # Note the mismatch at the current position without adjustment
+            else:  # Substitution
                 differences.append(f"{ref_char}{ref_pos}{seq_char}")
 
-        # Increment ref_pos if the current character in reference is not an insertion
-        if ref_char != '-':
+        if ref_char != "-":
             ref_pos += 1
 
-    return ';'.join(differences)
+    return ";".join(differences)
 
-    
 
 
 def check_frameshift(seq):

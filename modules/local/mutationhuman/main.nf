@@ -3,6 +3,7 @@ process MUTATIONHUMAN  {
     tag "$meta.id"
     label 'process_single'
     //errorStrategy 'ignore'
+    debug true
    
     //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
