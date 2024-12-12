@@ -63,6 +63,7 @@ include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
 include { TECHNICAL                   } from '../modules/local/technical/main'
 include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/main'
 include { BASERATIO                   } from '../modules/local/baseratio/main'
+include { CHOPPER                     } from '../modules/local/chopper/main'
 
 
 
@@ -119,15 +120,22 @@ workflow HUMAN {
     )
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
     
+    //
+    // MODULE: Chopper
+    //CQuality and length trim of FASTQ-sequences
 
+    CHOPPER (
+        CAT_FASTQ.out.reads
+    )
+   
 
-    
     //
     // MODULE: IRMA
     //Run IRMA to get the consensus sequences
 
     IRMA (
-        CAT_FASTQ.out.reads
+        CHOPPER.out.chopperfastq
+        
     )
     
     
