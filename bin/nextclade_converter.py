@@ -52,6 +52,8 @@ def process_file(input_file, meta_id, segment):
         df_ha1.rename(columns={'aaInsertions': f'aaInsertions {segment}1'}, inplace=True)
         df_ha1.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}1'}, inplace=True)
         df_ha1.rename(columns={'qc.mixedSites.totalMixedSites': f'Nextclade Mixed Sites {segment}1'}, inplace=True)
+        # Replace all commas within any cell value with semicolons
+        df_ha1 = df_ha1.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
         df_ha1.to_csv(f'./{meta_id}_HA1_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered HA1 file saved as: ./{meta_id}_HA1_nextclade_mutation.csv")
 
@@ -66,6 +68,8 @@ def process_file(input_file, meta_id, segment):
         df_ha2.rename(columns={'aaInsertions': f'aaInsertions {segment}2'}, inplace=True)
         df_ha2.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}2'}, inplace=True)
         df_ha2.rename(columns={'qc.mixedSites.totalMixedSites': f'Nextclade Mixed Sites {segment}2'}, inplace=True)
+        # Replace all commas within any cell value with semicolons
+        df_ha2 = df_ha2.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
         df_ha2.to_csv(f'./{meta_id}_HA2_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered HA2 file saved as: ./{meta_id}_HA2_nextclade_mutation.csv")
             
@@ -91,6 +95,8 @@ def process_file(input_file, meta_id, segment):
         summary_df[['HA_glycosylation_1', 'HA_glycosylation_2', 'HA_glycosylation_3']] = \
             pd.DataFrame(summary_df['glycosylation'].apply(split_glycosylation).tolist(), index=summary_df.index)
 
+        # Replace all commas within any cell value with semicolons
+        summary_df = summary_df.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
         summary_df.to_csv(f'./{meta_id}_nextclade_summary.csv', index=False)      
 
     elif 'M' in segment:
@@ -116,7 +122,10 @@ def process_file(input_file, meta_id, segment):
         df_m1.rename(columns={'aaInsertions': f'aaInsertions {segment}1'}, inplace=True)
         df_m1.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}1'}, inplace=True)
         df_m1.rename(columns={'qc.mixedSites.totalMixedSites': f'Nextclade Mixed Sites {segment}1'}, inplace=True)
+        # Replace all commas within any cell value with semicolons
+        df_m1 = df_m1.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
         df_m1.to_csv(f'./{meta_id}_M1_nextclade_{type}_mutation.csv', index=False)
+        
         print(f"Filtered M1 file saved as: ./{meta_id}_M1_nextclade_{type}_mutation.csv")
             
         # Filter and save the M2 mutations
@@ -130,6 +139,8 @@ def process_file(input_file, meta_id, segment):
         df_m2.rename(columns={'aaInsertions': f'aaInsertions {segment}2'}, inplace=True)
         df_m2.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}2'}, inplace=True)
         df_m2.rename(columns={'qc.mixedSites.totalMixedSites': f'Nextclade Mixed Sites {segment}2'}, inplace=True)
+        # Replace all commas within any cell value with semicolons
+        df_m2 = df_m2.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
         df_m2.to_csv(f'./{meta_id}_M2_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered M2 file saved as: ./{meta_id}_M2_nextclade_{type}_mutation.csv")
     elif 'NA' in segment:
@@ -150,6 +161,8 @@ def process_file(input_file, meta_id, segment):
         df_na.rename(columns={'clade': f'clade {segment}'}, inplace=True)
         df_na.rename(columns={'qc.overallStatus': f'Nextclade QC {segment}'}, inplace=True)
         df_na.rename(columns={'qc.mixedSites.totalMixedSites': f'Nextclade Mixed Sites {segment}'}, inplace=True)
+        # Replace all commas within any cell value with semicolons
+        df_na = df_na.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
         df_na.to_csv(f'./{meta_id}_NA_nextclade_{type}_mutation.csv', index=False)
         print(f"Filtered NA file saved as: ./{meta_id}_M1_nextclade_{type}_mutation.csv")
             
@@ -182,6 +195,9 @@ def process_file(input_file, meta_id, segment):
 
         # Create the new filename
         new_file_name = f"{meta_id}_{segment}_nextclade_{type}_mutation.csv"
+
+        # Replace all commas within any cell value with semicolons
+        filtered_df = filtered_df.applymap(lambda x: x.replace(',', ';') if isinstance(x, str) else x)
 
         # Save the filtered dataframe to a new CSV file
         new_file_path = f"./{new_file_name}"
