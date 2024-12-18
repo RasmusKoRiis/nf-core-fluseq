@@ -11,7 +11,18 @@ This pipeline processes FASTQ files from Nanopore sequencing of Influenza A and 
 - Consensus sequence analysis with Nextclade.
 - Mutation calling for all segments.
 - Generation of a comprehensive report in CSV format.
-- Output of high-quality sequences in a multiple FASTA file.
+- Output of sequences in a multiple FASTA file.
+
+The pipeline consist of four different worflows listed bellow:
+
+1) Human Influenza FASTQ analysis (human)
+  Alignment of FASTQ and mutation analysis 
+2) Human Influenza FASTA analysis (human-fasta) (under development)
+   Mutation analysis 
+3) Avian Influenza FASTQ analysis (avian)
+  Alignment of FASTQ and mutation analysis 
+4) Avian Influenza FASTA analysis (avian-fasta)
+   Mutation analysis 
 
 ## Compatibility
 
@@ -22,7 +33,8 @@ This pipeline processes FASTQ files from Nanopore sequencing of Influenza A and 
 
 ### Sample Sheet Preparation
 
-Prepare a sample sheet (CSV or TSV) in the `assets` folder with the following format:
+Prepare a sample sheet (CSV or TSV*) in the `assets` folder with the following format:
+* TSV file is not not compulsory
 
 ```
 PCR-PlatePosition,SequenceID,Barcode,KonsCt
@@ -34,6 +46,7 @@ Each row lists a sample to be analyzed. Samples not listed in the sheet will be 
 
 ### Directory Structure
 
+#### For FASTQ-analysis
 Ensure your directory structure is as follows:
 
 ```
@@ -53,15 +66,43 @@ Ensure your directory structure is as follows:
 
 Navigate to the `nf-core-fluseq` folder and execute the following command with default parameters:
 
+#### Human Influenza FASTQ analysis
+
 ```bash
 nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
+```
+
+#### Avian Influenza FASTQ analysis
+
+```bash
+nextflow run main.nf -profile docker --file avian-fastq  --genotype_database database* --runid runid_name --outdir ../outdir_name
+```
+* The database given as the genotyping database must be in the format given bellow:
+ ``` 
+>DatabaseNumber_|Subtype|ID|Segment|SegmentNumber|GISAIDID
+aa..
+>DatabaseNumber_|Subtype|ID|Segment|SegmentNumber|GISAIDID
+a..
+```
+
+Example of header:
+```
+>21_|H5N8|chicken/norway|HA|4|EPI_ESL_7473825
+```
+
+The database number is used in the genotyping02.py script to identify genotypes. Either the offical database has to be obtained or this script has to be adjusted to a be compatible to a in-house genotyping database.
+
+#### Avian Influenza FASTA analysis
+
+```bash
+nextflow run main.nf -profile docker --file avian-fasta  --genotype_database database --runid runid_name --outdir ../outdir_name
 ```
 
 ### Important Parameters
 
 - `--input` (default: `assets/samplesheet.csv`): Path to the samplesheet.
-- `--seq_quality_threshold` (default: 95): Coverage threshold for consensus sequences.
-- `--samplesDir` (default: `../data`): Directory containing the FASTQ files.
+- `--seq_quality_threshold` (default: 20): Coverage threshold for analysis of consensus sequences.
+- `--samplesDir` (default: `../data`): Directory containing the FASTQ files in the structure given above.
 
 All parameters are detailed in the `nextflow.config` file.
 
@@ -79,5 +120,4 @@ The output includes:
 
 ## Credits
 
-nf-core/fluseq was originally written by Rasmus Kopperud Riis.
-
+fluseq was originally written by Rasmus Kopperud Riis.
