@@ -99,7 +99,7 @@ merged_data['DR_NA_Mut'] = merged_data.apply(
 
 
 # SUBTYPE COLUMN
-merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2' if x == 'H3N2' else 'A/H1N1' if x == 'H1N1' else 'B/Victoria' if x == 'VICVIC' else 'B/Victoria' if x == 'VIC' else x)
+merged_data['Sekvens_Resultat'] = merged_data['Subtype'].apply(lambda x: 'A/H3N2' if x == 'H3N2' else 'A/H1N1' if x == 'H1N1' else 'B/Victoria' if x == 'VICVIC' else 'B/Victoria' if x == 'VIC' else 'B/Yamagata' if x == 'YAMYAM' else 'B/Yamagata' if x == 'YAM' else x)
 
 
 #REMOVE UNESSESARY COLUMNS
