@@ -37,8 +37,9 @@ process SUBTYPEFINDER {
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
     # Run BLAST for HA
-    blastn -query $ha_fasta -subject $ha_database -outfmt 6 -max_target_seqs 1 > "ha_${prefix}.tsv"
-    head -n 1 "ha_${prefix}.tsv" > "ha_${prefix}_filtered.tsv"
+    blastn -query $ha_fasta -subject $ha_database -outfmt 6 -max_target_seqs 2 > "ha_${prefix}.tsv"
+    sort -k12,12nr -k3,3nr "ha_${prefix}.tsv" | head -n 1 > "ha_${prefix}_sorted.tsv"
+    head -n 1 "ha_${prefix}_sorted.tsv" > "ha_${prefix}_filtered.tsv"
     if awk -F '\t' '{if(\$4 >= 0.2 * 1701) exit 0; else exit 1}' "ha_${prefix}_filtered.tsv"; then
         subtype_ha=\$(awk -F '\t' '{if(\$4 >= 0.2 * 1701) {split(\$2, a, "_"); print a[2]; exit}}' "ha_${prefix}_filtered.tsv")
     else
@@ -49,8 +50,9 @@ process SUBTYPEFINDER {
 
 
     # Run BLAST for NA
-    blastn -query $na_fasta -subject $na_database -outfmt 6 -max_target_seqs 1 > "na_${prefix}.tsv"
-    head -n 1 "na_${prefix}.tsv" > "na_${prefix}_filtered.tsv"
+    blastn -query $na_fasta -subject $na_database -outfmt 6 -max_target_seqs 2 > "na_${prefix}.tsv"
+    sort -k12,12nr -k3,3nr "na_${prefix}.tsv" | head -n 1 > "na_${prefix}_sorted.tsv"
+    head -n 1 "na_${prefix}_sorted.tsv" > "na_${prefix}_filtered.tsv"
     if awk -F '\t' '{if(\$4 >= 0.2 * 1410) exit 0; else exit 1}' "na_${prefix}_filtered.tsv"; then
         subtype_na=\$(awk -F '\t' '{if(\$4 >= 0.2 * 1410) {split(\$2, a, "_"); print a[2]; exit}}' "na_${prefix}_filtered.tsv")
     else
