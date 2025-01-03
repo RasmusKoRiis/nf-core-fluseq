@@ -3,6 +3,7 @@ process SUBTYPEFINDER {
     tag "$meta.id"
     label 'process_single'
     errorStrategy 'ignore'
+    debug true
 
 
    
