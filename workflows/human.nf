@@ -285,6 +285,7 @@ workflow HUMAN {
         NEXTCLADE.out.nextclade_report.collect(),
         MUTATIONHUMAN.out.vaccine_mutation_report.collect(),
         runid,
+        release_version: params.release_version,
         COVERAGE.out.filtered_fasta_report.collect(),
         TECHNICAL.out.depth_files_report.collect(),
         seq_instrument,

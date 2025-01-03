@@ -17,6 +17,7 @@ process REPORTHUMAN {
     path(nextclade_sample)
     path(mutation_vaccine)
     val runid
+    val release_version
     path(filtered_fasta)
     path(irma_depth)
     val seq_instrument
@@ -35,12 +36,13 @@ process REPORTHUMAN {
     script:
     """ 
 
+    # Generate date
+    current_date=$(date '+%Y-%m-%d')
+
     #turn csv int tsv
     sed 's/,/\t/g' ${samplesheet} > samplesheet.tsv
 
-
     python /project-bin/report.py samplesheet.tsv 
-    #python /project-bin/report.py ${samplesheet}
 
     #Add constant parameters to the report
     # Add RunID column
@@ -49,13 +51,11 @@ process REPORTHUMAN {
     # Add Instrument ID column
     awk -v seq_instrument=${seq_instrument} -v OFS=',' '{ if (NR == 1) { print  \$0, "Instrument ID" } else { print  \$0, seq_instrument } }' ${runid}_temp1.csv > ${runid}_temp2.csv
 
-    # Rename the final file to runID
-    mv ${runid}_temp2.csv ${runid}.csv
+    # Add Date column
+    awk -v date="${current_date}" -v OFS=',' '{ if (NR == 1) { print \$0, "Date" } else { print \$0, date } }' ${runid}_temp2.csv > ${runid}_temp3.csv
 
-
-
-
-
+    # Add Release Version column
+    awk -v version="${release_version}" -v OFS=',' '{ if (NR == 1) { print \$0, "Release Version" } else { print \$0, version } }' ${runid}_temp3.csv > ${runid}.csv
 
     #Merge all filtered fasta files to one
     cat ${filtered_fasta} > ${runid}.fasta
