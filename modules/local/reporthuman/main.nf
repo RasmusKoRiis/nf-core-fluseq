@@ -37,7 +37,7 @@ process REPORTHUMAN {
     """ 
 
     # Generate date
-    current_date=$(date '+%Y-%m-%d')
+    current_date=\$(date '+%Y-%m-%d')
 
     #turn csv int tsv
     sed 's/,/\t/g' ${samplesheet} > samplesheet.tsv
