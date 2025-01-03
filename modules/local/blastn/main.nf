@@ -2,8 +2,8 @@
 process SUBTYPEFINDER {
     tag "$meta.id"
     label 'process_single'
-    //errorStrategy 'ignore'
-    debug true
+    errorStrategy 'ignore'
+ 
 
 
    
@@ -40,8 +40,6 @@ process SUBTYPEFINDER {
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
     
-    blastdbcmd -db $ha_database -entry all
-
     # Run BLAST for HA
     blastn -query $ha_fasta -subject $ha_database -outfmt 6 -max_target_seqs 2 > "ha_${prefix}.tsv"
     sort -k12,12nr -k3,3nr "ha_${prefix}.tsv" | head -n 1 > "ha_${prefix}_sorted.tsv"
