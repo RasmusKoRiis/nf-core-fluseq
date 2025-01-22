@@ -12,7 +12,7 @@ process SUBTYPEFINDER {
     container 'biocontainers/blast:2.15.0--pl5321h6f7f691_1'
 
     input:
-    tuple val(meta), path(ha_fasta), path(na_fasta),path(pa_fasta), path(pb1_fasta),path(pb2_fasta), path(np_fasta),path(ns_fasta), path(m_fasta)
+    tuple val(meta), path(ha_fasta), path(na_fasta)
     path(ha_database)
     path(na_database)
 

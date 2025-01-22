@@ -139,8 +139,7 @@ workflow HUMAN {
     )
     
     
-    
-    
+
     //
     // MODULE: DEPTH ANALYSIS
     //
@@ -183,6 +182,15 @@ workflow HUMAN {
         def np_files = files.findAll { it.getName().contains('_5') }
         def m_files = files.findAll { it.getName().contains('_8') }
         return (ha_files && na_files && pa_files && pb1_files && pb2_files && ns_files && np_files && m_files) ? tuple(meta, ha_files, na_files, pa_files, pb1_files, pb2_files, ns_files, np_files, m_files) : null
+    }
+    .filter { it != null }
+    .set { IRMA_all_fasta }
+
+        IRMA.out.amended_consensus
+    .map { meta, files -> 
+        def ha_files = files.findAll { it.getName().contains('_4') }
+        def na_files = files.findAll { it.getName().contains('_6') }
+        return (ha_files && na_files) ? tuple(meta, ha_files, na_files) : null
     }
     .filter { it != null }
     .set { IRMA_ha_na_fasta }
