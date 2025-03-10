@@ -191,6 +191,55 @@ process NEXTCLADE {
                     --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
                     --output-all=${meta.id}_\${segment}_nextclade_output/ \
                     \$fasta_file
+            
+            elif [[ "\$segment" == *"PB2"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/vic/pb2' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+                        
+            elif [[ "\$segment" == *"PB1"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/vic/pb1' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+            
+            elif [[ "\$segment" == *"PB1"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/vic/pa' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *"NP"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/vic/np' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+            
+            elif [[ "\$segment" == *"M"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/vic/mp' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
+            elif [[ "\$segment" == *NS"* ]]; then
+                nextclade dataset get --name 'nextstrain/flu/vic/ns' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file
+
             else
                 echo "Segment \$segment not recognized for subtype VIC"
             fi
