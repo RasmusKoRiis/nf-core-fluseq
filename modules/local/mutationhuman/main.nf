@@ -2,8 +2,8 @@
 process MUTATIONHUMAN  {
     tag "$meta.id"
     label 'process_single'
-    //errorStrategy 'ignore'
-    debug true
+    errorStrategy 'ignore'
+    
     
    
     //conda "bioconda::blast=2.15.0"
@@ -97,7 +97,7 @@ process MUTATIONHUMAN  {
 
         echo "OK1"
 
-        
+
         
 
         # HUMAN MUTATIONS - INHIBTION
