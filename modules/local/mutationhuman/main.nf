@@ -53,6 +53,7 @@ process MUTATIONHUMAN  {
         subtype_name="VICVIC"
     fi
     
+    
     for fasta_file in ${fasta}; do
 
         filename=\$(basename \$fasta_file)
@@ -86,7 +87,7 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - DEFAULT
 
-        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* ]]; then 
+        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* ]] && "\${segment}" != *"BM2"* ]]; then 
 
             python /project-bin/mutation_finder.py \
                 \$fasta_file \
@@ -99,6 +100,8 @@ process MUTATIONHUMAN  {
         else
             echo "Skipping execution for a segment containing 'NEP' or 'PA-X' in its name: \${segment}"
         fi
+
+        echo "OK1"
         
 
         # HUMAN MUTATIONS - INHIBTION
@@ -117,6 +120,8 @@ process MUTATIONHUMAN  {
             echo "Skipping execution for a segment not containing 'NA', 'M' or 'PA' in its name: \${segment}"
         fi
 
+        echo "OK2"
+
         # HUMAN MUTATIONS - VACCINE
         
         if [[ ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
@@ -134,6 +139,8 @@ process MUTATIONHUMAN  {
         else
             echo "Skipping execution for a segmentcontaining 'HA' or'NA' in its name: \${segment}"
         fi
+
+        "OK3"
         
     done
     
