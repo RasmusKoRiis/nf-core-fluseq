@@ -2,7 +2,8 @@
 process MUTATIONHUMAN  {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
+    //errorStrategy 'ignore'
+    debug true
     
    
     //conda "bioconda::blast=2.15.0"
