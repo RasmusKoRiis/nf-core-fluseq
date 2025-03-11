@@ -53,7 +53,7 @@ process MUTATIONHUMAN  {
         subtype_name="VICVIC"
     fi
     
-    
+
     for fasta_file in ${fasta}; do
 
         filename=\$(basename \$fasta_file)
@@ -140,7 +140,7 @@ process MUTATIONHUMAN  {
             echo "Skipping execution for a segmentcontaining 'HA' or'NA' in its name: \${segment}"
         fi
 
-        "OK3"
+        echo "OK3"
         
     done
     
