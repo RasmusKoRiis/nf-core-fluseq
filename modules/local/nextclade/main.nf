@@ -208,7 +208,7 @@ process NEXTCLADE {
                     --output-all=${meta.id}_\${segment}_nextclade_output/ \
                     \$fasta_file
             
-            elif [[ "\$segment" == *"PB1"* ]]; then
+            elif [[ "\$segment" == *"PA"* ]]; then
                 nextclade dataset get --name 'nextstrain/flu/vic/pa' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
 
                 nextclade run \
@@ -232,7 +232,7 @@ process NEXTCLADE {
                     --output-all=${meta.id}_\${segment}_nextclade_output/ \
                     \$fasta_file
 
-            elif [[ "\$segment" == *NS"* ]]; then
+            elif [[ "\$segment" == *"NS"* ]]; then
                 nextclade dataset get --name 'nextstrain/flu/vic/ns' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
 
                 nextclade run \
