@@ -80,10 +80,21 @@ for ref in SeqIO.parse(reference_file, 'fasta'):
 # Create a DataFrame from the sequences
 df = pd.DataFrame(sequences)
 
-if not df.empty:
-    df['Differences'] = df.apply(process_differences, axis=1)
-else:
+# Create a DataFrame from the sequences
+df = pd.DataFrame(sequences)
+
+if df.empty:
     print("Warning: No sequences were processed; DataFrame is empty.")
+    # Create an empty DataFrame with the expected columns
+    empty_df = pd.DataFrame(columns=["Sample", "Differences"])
+    # Save the empty CSVs so downstream steps have output files
+    empty_df.to_csv(output_file, index=False)
+    output_file_report = output_file.replace('.csv', '_report.csv')
+    empty_df.to_csv(output_file_report, index=False)
+    sys.exit(0)
+
+df['Differences'] = df.apply(process_differences, axis=1)
+
 
  
 #df['Differences'] = df.apply(process_differences, axis=1)
