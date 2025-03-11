@@ -65,12 +65,6 @@ process MUTATIONHUMAN  {
         # Extract 'XX' as the segment assuming it's after the last '_' in segment_subtype
         segment=\$(echo "\${segment_subtype}" | awk -F_ '{print \$NF}')
 
-        # Skip BM2 analysis Next step is to make this into M2 ref
-        if [[ "\${segment}" == "BM2" ]]; then
-            echo "Skipping BM2 segment analysis"
-            continue
-        fi
-
         # Make output name
         output_name_human=${meta.id}_\${segment}"_human_mutation.csv"
         output_name_mamailian=${meta.id}_\${segment}"_mamailian_mutation.csv"
