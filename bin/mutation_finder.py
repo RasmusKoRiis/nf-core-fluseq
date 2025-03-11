@@ -80,8 +80,13 @@ for ref in SeqIO.parse(reference_file, 'fasta'):
 # Create a DataFrame from the sequences
 df = pd.DataFrame(sequences)
 
+if not df.empty:
+    df['Differences'] = df.apply(process_differences, axis=1)
+else:
+    print("Warning: No sequences were processed; DataFrame is empty.")
+
  
-df['Differences'] = df.apply(process_differences, axis=1)
+#df['Differences'] = df.apply(process_differences, axis=1)
 
 # Split "ID" column into "sample" and "Ref_Name" columns
 df[['Sample', 'Ref_Name']] = df['ID'].str.split('|', n=1, expand=True)

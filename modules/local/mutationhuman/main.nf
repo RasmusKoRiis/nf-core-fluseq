@@ -96,6 +96,8 @@ process MUTATIONHUMAN  {
         fi
 
         echo "OK1"
+
+        
         
 
         # HUMAN MUTATIONS - INHIBTION
