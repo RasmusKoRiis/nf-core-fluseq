@@ -100,7 +100,8 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - INHIBTION
 
-        if [[ "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ]]; then
+        if [[ ( "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ) && "\${segment}" != *"BM2"* ]]; then
+
 
             python /project-bin/mutation_finder.py \
                 \$fasta_file \
