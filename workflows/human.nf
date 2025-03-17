@@ -153,9 +153,9 @@ workflow HUMAN {
     // MODULE: MDEPTH REPORT
     //
 
-    //BASERATIO (
-    //    DEPTH_ANALYSIS.out.depth_report.collect()
-    //)
+    BASERATIO (
+        DEPTH_ANALYSIS.out.depth_report.collect()
+    )
 
     //ch_versions = ch_versions.mix(BASERATIO.out.versions.first())
     
