@@ -144,9 +144,9 @@ workflow HUMAN {
     // MODULE: DEPTH ANALYSIS
     //
 
-   // DEPTH_ANALYSIS (
-   //     IRMA.out.bam
-    //)
+   DEPTH_ANALYSIS (
+     IRMA.out.bam
+    )
 
 
     //
