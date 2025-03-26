@@ -1,5 +1,7 @@
 process BASERATIO {
     label 'process_single'
+    errorStrategy 'ignore'
+   
 
 
 
