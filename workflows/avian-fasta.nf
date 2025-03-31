@@ -63,6 +63,7 @@ include { TABLELOOKUP_MAMMALIAN       } from '../modules/local/tablelookup_mamma
 include { REPORT_AVIAN                } from '../modules/local/report_avian/main'
 include { FLUMUT                      } from '../modules/local/flumut/main'
 include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion/main'
+include { GENIN2                      } from '../modules/local/genin2/main'
 
 
 
@@ -244,11 +245,19 @@ workflow AVIANFASTA {
 
         
     //
-    // MODULE: FLUMUT
+    // MODULE: FLUMUT COVERSION
     //
 
     FLUMUT_CONVERSION (
         FLUMUT.out.markers
+    )
+
+    //
+    // MODULE: GENIN2
+    //
+
+    GENIN2 (
+        FASTA_CONFIGURATION.out.fasta_genin
     )
 
 

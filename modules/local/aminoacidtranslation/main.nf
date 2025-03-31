@@ -1,7 +1,7 @@
 process AMINOACIDTRANSLATION {
     tag "${meta.id}"
     label 'process_single'
-    errorStrategy 'ignore'
+    //errorStrategy 'ignore'
 
  
     container 'docker.io/nextstrain/nextclade:latest'
@@ -25,13 +25,15 @@ process AMINOACIDTRANSLATION {
     """
     for fasta_file in ${fasta}; do
 
-        filename=\$(basename \$fasta_file)
-        filename_no_ext=\${filename%.*}  
-        segment_subtype=\${filename_no_ext#*-} 
-        segment=\${segment_subtype%-*}  
-        subtype_name=\${segment_subtype#*-} 
+    filename=\$(basename "\$fasta_file")
+    filename_no_ext="\${filename%.*}"
+    segment_subtype="\${filename_no_ext#*-}"       # INFA_01-HA-H5N1
+    segment="\${segment_subtype%-*}"               # INFA_01-HA
+    subtype_name="\${segment_subtype##*-}"         # H5N1
+    segment_name="\${segment##*-}"                 # HA
+    
         
-        dataset_sample=${dataset}/"\${subtype_name}_\${segment}"
+        dataset_sample=${dataset}/"\${subtype_name}_\${segment_name}"
         
         nextclade run \
             --input-dataset "\$dataset_sample" \

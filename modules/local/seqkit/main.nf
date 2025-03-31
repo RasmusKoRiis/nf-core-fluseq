@@ -18,6 +18,8 @@ process FASTA_CONFIGURATION {
     tuple val(meta), path("*.fa"), path(subtype), emit: fasta
     tuple val(meta), path("${meta.id}.fasta"), emit: fasta_merge
     tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
+    tuple val(meta), path("${meta.id}_genin.fasta"), emit: fasta_genin
+
     
 
 
@@ -72,11 +74,7 @@ process FASTA_CONFIGURATION {
 
 
         ## FLUMUT SPECIFIC CODE
-        # Extract `id_flumut`: the part before the `|`
-        id_flumut=\$(echo "\$fasta_file" | cut -d'|' -f1)
-
-        # Extract `segment_flumut`: the part after the `-` and before `_`
-        segment_flumut=\$(echo "\$fasta_file" | cut -d'-' -f2 | cut -d'_' -f1)
+        segment_flumut="\${segment#*-}"
 
         # If `segment_flumut` is equal to "M", change it to "MP"
         if [ "\$segment_flumut" = "M" ]; then
@@ -84,10 +82,26 @@ process FASTA_CONFIGURATION {
         fi
 
         # Create the header using the extracted values
-        flumut_header=">\${id_flumut}_\${segment_flumut}"
-
+        flumut_header=">${meta.id}_\$segment_flumut"
+        
         # Create an additional file with modified headers for flumut.fasta
         awk -v flumut_header="\$flumut_header" 'NR == 1 {print flumut_header; next} {print}' "\$fasta_file" >> ${meta.id}_flumut.fasta
+
+        ## GENIN SPECIFIC CODE
+
+        # Extract `segment_genin`: the part after the `-` and before `_`
+        segment_genin="\${segment#*-}"
+
+        # If `segment_genin` is equal to "M", change it to "MP"
+        if [ "\$segment_genin" = "M" ]; then
+            segment_genin="MP"
+        fi
+
+        # Create the header using the extracted values
+        genin_header=">${meta.id}_\$segment_genin"
+
+        # Create an additional file with modified headers for flumut.fasta
+        awk -v genin_header="\$genin_header" 'NR == 1 {print genin_header; next} {print}' "\$fasta_file" >> ${meta.id}_genin.fasta
 
 
     done

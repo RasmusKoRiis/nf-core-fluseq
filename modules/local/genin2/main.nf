@@ -1,8 +1,8 @@
 
-process FLUMUT {
+process GENIN2 {
     tag "$meta.id"
     label 'process_medium'
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
    
 
 
@@ -12,7 +12,8 @@ process FLUMUT {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
-    container 'quay.io/biocontainers/flumut:0.6.3--pyhdfd78af_0'
+    container 'docker.io/rasmuskriis/genin2:latest'
+    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
     
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -24,9 +25,8 @@ process FLUMUT {
    
 
     output:
-    tuple val(meta), path("${meta.id}_markers_output.tsv") , emit: markers
-    tuple val(meta), path("${meta.id}_mutations_output.tsv"), emit: mutations
-    tuple val(meta), path("${meta.id}_literature_output.tsv") , emit: literature
+    tuple val(meta), path("${meta.id}_genin2.tsv") , emit: genin2_report
+
 
 
     when:
@@ -34,7 +34,6 @@ process FLUMUT {
 
     script:
     """
-    flumut --update
-    flumut -m ${meta.id}_markers_output.tsv -M ${meta.id}_mutations_output.tsv -l ${meta.id}_literature_output.tsv $fasta
+    genin2 -o ${meta.id}_genin2.tsv $fasta
     """
 }

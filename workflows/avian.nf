@@ -57,8 +57,12 @@ include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATION                    } from '../modules/local/mutation/main'
-include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
+include { TABLELOOKUP_MAMMALIAN                } from '../modules/local/tablelookup_mammalian/main'
 include { REPORT_AVIAN                } from '../modules/local/report_avian/main'
+include { FLUMUT                      } from '../modules/local/flumut/main'
+include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion/main'
+include { GENIN2                      } from '../modules/local/genin2/main'
+
 
 
 
@@ -75,18 +79,20 @@ def multiqc_report = []
 
 
 // Function to parse the sample sheet
+
+
+// Function to parse the sample sheet
 def parseSampleSheet(sampleSheetPath) {
-    return Channel
-        .fromPath(sampleSheetPath)
-        .splitCsv(header: true, sep: ',', strip: true)
-        .map { row ->
-            // Replacing '-' with '!' in sampleId
-            def sampleId = row.sample_id.replace('-', '!')
-            def files = file("${params.samplesDir}/${row.barcode}/*.fastq.gz")
-            // Creating a metadata map
-            def meta = [ id: sampleId, single_end: true ]
-            return tuple(meta, files)
-        }
+        return Channel
+            .fromPath(sampleSheetPath)
+            .splitCsv(header: true, sep: ',', strip: true)
+            .map { row ->
+                def sampleId = row.SequenceID
+                def files = file("${params.samplesDir}/${row.Barcode}/*.fastq.gz")
+                // Creating a metadata map
+                def meta = [ id: sampleId, single_end: true ]
+                return tuple(meta, files)
+            }
 }
 
 
@@ -213,12 +219,33 @@ workflow AVIAN {
 
 
     //
+    // MODULE: FLUMUT
+    //
+
+    FLUMUT (
+        FASTA_CONFIGURATION.out.fasta_flumut
+    )
+
+    //
+    // MODULE: GENIN2
+    //
+
+    GENIN2 (
+        FASTA_CONFIGURATION.out.fasta_genin
+    )
+
+
+
+    //
     // MODULE: COVERAGE
     //
 
+    /// Coverage threshold from the params/user
+    def seq_quality_thershold = params.seq_quality_thershold
+
     
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta
+         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
     )
 
 
@@ -254,8 +281,8 @@ workflow AVIAN {
 
 
     
-    TABLELOOKUP  (
-        MUTATION.out.mamailian_mutation, MUTATION.out.inhibtion_mutation, fullPath_mammalian_mutation, fullPath_inhibtion_mutation 
+    TABLELOOKUP_MAMMALIAN  (
+        MUTATION.out.mamailian_mutation, fullPath_mammalian_mutation
     )
 
     //
@@ -267,7 +294,7 @@ workflow AVIAN {
         COVERAGE.out.coverage_report.collect(), 
         MUTATION.out.mamailian_mutation_report.collect(), 
         MUTATION.out.inhibtion_mutation_report.collect(), 
-        TABLELOOKUP.out.lookup_report.collect()
+        TABLELOOKUP_MAMMALIAN.out.lookup_report.collect()
     )
     
 

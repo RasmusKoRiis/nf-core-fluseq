@@ -13,7 +13,6 @@ process REPORT_AVIAN {
     path(coverage)
     path(mutation_mamilian)
     path(mutation_inhibtion)
-    path(lookup)
     path(lookup_mammalian)
 
     output:
