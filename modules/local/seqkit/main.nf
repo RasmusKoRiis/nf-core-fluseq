@@ -48,17 +48,31 @@ process FASTA_CONFIGURATION {
         subtype=\$(cat ${subtype} )
 
         segment=""
-        case "\$number" in
-            "04") segment="01-HA" ;;
-            "06") segment="02-NA" ;;
-            "07") segment="03-M" ;;
-            "02") segment="04-PB1" ;;
-            "01") segment="05-PB2" ;;
-            "05") segment="06-NP" ;;
-            "03") segment="07-PA" ;;
-            "08") segment="08-NS" ;;
-            *) segment="Unknown" ;;
-        esac
+        if [ "\$subtype" = "VIC" ] || [ "\$subtype" = "VICVIC" ]; then
+            case "\$number" in
+                "04") segment="01-HA" ;;
+                "06") segment="02-NA" ;;
+                "07") segment="03-M" ;;
+                "02") segment="05-PB2" ;;   
+                "01") segment="04-PB1" ;;   
+                "05") segment="06-NP" ;;
+                "03") segment="07-PA" ;;
+                "08") segment="08-NS" ;;
+                *) segment="Unknown" ;;
+            esac
+        else
+            case "\$number" in
+                "04") segment="01-HA" ;;
+                "06") segment="02-NA" ;;
+                "07") segment="03-M" ;;
+                "02") segment="04-PB1" ;;
+                "01") segment="05-PB2" ;;
+                "05") segment="06-NP" ;;
+                "03") segment="07-PA" ;;
+                "08") segment="08-NS" ;;
+                *) segment="Unknown" ;;
+            esac
+        fi
 
         # Prepare the new header
         new_header=">\${id}|\${segment}-\${subtype}"
