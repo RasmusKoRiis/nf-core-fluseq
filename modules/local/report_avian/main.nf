@@ -14,6 +14,7 @@ process REPORT_AVIAN {
     path(mutation_mamilian)
     path(mutation_inhibtion)
     path(lookup_mammalian)
+    path(aminoacid_mutations)
 
     output:
 

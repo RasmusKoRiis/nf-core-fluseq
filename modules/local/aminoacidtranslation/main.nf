@@ -1,10 +1,11 @@
 process AMINOACIDTRANSLATION {
     tag "${meta.id}"
     label 'process_single'
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
 
  
-    container 'docker.io/nextstrain/nextclade:latest'
+    container 'docker.io/rasmuskriis/nextclade-python'
+    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
 
 
     input:
@@ -13,7 +14,8 @@ process AMINOACIDTRANSLATION {
     
 
     output:
-    tuple val(meta), path("*.csv"), emit: nextclade_csv
+    path("*nextclade_mutations.csv"), emit: nextclade_csv
+    tuple val(meta), path("*_nextclade_lookup_mutations.csv"), path(subtype), emit: mutation_lookup_csv
     tuple val(meta), path("*translation*fasta"), path(subtype), emit: aminoacid_sequence
     path "versions.yml", emit: versions
 
@@ -46,7 +48,18 @@ process AMINOACIDTRANSLATION {
             mv "\$file" ./${meta.id}_\${basename}
         done
 
+        echo "1"
+
+        mv ${meta.id}_nextclade.csv ${meta.id}_\${segment_name}_nextclade.csv
+
         subtype=\$(cat ${subtype})
+
+        #NEXTCLADE CONVERSION
+        echo ${fasta}
+        python /project-bin/csv_conversion_nextclade.py  \
+                ${meta.id}_\${segment_name}_nextclade.csv \
+                ${meta.id} 
+   
     done
 
     cat <<-END_VERSIONS > versions.yml

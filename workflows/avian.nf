@@ -68,6 +68,7 @@ include { GENIN2                      } from '../modules/local/genin2/main'
 
 
 
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -277,12 +278,9 @@ workflow AVIAN {
     def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
     def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
 
-    
 
-
-    
     TABLELOOKUP_MAMMALIAN  (
-        MUTATION.out.mamailian_mutation, fullPath_mammalian_mutation
+        AMINOACIDTRANSLATION.out.mutation_lookup_csv, fullPath_mammalian_mutation
     )
 
     //
@@ -291,10 +289,11 @@ workflow AVIAN {
     REPORT_AVIAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
         GENOTYPING.out.genotype_report.collect(), 
-        COVERAGE.out.coverage_report.collect(), 
+        COVERAGE.out.coverage_report.collect(),
         MUTATION.out.mamailian_mutation_report.collect(), 
         MUTATION.out.inhibtion_mutation_report.collect(), 
-        TABLELOOKUP_MAMMALIAN.out.lookup_report.collect()
+        TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
+        AMINOACIDTRANSLATION.out.nextclade_csv.collect() 
     )
     
 

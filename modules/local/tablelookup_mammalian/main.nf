@@ -2,7 +2,7 @@
 process TABLELOOKUP_MAMMALIAN {
     tag "$meta.id"
     label 'process_single'
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
     
     
 
@@ -16,16 +16,12 @@ process TABLELOOKUP_MAMMALIAN {
 
 
     output:
-    //tuple val(meta), path("*.txt"), emit: genotype
-    //tuple val(meta), path("*.csv"), emit: genotype_file
     tuple val(meta), path("*mammalian.csv"), emit: mammalian_mutations
     path("*.csv"), emit: lookup_report
     path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
-
-    //errorStrategy 'ignore'
 
     script:
     def args = task.ext.args ?: ''
@@ -44,6 +40,7 @@ process TABLELOOKUP_MAMMALIAN {
   
     for mutation_file in ${mammalian_mutation}; do
 
+
         type="mammalian"
         filename=\$(basename \$mutation_file)
         filename_no_ext=\${filename%.*}  
@@ -60,6 +57,7 @@ process TABLELOOKUP_MAMMALIAN {
         \${subtype_name} \
         ${meta.id} \
         \${type} \
+
 
     done
 
