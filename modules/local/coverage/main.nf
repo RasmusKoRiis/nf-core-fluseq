@@ -17,7 +17,7 @@ process COVERAGE {
     output:
     tuple val(meta), path("*.csv"), emit: coverage
     path("*.csv"), emit: coverage_report
-    tuple val(meta), path("*fasta"), path(subtype), path("*csv") emit: filtered_fasta
+    tuple val(meta), path("*fasta"), path(subtype), path("*csv"), emit: filtered_fasta
     tuple val(meta), path("*coverage.fa"), path(subtype), emit:  merged_filtered_fasta
     path "versions.yml", emit: versions
 
