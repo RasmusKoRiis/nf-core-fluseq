@@ -6,9 +6,10 @@ process REASSORTMENT {
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
     containerOptions = "-v ${baseDir}/bin:/project-bin"
 
+    stageInMode 'copy'          
     input:
     tuple val(meta), path(sequences)                         // Multi-segment FASTA with headers like >ID_segment
-    path(reassortment_database)                              // Multi-lineage reference DB
+    file reassortment_database                           // Multi-lineage reference DB
 
     output:
     tuple val(meta), path("${meta.id}_reassortment_summary.csv"), emit: genotype_report
