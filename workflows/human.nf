@@ -237,7 +237,7 @@ workflow HUMAN {
 
     
     REASSORTMENT (
-         FASTA_CONFIGURATION.out.fasta_flumut, Channel.value(file(params.ha_database))
+         FASTA_CONFIGURATION.out.fasta_flumut, Channel.value(file(params.reassortment_database))
     )
 
 
