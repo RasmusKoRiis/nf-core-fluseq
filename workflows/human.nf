@@ -64,6 +64,7 @@ include { TECHNICAL                   } from '../modules/local/technical/main'
 include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/main'
 include { BASERATIO                   } from '../modules/local/baseratio/main'
 include { CHOPPER                     } from '../modules/local/chopper/main'
+include { REASSORTMENT                } from '../modules/local/reassortment/main'
 
 
 
@@ -228,6 +229,15 @@ workflow HUMAN {
     
     FASTA_CONFIGURATION (
          fasta_subtype 
+    )
+
+    //
+    // MODULE: REASSORTMENT
+    //Configure the fasta file names for reporting
+
+    
+    REASSORTMENT (
+         FASTA_CONFIGURATION.out.fasta_flumut, Channel.value(file(params.ha_database))
     )
 
 
