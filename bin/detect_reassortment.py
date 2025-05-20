@@ -8,7 +8,8 @@ Summarise BLAST hits for an influenza sample and flag possible reassortment.
 Reassortment flag:
   No       – every high‑quality segment points to the *same* STRAIN
   Yes      – different STRAINs among high‑quality segments
-  Unknown  – at least one segment missing or < IDENTITY_THRESHOLD
+  Less Likely - at least one segment < IDENTITY_THRESHOLD
+  Unknown  – at least one segment missing 
 """
 
 import argparse
@@ -45,20 +46,21 @@ def main() -> None:
     # Build one‑line output
     row = {'Sample': args.sample}
     different_strains = set()
-    quality_ok = True
+    missing_segment   = False         
+    low_identity_hit  = False        
 
     for seg in EXPECTED_SEGMENTS:
         hit = best[best['segment'] == seg]
         if hit.empty:
             row[seg] = 'Missing'
-            quality_ok = False
+            missing_segment = True    
             continue
 
         hit = hit.iloc[0]
         pid = round(hit['pident'], 1)
         if pid < IDENTITY_THRESHOLD:
             row[seg] = f"TooLow({pid})"
-            quality_ok = False
+            low_identity_hit = True   
             continue
 
         strain = hit['strain']
@@ -66,8 +68,10 @@ def main() -> None:
         different_strains.add(strain)
 
     # Decide flag
-    if not quality_ok:
-        row['Reassortment'] = 'Unknown'
+    if missing_segment:                           
+        row['Reassortment'] = 'Unknown'           
+    elif low_identity_hit:                        
+        row['Reassortment'] = 'Unknown (Less Likely)'  
     else:
         row['Reassortment'] = 'No' if len(different_strains) == 1 else 'Yes'
 
