@@ -94,7 +94,7 @@ for (bam,ref,pos), vals in depth_dict.items():
     out_rows.append(row)
 
 # Write annotated file
-out_fn = f"{meta_id}_annotated_depth.csv"
+out_fn = f"{meta_id}_merged_depth_analysis.csv"
 with open(out_fn, 'w', newline='') as f:
     w = csv.writer(f)
     w.writerow([
