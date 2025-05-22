@@ -25,7 +25,7 @@ process DEPTH_ANALYSIS {
    
 
     output:
-    path("*merged_depth_analysis.csv") , emit: depth_report
+    path("*_long.csv") , emit: depth_report
 
     when:
     task.ext.when == null || task.ext.when
