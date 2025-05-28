@@ -13,6 +13,7 @@ process REPORT_AVIAN {
     path(coverage)
     path(lookup_mammalian)
     path(aminoacid_mutations)
+    val runid
 
     output:
 

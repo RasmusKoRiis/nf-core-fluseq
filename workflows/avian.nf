@@ -290,12 +290,16 @@ workflow AVIAN {
     //
     // MODULE: REPORT
     //
+    def runid = params.runid
+
+
     REPORT_AVIAN  (
         SUBTYPEFINDER.out.subtype_report.collect(), 
         GENOTYPING.out.genotype_report.collect(), 
         COVERAGE.out.coverage_report.collect(),
         TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
-        AMINOACIDTRANSLATION.out.nextclade_csv.collect() 
+        AMINOACIDTRANSLATION.out.nextclade_csv.collect(),
+        runid 
     )
     
 
