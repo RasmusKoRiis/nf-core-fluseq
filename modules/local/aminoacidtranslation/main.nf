@@ -1,7 +1,7 @@
 process AMINOACIDTRANSLATION {
     tag "${meta.id}"
     label 'process_single'
-    errorStrategy 'ignore'
+    //errorStrategy 'ignore'
 
  
     container 'docker.io/rasmuskriis/nextclade-python'
