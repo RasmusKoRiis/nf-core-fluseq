@@ -283,8 +283,9 @@ workflow AVIAN {
 
 
     TABLELOOKUP_MAMMALIAN  (
-        AMINOACIDTRANSLATION.out.mutation_lookup_csv, fullPath_mammalian_mutation
+        AMINOACIDTRANSLATION.out.mutation_lookup_csv, Channel.value(file(params.mamalian_mutation_db)
     )
+
 
     //
     // MODULE: REPORT
