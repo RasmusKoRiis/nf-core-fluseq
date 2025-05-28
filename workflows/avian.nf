@@ -205,7 +205,7 @@ workflow AVIAN {
     ch_genotype_database = params.genotype_database
 
     GENOTYPING (
-        IRMA_amended_consensus_files, ch_genotype_database
+        IRMA_amended_consensus_files, Channel.value(file(params.genotype_database))
     )
 
 
