@@ -180,8 +180,8 @@ workflow AVIAN {
     def fullPathNA = "${currentDir}/${params.na_database}"
 
 
-    SUBTYPEFINDER (
-        IRMA_ha_na_fasta, fullPathHA, fullPathNA
+        SUBTYPEFINDER (
+        IRMA_ha_na_fasta, Channel.value(file(params.ha_database)),Channel.value(file(params.na_database))
     )
 
 
