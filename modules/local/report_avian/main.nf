@@ -11,8 +11,6 @@ process REPORT_AVIAN {
     path(subtype)
     path(genotype)
     path(coverage)
-    path(mutation_mamilian)
-    path(mutation_inhibtion)
     path(lookup_mammalian)
     path(aminoacid_mutations)
 
