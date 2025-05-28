@@ -257,8 +257,11 @@ workflow AVIAN {
     def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
 
     AMINOACIDTRANSLATION (
-        COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
+        COVERAGE.out.filtered_fasta, Channel.value(file(params.nextclade_dataset))
     )
+
+    Channel.value(file(params.nextclade_dataset))
+   
 
     //
     // MODULE: MUTATION
@@ -267,9 +270,9 @@ workflow AVIAN {
     def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
     MUTATION  (
-        AMINOACIDTRANSLATION.out.aminoacid_sequence, fullPath_references_2
+        AMINOACIDTRANSLATION.out.aminoacid_sequence, Channel.value(file(params.sequence_references))
     )
- 
+
     //
     // MODULE: TABLELOOKUP
     //
