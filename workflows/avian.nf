@@ -294,8 +294,6 @@ workflow AVIAN {
         SUBTYPEFINDER.out.subtype_report.collect(), 
         GENOTYPING.out.genotype_report.collect(), 
         COVERAGE.out.coverage_report.collect(),
-        MUTATION.out.mamailian_mutation_report.collect(), 
-        MUTATION.out.inhibtion_mutation_report.collect(), 
         TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
         AMINOACIDTRANSLATION.out.nextclade_csv.collect() 
     )
