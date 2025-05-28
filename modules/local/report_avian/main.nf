@@ -30,6 +30,7 @@ process REPORT_AVIAN {
     script:
     """  
     python /project-bin/reportavian.py 
+    mv merged_report.csv ${runid}_report.csv
     """
 
 }
