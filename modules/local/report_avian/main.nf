@@ -1,35 +1,33 @@
 process REPORT_AVIAN {
-    label 'process_single'
-    debug = true
 
-
-    //conda "bioconda::blast=2.15.0"
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    containerOptions "-v ${baseDir}/bin:/project-bin"   // reportavian.py lives here
 
+    /*
+     * Six lists of CSV paths – exactly what you pass with .collect()
+     * Each list arrives as a Bash array; we don’t have to touch them.
+     */
     input:
-    path(subtype)
-    path(genotype)
-    path(coverage)
-    path(lookup_mammalian)
-    path(aminoacid_mutations)
-    val runid
+    path subtype
+    path genotype
+    path coverage
+    path mammalian_mutations
+    path lookup_inhibition
+    path lookup_mammalian
 
+    /*
+     * One merged file + (optionally) keep all csvs for provenance.
+     */
     output:
-
-    path("*_report.csv"), emit: report
-    path("*.csv"), emit: all
-
-
-    when:
-    task.ext.when == null || task.ext.when
-
-    //errorStrategy 'ignore'
+    path "fluseq_merged_report.csv", emit: report
+    path "*.csv",                    emit: all   // keep originals + merged
 
     script:
-    """  
-    python /project-bin/reportavian.py 
-    mv merged_report.csv ${runid}_report.csv
     """
+    # Merge every CSV in the current directory
+    python /project-bin/reportavian.py
 
+    # Rename to a fixed, pipeline-wide name
+    mv merged_report.csv fluseq_merged_report.csv
+    """
 }

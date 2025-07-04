@@ -82,44 +82,77 @@ def multiqc_report = []
 // Function to parse a multi-FASTA file and channel sequences individually
 
 
-def parseFasta(String fastaFilePath) {
-    Channel
-        .fromPath(fastaFilePath)
-        .splitFasta(record: [id: true, seqString: true])
-        .map { record ->
-            def sampleId = record.id.tokenize('|')[0] // Extract sampleId
-            def fileId = record.id // Full ID from the record
-            def sequenceFile = "${fileId}.fasta" // Define file name with uniqueId to ensure uniqueness
+/* ---------- imports & globals ---------- */
+import groovy.transform.Field
 
-            // Write sequence to file
-            new File(sequenceFile).withWriter { writer ->
-                writer.writeLine(">${record.id}")
-                writer.writeLine(record.seqString)
+@Field Map SEGMENT_INDEX = [
+    'PB2':1, 'PB1':2, 'PA':3, 'HA':4,
+    'NP':5,  'NA':6,  'MP':7, 'NS':8
+]
+
+/* duplicate counter, initialised once for the whole run */
+@Field Map dupCounter = [:].withDefault{ 0 }
+
+/* helper to make IDs filesystem-safe */
+String sanitise( String s ) {
+    s.replaceAll('[^A-Za-z0-9._-]', '-')   // swap illegal chars → -
+     .replaceAll('-{2,}', '-')             // squeeze repeats
+     .replaceAll(/^[-.]+|[-.]+$/, '')      // trim ends
+}
+
+import groovy.transform.Field
+
+/* map segment → number */
+@Field Map SEGMENT_NUM = [
+    'PB2':1, 'PB1':2, 'PA':3, 'HA':4,
+    'NP':5,  'NA':6,  'MP':7, 'NS':8
+]
+
+/* remember which (sample, segment) we have already written */
+@Field Set taken = new HashSet<>()          // e.g. "A-Cambodia-…|HA"
+
+String clean(String s) {
+    s.replaceAll('[^A-Za-z0-9._-]', '-')
+     .replaceAll('-{2,}', '-')
+     .replaceAll(/^[-.]+|[-.]+$/, '')
+}
+
+def parseFasta(String fastaPath) {
+
+    Channel
+        .fromPath(fastaPath)
+        .splitFasta(record:[id:true, seqString:true])
+        .filter { rec ->                          // keep only first of each segment
+            def seg = rec.id.split(/\|+/)
+                         .find { SEGMENT_NUM.containsKey(it) } ?: 'UNK'
+            def sid = clean(rec.id.split(/\|/)[0])
+            taken.add("${sid}|${seg}")            // returns false if seen before
+        }
+        .map { rec ->
+            def parts      = rec.id.split(/\|+/)
+            def sampleId   = clean(parts[0])
+            def segmentTag = parts.find { SEGMENT_NUM.containsKey(it) } ?: 'UNK'
+            def segNum     = SEGMENT_NUM.getOrDefault(segmentTag, 0)
+
+            /* simple name: ID_#.fasta */
+            def fn = "${sampleId}_${segNum}.fasta"
+
+            new File(fn).withWriter { w ->
+                w << ">${sampleId}|${segmentTag}\n${rec.seqString}\n"
             }
 
-            // Construct metadata for this sequence
-            def meta = [id: sampleId, sampleId: fileId]
-
-            // Return a tuple of sampleId, metadata, and the file reference
-            // This allows for grouping by sampleId while retaining detailed info for each sequence
-            return [sampleId, [meta, file(sequenceFile)]]
+            def meta = [ id: sampleId ]        // ← only the ID
+            [ sampleId, [ meta, file(fn) ] ]
         }
         .groupTuple()
         .map { sampleId, seqInfos ->
-            // For each sampleId, seqInfos contains a list of [meta, file] tuples for each sequence
-            
-            // If you want to return a structure where each sample's sequences are together:
-            // Flatten the list of files for easier access
-            def files = seqInfos.collect { it[1] } // Collect all file references
-
-            // Optionally, merge or manipulate metadata here. Assuming keeping first meta or creating a summary
-            // For simplicity, let's just take the first sequence's metadata as a sample representation
-            def meta = seqInfos[0][0]
-
-            // Return a structure combining metadata with all sequence file paths for the sample
-            [meta, files]
+            [ seqInfos[0][0], seqInfos.collect { it[1] } ]
         }
 }
+
+
+
+
 
 
 workflow AVIANFASTA {
@@ -144,20 +177,34 @@ workflow AVIANFASTA {
     )
 
     // SUBTYPE CHANNEL
-    SEGMENTIFENTIFIER.out.fasta_segment
-    .map { meta, files -> 
-        def ha_files = files.findAll { it.getName().contains('HA') }
-        def na_files = files.findAll { it.getName().contains('NA') }
-        def pa_files = files.findAll { it.getName().contains('PA') }
-        def pb1_files = files.findAll { it.getName().contains('PB1') }
-        def pb2_files = files.findAll { it.getName().contains('PB2') }
-        def ns_files = files.findAll { it.getName().contains('NS') }
-        def np_files = files.findAll { it.getName().contains('NP') }
-        def m_files = files.findAll { it.getName().contains('M') }
-        return tuple(meta, ha_files ?: [], na_files ?: [], pa_files ?: [], pb1_files ?: [], pb2_files ?: [], ns_files ?: [], np_files ?: [], m_files ?: [])
-    }
-    .set { subtype_channel }
+ /* ---------- SUBTYPE CHANNEL (one file per segment) ---------- */
+def pick = { fset, num ->                              // helper
+    fset.find { it.getName().endsWith("_${num}.fasta") }
+}
 
+SEGMENTIFENTIFIER.out.fasta_segment
+    .map { meta, files ->
+
+        // mandatory segments
+        def ha = pick(files, 4)
+        def na = pick(files, 6)
+
+        // skip sample if either HA or NA is missing
+        if (!ha || !na) return null
+
+        // optional segments
+        def pa  = pick(files, 3)
+        def pb1 = pick(files, 2)
+        def pb2 = pick(files, 1)
+        def ns  = pick(files, 8)
+        def np  = pick(files, 5)
+        def mp  = pick(files, 7)
+
+        /* emit exactly nine elements: meta + eight paths (some may be null) */
+        tuple(meta, ha, na, pa, pb1, pb2, ns, np, mp)
+    }
+    .filter { it != null }     // remove samples lacking HA or NA
+    .set    { subtype_channel }
 
 
     /// GENOTYPING CHANNEL
@@ -305,7 +352,6 @@ workflow AVIANFASTA {
         GENOTYPING.out.genotype_report.collect(), 
         COVERAGE.out.coverage_report.collect(), 
         MUTATION.out.mamailian_mutation_report.collect(), 
-        MUTATION.out.inhibtion_mutation_report.collect(), 
         TABLELOOKUP.out.lookup_report.collect(),
         TABLELOOKUP_MAMMALIAN.out.lookup_report.collect()
     )
