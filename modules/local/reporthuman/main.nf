@@ -56,7 +56,9 @@ process REPORTHUMAN {
     awk -v date="\$current_date" -v OFS=',' '{ if (NR == 1) { print \$0, "Date" } else { print \$0, date } }' ${runid}_temp2.csv > ${runid}_temp3.csv
 
     # Add Release Version column
-    awk -v version="${release_version}" -v OFS=',' '{ if (NR == 1) { print \$0, "Release Version" } else { print \$0, version } }' ${runid}_temp3.csv > ${runid}.csv
+    awk -v version="${release_version}" -v OFS=',' '{ if (NR == 1) { print \$0, "Release Version" } else { print \$0, version } }' ${runid}_temp3.csv > ${runid}_temp4.csv
+
+    python /project-bin/report_calculation.py ${runid}_temp4.csv ${runid}.csv
 
     #Merge all filtered fasta files to one
     cat ${filtered_fasta} > ${runid}.fasta
