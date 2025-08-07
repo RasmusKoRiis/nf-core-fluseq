@@ -2,6 +2,7 @@ import pandas as pd
 import glob
 import sys
 
+
 #MERGE ALL DATA
 # Get a list of all CSV files in the current directory
 csv_files = glob.glob('*.csv')
@@ -46,9 +47,6 @@ keywords = {'mutation', 'differences', 'frameshift', 'aadeletions', 'aainsertion
 
 # Convert the column names to lowercase and check if any keyword is in each column name
 columns_to_fill = [col for col in merged_data.columns if any(keyword in col.lower() for keyword in keywords)]
-
-# Fill NA values in the identified columns
-merged_data[columns_to_fill] = merged_data[columns_to_fill].fillna('NA')
 
 # Function to check if a column exists, and if not, create it with 'NA' values
 def ensure_column(df, column_name):
@@ -143,8 +141,6 @@ merged_data = pd.concat([merged_data, new_samples], ignore_index=True)
 all_columns = columns + [col for col in new_samples.columns if col not in columns]
 merged_data = merged_data.reindex(columns=all_columns)
 
-# Fill all empty values in merged_data with NaN
-merged_data = merged_data.applymap(lambda x: 'NA' if pd.isna(x) else x)
 
 # Ensure alle numeric columns have onlue 5 decimals
 
@@ -163,6 +159,10 @@ for col in coverage_columns:
 
 merged_data[coverage_columns] = merged_data[coverage_columns].fillna('NA')
 
+merged_data = (
+    merged_data.replace(r"^\s*$", pd.NA, regex=True)   # blanks → <missing>
+               .fillna("NA")                           # any missing → "NA"
+)
 
 # Write the merged data to a new CSV file
 merged_data.to_csv('merged_report.csv', index=False)

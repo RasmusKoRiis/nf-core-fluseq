@@ -16,7 +16,7 @@ HA, NA, MP, NP, NS, PA, PB1, PB2
 Issue codes
 -----------
 FS – frameshift detected
-LC – low coverage (<80 %)
+LC – low coverage (0%><80 %)
 MS – mixed sites (>3)
 
 Usage
@@ -86,7 +86,7 @@ def qc_summary(row: pd.Series) -> str:
 
         # Low coverage
         cov_val = row.get(COVERAGE_COL[seg])
-        if pd.notna(cov_val) and cov_val < 80:
+        if pd.notna(cov_val) and 0.1 < cov_val < 80:
             issues.append('LC')
 
         # Mixed sites

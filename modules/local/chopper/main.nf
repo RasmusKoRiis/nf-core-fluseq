@@ -17,7 +17,7 @@ process CHOPPER {
     script:
     """
     
-    chopper -q 11 -l 750 --tailcrop 22 --headcrop 22  -i $fastq > ${meta.id}_filtered.fastq
+    chopper -q 11 -l 600 --tailcrop 22 --headcrop 22  -i $fastq > ${meta.id}_filtered.fastq
 
     """
 }
