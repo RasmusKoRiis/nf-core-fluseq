@@ -167,46 +167,4 @@ merged_data = merged_data[front + sorted(others)]
 new_samples = samplesheet_df[~samplesheet_df['Sample'].isin(merged_data['Sample'])]
 merged_data = pd.concat([merged_data, new_samples], ignore_index=True)
 
-# Ensure all columns from both frames are present and ordered: keep current order + any extras from new_samples
-extra_cols = [c for c in new_samples.columns if c not in merged_data.columns]
-for c in extra_cols:
-    merged_data[c] = 'NA'
-# Reindex to front + sorted others again to keep consistent layout
-others = [c for c in merged_data.columns if c not in front]
-merged_data = merged_data[front + sorted(others)]
-
-# ────────────────────────── Numeric handling & rounding ────
-# Convert IRMA_noise to numeric safely and round 5
-merged_data["IRMA_noise"] = pd.to_numeric(merged_data.get("IRMA_noise", pd.Series(index=merged_data.index)), errors='coerce').round(5)
-
-# Coverage columns: numeric → round(2) → fill 'NA' for missing
-coverage_columns = [col for col in merged_data.columns if "Coverage" in col]
-for col in coverage_columns:
-    merged_data[col] = pd.to_numeric(merged_data[col], errors='coerce').round(2)
-# After rounding, replace NaN with 'NA' strings as in original
-merged_data[coverage_columns] = merged_data[coverage_columns].where(~merged_data[coverage_columns].isna(), other='NA')
-
-# Round any other numeric cols to 5 decimals (keeps coverage at 2 as already done)
-numeric_cols = merged_data.select_dtypes(include='number').columns.tolist()
-other_numeric = [c for c in numeric_cols if c not in coverage_columns]
-if other_numeric:
-    merged_data[other_numeric] = merged_data[other_numeric].round(5)
-
-# ── FINAL SWEEP: normalize empties across the whole DF ──
-# 1) Trim whitespace in all string columns
-obj_cols = merged_data.select_dtypes(include='object').columns
-merged_data[obj_cols] = merged_data[obj_cols].apply(lambda s: s.str.strip())
-
-# 2) Turn common empty-like tokens into real <NA>
-merged_data[obj_cols] = merged_data[obj_cols].replace(
-    to_replace=r'^(?i)(?:na|nan|none|null|n/?a|-)?$',  # case-insensitive
-    value=pd.NA,
-    regex=True
-)
-
-# 3) Also convert pure blanks to <NA>, then fill everything with "NA"
-merged_data = merged_data.replace(r'^\s*$', pd.NA, regex=True).fillna("NA")
-
-
-# ────────────────────────── Write ──────────────────────────
-merged_data.to_csv('merged_report.csv', index=False)
+# Ensure all columns from both frames are
