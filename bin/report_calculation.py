@@ -1,30 +1,12 @@
-
 #!/usr/bin/env python3
 """
 Process influenza NGS QC CSV files.
 
 Adds two columns:
 
-1. **NGS_QC_Sum** – segment‑wise QC issues in the format:
-      HA:MS|PB1:LC,FS|NP:LC
-2. **GISAID_Comment** – "Review" when any QC issues are present (i.e. NGS_QC_Sum not empty).
-
-Segments considered
--------------------
-HA, NA, MP, NP, NS, PA, PB1, PB2
-
-Issue codes
------------
-FS – frameshift detected
-LC – low coverage (0%><80 %)
-MS – mixed sites (>3)
-
-Usage
------
-$ python process_qc.py input.csv              # writes input_processed.csv
-$ python process_qc.py input.csv -o output.csv
+1. NGS_QC_Sum – segment-wise QC issues, e.g. HA:MS|PB1:LC,FS|NP:LC
+2. GISAID_Comment – "Review" when any QC issues are present, else "NA".
 """
-
 import argparse
 from pathlib import Path
 import pandas as pd
@@ -77,24 +59,27 @@ def qc_summary(row: pd.Series) -> str:
     for seg in SEGMENT_ORDER:
         issues = []
 
-        # Frameshift: any column not equal 'No frameShifts'
+        # Frameshift: any column not equal 'No frameShifts' (case/space-insensitive)
         for col in FRAMESHIFT_COLS[seg]:
             val = row.get(col)
-            if pd.notna(val) and str(val).strip().lower() != 'no frameshifts':
+            if pd.isna(val):
+                continue
+            if str(val).strip().lower() != 'no frameshifts':
                 issues.append('FS')
                 break
 
-        # Low coverage
-        cov_val = row.get(COVERAGE_COL[seg])
-        if pd.notna(cov_val) and 0.1 < cov_val < 80:
+        # Low coverage: coerce to numeric first
+        cov_raw = row.get(COVERAGE_COL[seg])
+        cov_val = pd.to_numeric(cov_raw, errors='coerce')
+        if pd.notna(cov_val) and (cov_val > 0.1) and (cov_val < 80):
             issues.append('LC')
 
-        # Mixed sites
-        ms_sum = sum(
-            float(row.get(col, 0) or 0)
-            for col in MIXED_COLS[seg]
-            if pd.notna(row.get(col))
-        )
+        # Mixed sites: coerce each to numeric and sum
+        ms_sum = 0.0
+        for col in MIXED_COLS[seg]:
+            v = pd.to_numeric(row.get(col), errors='coerce')
+            if pd.notna(v):
+                ms_sum += float(v)
         if ms_sum > 3:
             issues.append('MS')
 
@@ -105,11 +90,27 @@ def qc_summary(row: pd.Series) -> str:
 
 
 def process_file(in_csv: Path, out_csv: Path) -> None:
-    df = pd.read_csv(in_csv)
+    # Read and normalize blanks to <NA>
+    df = pd.read_csv(in_csv, low_memory=False)
+    obj_cols = df.select_dtypes(include='object').columns
+    if len(obj_cols):
+        # strip spaces and normalize common empty-like tokens to NA
+        df[obj_cols] = df[obj_cols].apply(lambda s: s.str.replace(r'[\u00A0\u200B\uFEFF]', ' ', regex=True).str.strip())
+        df[obj_cols] = df[obj_cols].replace(
+            to_replace=r'^(?i)(?:na|nan|none|null|n/?a|-)?$',
+            value=pd.NA,
+            regex=True
+        )
+        df = df.replace(r'^\s*$', pd.NA, regex=True)
+
+    # Build QC summary
     df['NGS_QC_Sum'] = df.apply(qc_summary, axis=1)
-    # New column: flag for GISAID comment
-    df['GISAID_Comment'] = df['NGS_QC_Sum'].apply(lambda x: 'Review' if str(x).strip() else '')
-    df.to_csv(out_csv, index=False)
+
+    # GISAID comment: "Review" if any issues, else "NA"
+    df['GISAID_Comment'] = df['NGS_QC_Sum'].apply(lambda x: 'Review' if str(x).strip() else 'NA')
+
+    # Write with NA shown explicitly
+    df.to_csv(out_csv, index=False, na_rep='NA')
     print(f"Wrote processed file to {out_csv}")  # noqa: T201
 
 
@@ -129,9 +130,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    out_path = args.output or args.input.with_name(
-        f"{args.input.stem}_processed.csv"
-    )
+    out_path = args.output or args.input.with_name(f"{args.input.stem}_processed.csv")
     process_file(args.input, out_path)
 
 
