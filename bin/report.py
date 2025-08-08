@@ -195,5 +195,6 @@ if other_numeric:
 # Normalize blanks/None to 'NA' at the end (stringify missing)
 merged_data = merged_data.replace(r"^\s*$", pd.NA, regex=True).fillna("NA")
 
+
 # ────────────────────────── Write ──────────────────────────
 merged_data.to_csv('merged_report.csv', index=False)
