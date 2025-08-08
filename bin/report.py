@@ -192,8 +192,20 @@ other_numeric = [c for c in numeric_cols if c not in coverage_columns]
 if other_numeric:
     merged_data[other_numeric] = merged_data[other_numeric].round(5)
 
-# Normalize blanks/None to 'NA' at the end (stringify missing)
-merged_data = merged_data.replace(r"^\s*$", pd.NA, regex=True).fillna("NA")
+# ── FINAL SWEEP: normalize empties across the whole DF ──
+# 1) Trim whitespace in all string columns
+obj_cols = merged_data.select_dtypes(include='object').columns
+merged_data[obj_cols] = merged_data[obj_cols].apply(lambda s: s.str.strip())
+
+# 2) Turn common empty-like tokens into real <NA>
+merged_data[obj_cols] = merged_data[obj_cols].replace(
+    to_replace=r'^(?i)(?:na|nan|none|null|n/?a|-)?$',  # case-insensitive
+    value=pd.NA,
+    regex=True
+)
+
+# 3) Also convert pure blanks to <NA>, then fill everything with "NA"
+merged_data = merged_data.replace(r'^\s*$', pd.NA, regex=True).fillna("NA")
 
 
 # ────────────────────────── Write ──────────────────────────
