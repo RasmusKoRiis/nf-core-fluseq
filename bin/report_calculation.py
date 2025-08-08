@@ -106,8 +106,13 @@ def process_file(in_csv: Path, out_csv: Path) -> None:
     # Build QC summary
     df['NGS_QC_Sum'] = df.apply(qc_summary, axis=1)
 
-    # GISAID comment: "Review" if any issues, else "NA"
-    df['GISAID_Comment'] = df['NGS_QC_Sum'].apply(lambda x: 'Review' if str(x).strip() else 'NA')
+    # If no issues, make it an empty string instead of "NA"
+    df['NGS_QC_Sum'] = df['NGS_QC_Sum'].replace(r'^\s*$', '', regex=True)
+
+    # GISAID comment: "Review" if any issues, else empty string
+    df['GISAID_Comment'] = df['NGS_QC_Sum'].apply(lambda x: 'Review' if str(x).strip() else '')
+
+
 
     # Write with NA shown explicitly
     df.to_csv(out_csv, index=False, na_rep='NA')
