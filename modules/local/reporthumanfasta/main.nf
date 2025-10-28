@@ -31,49 +31,74 @@ process REPORTHUMANFASTA {
     task.ext.when == null || task.ext.when
 
     script:
-    """
-    set -euo pipefail
+"""
+set -euo pipefail
 
-    echo "[REPORTHUMANFASTA] staged CSVs:"
-    ls -1 *.csv || true
+echo "[REPORTHUMANFASTA] staged CSVs:"
+ls -1 *.csv || true
 
-    # 1) Merge all CSVs in CWD into merged_report.csv (dedup by Sample, keep first non-empty per column)
-    python /project-bin/reportfasta.py
+# 1) Merge staged CSVs into merged_report.csv (dedup by Sample, keep first non-empty per column)
+python /project-bin/reportfasta.py
 
-    # 2) Join OriginalName + add meta, with extra de-dup guard
-    python - <<'PY'
+# 2) Join OriginalName + add meta, robust de-dup (no .str.split)
+export RUNID='${runid}'
+export SEQINST='${seq_instrument}'
+export RELVER='${release_version}'
+export IDMAP='${id_map}'
+
+python - <<'PY'
+import os
 import pandas as pd
 from datetime import date
 
-runid   = "${runid}"
-seqinst = "${seq_instrument}"
-relver  = "${release_version}"
+runid   = os.environ.get("RUNID","unknown")
+seqinst = os.environ.get("SEQINST","unknown")
+relver  = os.environ.get("RELVER","unknown")
+idmap_p = os.environ["IDMAP"]
 
-# Clean id_map (also kills any stray 'EOF' etc.)
-idmap = pd.read_csv("id_map.tsv", sep="\\t", dtype=str, keep_default_na=False)
+# --- helpers (regex-free split on '|' or '_') ---
+def cut_prefix(x: str) -> str:
+    x = str(x)
+    for d in ('|','_'):
+        i = x.find(d)
+        if i != -1:
+            return x[:i]
+    return x
+
+def norm_uid_series(s: pd.Series) -> pd.Series:
+    return s.astype(str).map(cut_prefix)
+
+def dedup_on_key(df: pd.DataFrame, key: str) -> pd.DataFrame:
+    if df.empty or key not in df.columns: 
+        return df
+    df2  = df.copy()
+    cols = [c for c in df2.columns if c != key]
+    if not cols:
+        return df2.drop_duplicates(subset=[key], keep="first")
+    non_empty = (df2[cols].notna()) & (df2[cols].astype(str) != "")
+    df2["__score"] = non_empty.sum(axis=1)
+    df2 = df2.sort_values("__score", ascending=False).drop(columns="__score")
+    return df2.drop_duplicates(subset=[key], keep="first")
+
+# --- id_map clean (no backticks / no  examples) ---
+idmap = pd.read_csv(idmap_p, sep="\t", dtype=str, keep_default_na=False)
 idmap.columns = ["SampleID","OriginalName"]
-idmap["SampleID"]    = idmap["SampleID"].str.strip()
-idmap["OriginalName"]= idmap["OriginalName"].str.strip()
-idmap = idmap[idmap["SampleID"].str.fullmatch(r"[A-Za-z0-9]+").fillna(False)]
-idmap = idmap.drop_duplicates(subset=["SampleID"], keep="first")
+idmap["SampleID"]     = idmap["SampleID"].astype(str).str.strip()
+idmap["OriginalName"] = idmap["OriginalName"].astype(str).str.strip()
+mask = idmap["SampleID"].str.len().gt(0) & idmap["SampleID"].str.isalnum()
+idmap = idmap[mask].drop_duplicates(subset=["SampleID"], keep="first")
 
-# Load aggregated content (may be empty)
+# --- load merged ---
 try:
     merged = pd.read_csv("merged_report.csv", dtype=str, keep_default_na=False)
 except Exception:
     merged = pd.DataFrame(columns=["Sample"])
 
-def norm_uid_series(s: pd.Series) -> pd.Series:
-    s = s.astype(str)
-    # split on first '|' or '_' (Jyutping tip: "cut1" = zaap6 1 ci3)
-    return s.str.split("[|_]", n=1).str[0]
-
 uids  = set(idmap["SampleID"])
 names = set(idmap["OriginalName"])
 
-# Choose best join key
+# choose best join key: UID exact -> UID normalized -> OriginalName
 best_key, best_hits, mode = None, -1, "uid_exact"
-
 for c in merged.columns:
     hits = merged[c].astype(str).isin(uids).sum()
     if hits > best_hits:
@@ -92,23 +117,11 @@ if best_hits == 0 and not merged.empty:
         if hits > best_hits:
             best_hits, best_key, mode = hits, c, "name_exact"
 
-# Final de-dup on chosen key (keep "richest" row per key)
-def dedup_on_key(df: pd.DataFrame, key: str) -> pd.DataFrame:
-    if df.empty or key not in df.columns:
-        return df
-    df2 = df.copy()
-    cols = [c for c in df2.columns if c != key]
-    if not cols:
-        return df2.drop_duplicates(subset=[key], keep="first")
-    non_empty = (df2[cols].notna()) & (df2[cols].astype(str) != "")
-    df2["__score"] = non_empty.sum(axis=1)
-    df2 = df2.sort_values("__score", ascending=False).drop(columns="__score")
-    return df2.drop_duplicates(subset=[key], keep="first")
-
+# de-dup merged on chosen key (prefer "richer" rows)
 if best_key:
     merged = dedup_on_key(merged, best_key)
 
-# Left-join so every SampleID appears once
+# left-join so every SampleID appears once
 if best_key:
     if mode in ("uid_exact","uid_norm"):
         out = idmap.merge(merged, how="left", left_on="SampleID", right_on=best_key)
@@ -119,27 +132,31 @@ if best_key:
 else:
     out = idmap.copy()
 
-# Safety: ensure unique SampleID rows, and drop a redundant 'Sample' col if it just mirrors SampleID
+# final guards: unique rows, drop mirror 'Sample'
 out = out.drop_duplicates()
 out = out.drop_duplicates(subset=["SampleID"], keep="first")
 if "Sample" in out.columns:
     same_raw  = out["Sample"].astype(str).eq(out["SampleID"]).all()
-    same_norm = out["Sample"].astype(str).str.split("[|_]", n=1).str[0].eq(out["SampleID"]).all()
+    same_norm = out["Sample"].astype(str).map(cut_prefix).eq(out["SampleID"]).all()
     if same_raw or same_norm:
         out = out.drop(columns=["Sample"])
 
-# Meta columns
+# meta columns
 out["RunID"]           = runid
 out["Instrument ID"]   = seqinst
 out["Date"]            = date.today().isoformat()
 out["Release Version"] = relver
 
-# Order columns
+# order
 front = ["SampleID","OriginalName","RunID","Instrument ID","Date","Release Version"]
 rest  = [c for c in out.columns if c not in front]
 out = out[front + rest]
 
-out.to_csv(f"{runid}.csv", index=False)
+# hand off to QC calc
+out.to_csv(f"{runid}_qc_input.csv", index=False)
 PY
-    """
+
+# 3) QC calculation -> FINAL report (adds DR_* + Sekvens_Resultat)
+python /project-bin/report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
+"""
 }
