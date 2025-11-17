@@ -243,6 +243,20 @@ process NEXTCLADE {
             else
                 echo "Segment \$segment not recognized for subtype VIC"
             fi
+
+        elif [[ "\$subtype_name" == *"H5"* ]]; then
+            if [[ "\$segment" == *"HA"* ]]; then
+                nextclade dataset get --name 'community/moncla-lab/iav-h5/ha/all-clades' --output-dir "${meta.id}_\${segment}_nextclade_dataset/"
+
+                nextclade run \
+                    --input-dataset "${meta.id}_\${segment}_nextclade_dataset/" \
+                    --output-all=${meta.id}_\${segment}_nextclade_output/ \
+                    \$fasta_file    
+
+            else
+                echo "Segment \$segment not recognized for subtype VIC"
+            fi
+
         else
             echo "Subtype \$subtype_name not recognized or not handled."
         fi
