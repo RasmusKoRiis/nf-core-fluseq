@@ -20,6 +20,7 @@ process FASTA_CONFIGURATIONFASTA {
     tuple val(meta), path("${meta.id}.fasta"), emit: fasta_merge
     tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
     tuple val(meta), path("${meta.id}_genin.fasta"), emit: fasta_genin
+    tuple val(meta), path("${meta.id}_genotyping.fasta"), emit: fasta_genotyping
 
   /*
     Strategy:
@@ -84,11 +85,35 @@ process FASTA_CONFIGURATIONFASTA {
     fi
   }
 
+  # Genotyping: map segment token to numeric code
+  # PB2→1, PB1→2, PA→3, HA→4, NP→5, NA→6, M/MP→7, NS→8
+  map_segment_number() {
+    seg="$1"
+    case "$seg" in
+      PB2)  echo "1" ;;
+      PB1)  echo "2" ;;
+      PA)   echo "3" ;;
+      HA)   echo "4" ;;
+      NP)   echo "5" ;;
+      NA)   echo "6" ;;
+      M|MP) echo "7" ;;
+      NS)   echo "8" ;;
+      *)    echo ""  ;;
+    esac
+  }
+
   # Detect segment token from filename (case-insensitive).
   # Returns: HA NA M PB1 PB2 NP PA NS ; empty string if none found.
   detect_seg_token() {
     fn="$1"
     u="$(printf "%s" "$fn" | tr '[:lower:]' '[:upper:]')"
+
+    # Special-case MP in filenames -> treat as M token
+    if echo "$u" | grep -Eq '(^|[^A-Z0-9])MP([^A-Z0-9]|$)'; then
+      echo "M"
+      return
+    fi
+
     for t in HA NA M PB1 PB2 NP PA NS; do
       # require non-alnum boundaries to avoid partial matches
       pattern="(^|[^A-Z0-9])${t}([^A-Z0-9]|$)"
@@ -104,15 +129,16 @@ process FASTA_CONFIGURATIONFASTA {
   : > "${META_ID}.fasta"
   : > "${META_ID}_flumut.fasta"
   : > "${META_ID}_genin.fasta"
+  : > "${META_ID}_genotyping.fasta"
 
   any_written=0
+  found_files=0
 
   # Iterate over staged fasta-like files, skip outputs & subtype file
-  found_files=0
   for f in *.fa *.fasta; do
     [ -e "$f" ] || continue
     case "$f" in
-      "${META_ID}.fasta"|"${META_ID}_flumut.fasta"|"${META_ID}_genin.fasta") continue ;;
+      "${META_ID}.fasta"|"${META_ID}_flumut.fasta"|"${META_ID}_genin.fasta"|"${META_ID}_genotyping.fasta") continue ;;
       *_subtype.txt) continue ;;
     esac
     found_files=1
@@ -130,11 +156,19 @@ process FASTA_CONFIGURATIONFASTA {
     seg_label="$(map_segment_label "$seg_tok")"
     [ "$seg_label" = "Unknown" ] && continue
 
-    # Headers
+    # Headers for "normal" and flumut/genin
     new_header=">${META_ID}|${seg_label}-${subtype}"
     seg_fg="$(seg_token_for_fg "$seg_tok")"
     flumut_header=">${META_ID}_${seg_fg}"
     genin_header=">${META_ID}_${seg_fg}"
+
+    # Genotyping header: numeric suffix
+    seg_num="$(map_segment_number "$seg_fg")"
+    if [ -z "$seg_num" ]; then
+      # Skip if we can't assign a numeric code
+      continue
+    fi
+    genotyping_header=">${META_ID}_${seg_num}"
 
     # Per-segment rewritten file (kept in work dir)
     out_seg="${META_ID}_${seg_label}-${subtype}.fa"
@@ -143,19 +177,20 @@ process FASTA_CONFIGURATIONFASTA {
     awk -v H="$new_header" 'NR==1{print H; next} {print}' "$f" > "$out_seg"
 
     # Append to combined outputs with their respective headers
-    awk -v H="$new_header"    'NR==1{print H; next} {print}' "$f" >> "${META_ID}.fasta"
-    awk -v H="$flumut_header" 'NR==1{print H; next} {print}' "$f" >> "${META_ID}_flumut.fasta"
-    awk -v H="$genin_header"  'NR==1{print H; next} {print}' "$f" >> "${META_ID}_genin.fasta"
+    awk -v H="$new_header"        'NR==1{print H; next} {print}' "$f" >> "${META_ID}.fasta"
+    awk -v H="$flumut_header"     'NR==1{print H; next} {print}' "$f" >> "${META_ID}_flumut.fasta"
+    awk -v H="$genin_header"      'NR==1{print H; next} {print}' "$f" >> "${META_ID}_genin.fasta"
+    awk -v H="$genotyping_header" 'NR==1{print H; next} {print}' "$f" >> "${META_ID}_genotyping.fasta"
 
     any_written=1
   done
 
-  if [ "$found_files" -ne 1 ]; then
+  # Sanity checks
+  if [ "$found_files" -eq 0 ]; then
     echo "No input segment files (*.fa/*.fasta) staged for ${META_ID}" >&2
     exit 1
   fi
 
-  # Sanity: ensure we produced at least one sequence
   if [ "$any_written" -ne 1 ] || [ ! -s "${META_ID}.fasta" ]; then
     echo "No valid segments found for ${META_ID} among staged files." >&2
     exit 1

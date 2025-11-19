@@ -25,7 +25,7 @@ process GENIN2 {
    
 
     output:
-    tuple val(meta), path("${meta.id}_genin2.tsv") , emit: genin2_report
+    path("${meta.id}_genin2.csv") , emit: genin2_report
 
 
 
@@ -35,5 +35,6 @@ process GENIN2 {
     script:
     """
     genin2 -o ${meta.id}_genin2.tsv $fasta
+    tr '\t' ',' < ${meta.id}_genin2.tsv > ${meta.id}_genin2.csv
     """
 }

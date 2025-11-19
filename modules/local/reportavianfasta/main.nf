@@ -22,6 +22,8 @@ process REPORTAVIANFASTA {
     val  filtered_fasta            // ignored here
     val  seq_instrument
     val  samplesheet               // ignored here
+    path genin2
+    path flumut
 
     output:
     path("${runid}.csv"), emit: report

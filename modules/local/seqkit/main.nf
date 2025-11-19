@@ -19,6 +19,8 @@ process FASTA_CONFIGURATION {
     tuple val(meta), path("${meta.id}.fasta"), emit: fasta_merge
     tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
     tuple val(meta), path("${meta.id}_genin.fasta"), emit: fasta_genin
+    tuple val(meta), path("${meta.id}_genotyping.fasta"), emit: fasta_genotyping
+
 
     
 
@@ -52,7 +54,7 @@ process FASTA_CONFIGURATION {
             case "\$number" in
                 "04") segment="01-HA" ;;
                 "06") segment="02-NA" ;;
-                "07") segment="03-M" ;;
+                "07") segment="03-MP" ;;
                 "02") segment="05-PB2" ;;   
                 "01") segment="04-PB1" ;;   
                 "05") segment="06-NP" ;;
@@ -117,6 +119,38 @@ process FASTA_CONFIGURATION {
         # Create an additional file with modified headers for flumut.fasta
         awk -v genin_header="\$genin_header" 'NR == 1 {print genin_header; next} {print}' "\$fasta_file" >> ${meta.id}_genin.fasta
 
+         ## GENOTYPING SPECIFIC CODE
+
+
+        # Start from the same segment string as before (part after "-")
+        segment_genotype="\${segment#*-}"
+
+        # Normalise M -> MP
+        if [ "\$segment_genotype" = "M" ]; then
+            segment_genotype="MP"
+        fi
+
+        # Map segment name to numeric code:
+        # PB2→1, PB1→2, PA→3, HA→4, NP→5, NA→6, MP→7, NS→8
+        case "\$segment_genotype" in
+            PB2) segnum="1" ;;
+            PB1) segnum="2" ;;
+            PA)  segnum="3" ;;
+            HA)  segnum="4" ;;
+            NP)  segnum="5" ;;
+            NA)  segnum="6" ;;
+            MP)  segnum="7" ;;
+            NS)  segnum="8" ;;
+            *)   segnum="\$segment_genotype" ;;  # fallback: keep whatever it was
+        esac
+
+        # New header, e.g. >ABARNACLEGOOSENORWAY..._4
+        genotype_header=">${meta.id}_\$segnum"
+
+        # Write genotyping-style FASTA (numeric suffix)
+        awk -v genotype_header="\$genotype_header" \
+            'NR == 1 {print genotype_header; next} {print}' \
+            "$fasta_file" >> "${meta.id}_genotyping.fasta"
 
     done
 

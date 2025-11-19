@@ -221,11 +221,13 @@ workflow AVIANFASTA {
   /* 4) Optionally run SEGMENTIFENTIFIER (not consumed for grouping here) */
   SEGMENTIFENTIFIER( ch_sample_info, ref_fasta )
 
+
   /* 5) Build segment groups from our own files (avoid GroupTupleOp traps) */
   ch_sample_info
     .map { meta, files -> tuple(meta, files.findAll { f -> fnameOf(f) ==~ /(?i).*\.fa(sta)?$/ }) }
     .filter { meta, files -> files && files.size() > 0 }
     .set { ch_segments_grouped }
+
 
   /* 6) SUBTYPING: pick HA + NA by filename tokens */
   ch_segments_grouped
@@ -255,7 +257,7 @@ workflow AVIANFASTA {
     .filter { it != null }
     .set { ch_genotyping }
 
-  GENOTYPING( ch_genotyping, genotype_db )
+
 
   /* 8) FASTA CONFIGURATION input = (meta, files, subtype) */
     ch_segments_grouped
@@ -264,6 +266,7 @@ workflow AVIANFASTA {
 
     // Call the new robust module
     FASTA_CONFIGURATIONFASTA( ch_segments_with_subtype )
+    GENOTYPING(FASTA_CONFIGURATIONFASTA.out.fasta_genotyping, genotype_db )
 
   /* 9) REASSORTMENT */
   REASSORTMENT( FASTA_CONFIGURATIONFASTA.out.fasta_flumut, Channel.value(reassortment_db) )
@@ -305,6 +308,8 @@ workflow AVIANFASTA {
   GENIN2 (
         FASTA_CONFIGURATIONFASTA.out.fasta_genin
   )
+
+  GENIN2.out.genin2_report.view()
 
 
   //
@@ -357,7 +362,9 @@ workflow AVIANFASTA {
     params.release_version,
     COVERAGE.out.filtered_fasta_report.collect(),
     params.seq_instrument,
-    Channel.value(file(params.input ?: params.fasta))
+    Channel.value(file(params.input ?: params.fasta)),
+    GENIN2.out.genin2_report.collect(),
+    FLUMUT_CONVERSION.out.flumut_report.collect()
   )
 
   /* Bring-up logs */
