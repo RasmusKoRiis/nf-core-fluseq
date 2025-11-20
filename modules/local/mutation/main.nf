@@ -2,7 +2,7 @@
 process MUTATION {
     tag "$meta.id"
     label 'process_single'
-    lasterrorStrategy 'ignore'
+    errorStrategy 'ignore'
    
   
 
