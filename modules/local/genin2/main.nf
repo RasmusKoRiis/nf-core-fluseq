@@ -34,7 +34,10 @@ process GENIN2 {
 
     script:
     """
-    genin2 -o ${meta.id}_genin2.tsv $fasta
-    tr '\t' ',' < ${meta.id}_genin2.tsv > ${meta.id}_genin2.csv
+    genin2 -o ${meta.id}_genin2.tsv "$fasta"
+    awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if(\$i=="Genotype") \$i="Genotype_Genin2"}1' OFS='\t' ${meta.id}_genin2.tsv \
+    | tr '\t' ',' > ${meta.id}_genin2.csv
+
+
     """
 }
