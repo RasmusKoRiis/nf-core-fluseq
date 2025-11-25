@@ -150,7 +150,7 @@ process FASTA_CONFIGURATION {
         # Write genotyping-style FASTA (numeric suffix)
         awk -v genotype_header="\$genotype_header" \
             'NR == 1 {print genotype_header; next} {print}' \
-            "$fasta_file" >> "${meta.id}_genotyping.fasta"
+            "\$fasta_file" >> "${meta.id}_genotyping.fasta"
 
     done
 
