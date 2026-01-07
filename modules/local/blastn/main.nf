@@ -2,6 +2,7 @@ process SUBTYPEFINDER {
     tag "$meta.id"
     label 'process_single'
     errorStrategy 'ignore'
+    debug   true
 
     conda "bioconda::blast=2.15.0"
     container 'biocontainers/blast:2.15.0--pl5321h6f7f691_1'
@@ -91,6 +92,7 @@ process SUBTYPEFINDER {
     # ---------------------------
     # NA BLAST
     # ---------------------------
+    echo "$na_database"
     if [[ ! -s "$na_fasta" ]]; then
         log_fail "NA_input" "NA query fasta is missing or empty: $na_fasta"
     else
