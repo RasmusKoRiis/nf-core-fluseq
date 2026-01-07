@@ -15,6 +15,8 @@ process SUBTYPEFINDER {
     tuple val(meta), path("*subtype.txt"), emit: subtype
     tuple val(meta), path("*subtype.csv"), emit: subtype_file
     path("*subtype.csv"), emit: subtype_report
+    path("*_subtype.status.tsv"), emit: subtype_status
+    path("*_subtype.errors.txt"), optional: true, emit: subtype_errors
     tuple val(meta), path("*.tsv"), emit: subtype_file_test
     path("versions.yml"), emit: versions
 
