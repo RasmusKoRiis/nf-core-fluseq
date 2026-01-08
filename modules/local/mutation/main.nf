@@ -78,11 +78,11 @@ process MUTATION {
             \$mamailian\
 
         
-        if [[ "\${segment}" == *"NA"* ]]; then
+        if [[ ( "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ) && "\${segment}" != *"BM2"* ]]; then
 
 
 
-        echo "Executing mutation finder scripts for a segment containing 'NA' or 'PA' in its name: \${segment}"
+        echo "Executing inhibition mutation finder for NA/PA/M2 segment: \${segment}"
 
 
 
@@ -95,7 +95,7 @@ process MUTATION {
             \$inhibition
 
         else
-            echo "Skipping execution for a segment not containing 'NA' or 'PA' in its name: \${segment}"
+            echo "Skipping inhibition call for segment not matching NA, PA (non PA-X) or M2: \${segment}"
         fi
         
     done
