@@ -20,9 +20,11 @@ process MUTATION {
     output:
     tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
     tuple val(meta), path("*inhibtion_mutation.csv"), path(subtype), emit: inhibtion_mutation
+    tuple val(meta), path("*vaccine_mutation.csv"), path(subtype), emit: vaccine_mutation, optional: true
     
     path("*mamailian_mutation_report.csv"), emit: mamailian_mutation_report
     path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report
+    path("*vaccine_mutation_report.csv"), emit: vaccine_mutation_report, optional: true
 
     path "versions.yml", emit: versions
 
@@ -64,10 +66,12 @@ process MUTATION {
         # Make output name
         output_name_mamailian=${meta.id}_\${segment}"_mamailian_mutation.csv"
         output_name_inhibition=${meta.id}_\${segment}"_inhibtion_mutation.csv"
+        output_name_vaccine=${meta.id}_\${segment}"_vaccine_mutation.csv"
 
         reference_file=${sequence_references}
         mamailian=mamailian
         inhibition=inhibition
+        human_vaccine=human_vaccine
 
         python /project-bin/mutation_finder.py \
             \$fasta_file \
@@ -96,6 +100,26 @@ process MUTATION {
 
         else
             echo "Skipping inhibition call for segment not matching NA, PA (non PA-X) or M2: \${segment}"
+        fi
+
+        if [[ ( "\${segment}" == *"HA"* || "\${segment}" == *"NA"* ) && ( "\${subtype_name}" == "H5N1" || "\${subtype_name}" == "H5N5" ) ]]; then
+
+
+
+        echo "Executing vaccine mutation finder for subtype \${subtype_name} segment: \${segment}"
+
+
+
+        python /project-bin/mutation_finder.py \
+            \$fasta_file \
+            \$reference_file \
+            \${segment} \
+            \$subtype_name \
+            \$output_name_vaccine\
+            \$human_vaccine
+
+        else
+            echo "Skipping vaccine call for subtype/segment combination: \${subtype_name} / \${segment}"
         fi
         
     done
