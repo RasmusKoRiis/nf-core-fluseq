@@ -159,5 +159,66 @@ PY
 
 # 3) QC calculation -> FINAL report (adds DR_* + Sekvens_Resultat)
 python /project-bin/report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
+
+# 4) Split "HA Differences mamailian" into _1/_2 (keep original), max 78 chars, don't split mid-mutation
+python - <<'PY'
+import os
+import pandas as pd
+
+runid = os.environ.get("RUNID", "unknown")
+fname = f"{runid}.csv"
+
+col  = "HA Differences mamailian"
+col1 = f"{col}_1"
+col2 = f"{col}_2"
+MAX_LEN = 78
+
+def split_safely(s: str, max_len: int = MAX_LEN):
+    s = "" if s is None else str(s)
+    if s == "":
+        return "", ""
+
+    # Find the last ';' such that the left part length <= max_len
+    cut = s.rfind(";", 0, max_len)  # searches in s[0:max_len)
+
+    if cut != -1:
+        left = s[:cut + 1]                  # include ';' so _1 ends with ';'
+        right = s[cut + 1:].lstrip()        # rest to _2
+        return left, right
+
+    # Edge case: no ';' before max_len (can't split without cutting a mutation)
+    # If it fits, we can still put it in _1; optionally add ';' if there's room.
+    if len(s) < max_len and not s.endswith(";"):
+        return s + ";", ""
+    if len(s) <= max_len and s.endswith(";"):
+        return s, ""
+
+    # Otherwise, keep everything in _2
+    return "", s
+
+df = pd.read_csv(fname, dtype=str, keep_default_na=False)
+
+# Ensure columns exist even if source column is missing
+if col not in df.columns:
+    df[col] = ""
+
+parts = df[col].apply(lambda x: pd.Series(split_safely(x)))
+df[col1] = parts[0]
+df[col2] = parts[1]
+
+# Place new columns right after the original column
+cols = [c for c in df.columns if c not in (col1, col2)]
+insert_at = cols.index(col) + 1 if col in cols else len(cols)
+cols = cols[:insert_at] + [col1, col2] + cols[insert_at:]
+df = df[cols]
+
+tmp = fname + ".tmp"
+df.to_csv(tmp, index=False)
+os.replace(tmp, fname)
+PY
+
+
+
+
 """
 }

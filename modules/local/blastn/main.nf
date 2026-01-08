@@ -92,7 +92,6 @@ process SUBTYPEFINDER {
     # ---------------------------
     # NA BLAST
     # ---------------------------
-    echo "$na_database"
     if [[ ! -s "$na_fasta" ]]; then
         log_fail "NA_input" "NA query fasta is missing or empty: $na_fasta"
     else
