@@ -171,7 +171,7 @@ fname = f"{runid}.csv"
 col  = "HA Differences mamailian"
 col1 = f"{col}_1"
 col2 = f"{col}_2"
-MAX_LEN = 78
+MAX_LEN = 148
 
 def split_safely(s: str, max_len: int = MAX_LEN):
     s = "" if s is None else str(s)

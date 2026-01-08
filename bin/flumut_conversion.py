@@ -32,6 +32,7 @@ output_df = pd.DataFrame(columns=desired_columns)
 
 # Function to get the correct column name based on the marker
 def get_column_names(marker):
+    marker = str(marker)
     if marker.startswith('HA1'):
         return 'Flumut_HA1', 'Effect_HA1'
     elif marker.startswith('HA2'):
@@ -58,27 +59,48 @@ def get_column_names(marker):
 # Iterate through each sample
 grouped = df.groupby('Sample')
 rows = []
+
+# Identify mutation/effect columns
+mutation_cols = [c for c in desired_columns if c.startswith("Flumut_")]
+effect_cols = [c for c in desired_columns if c.startswith("Effect_")]
+
 for sample, group in grouped:
-    # Create a dictionary to hold the consolidated row data
+    # Build lists then join with ';' at the end (dedup + stable order)
+    mut_lists = {c: [] for c in mutation_cols}
+    eff_lists = {c: [] for c in effect_cols}
+
+    # Track seen mutations per segment/column
+    seen = {c: set() for c in mutation_cols}
+
+    for _, row in group.iterrows():
+        mutation_column, effect_column = get_column_names(row.get('Marker', ''))
+        if not mutation_column or not effect_column:
+            continue
+
+        # Remove segment and colon from the mutation
+        mutation_raw = str(row.get('Mutations in your sample', '')).strip()
+        mutation = re.sub(r'^[^:]+:', '', mutation_raw).strip()
+        effect = str(row.get('Effect', '')).strip()
+
+        if not mutation:
+            continue
+
+        # Deduplicate mutations within each mutation column
+        if mutation not in seen[mutation_column]:
+            seen[mutation_column].add(mutation)
+            mut_lists[mutation_column].append(mutation)
+            eff_lists[effect_column].append(effect)
+
+    # Create final row
     row_data = {col: '' for col in desired_columns}
     row_data['Sample'] = sample
-    
-    # Iterate through the mutations in the group
-    for _, row in group.iterrows():
-        mutation_column, effect_column = get_column_names(row['Marker'])
-        if mutation_column and effect_column:
-            # Remove segment and colon from the mutation
-            mutation = re.sub(r'^[^:]+:', '', row['Mutations in your sample'])
-            
-            # Append mutation and effect information to the corresponding columns
-            if row_data[mutation_column]:
-                row_data[mutation_column] += f";{mutation}"
-                row_data[effect_column] += f";{row['Effect']}"
-            else:
-                row_data[mutation_column] = mutation
-                row_data[effect_column] = row['Effect']
-    
-    # Append the row data to the list of rows
+
+    # Join lists into ';' separated strings
+    for c in mutation_cols:
+        row_data[c] = ";".join(mut_lists[c])
+    for c in effect_cols:
+        row_data[c] = ";".join(eff_lists[c])
+
     rows.append(row_data)
 
 # Create the output DataFrame from the list of rows
