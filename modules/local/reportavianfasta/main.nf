@@ -163,7 +163,7 @@ PY
 # STEP 3: run QC calculation, producing the final CSV
 python /project-bin/report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
 
-# STEP 4: post-process HA differences column for readability on downstream systems
+# STEP 4: post-process Difference columns for readability on downstream systems
 python - <<'PY'
 import os
 import pandas as pd
@@ -171,49 +171,69 @@ import pandas as pd
 runid = os.environ.get("RUNID", "unknown")
 fname = f"{runid}.csv"
 
-col  = "HA Differences mamailian"
-col1 = f"{col}_1"
-col2 = f"{col}_2"
-MAX_LEN = 148
-
-def split_safely(s: str, max_len: int = MAX_LEN):
-    s = "" if s is None else str(s)
-    if s == "":
-        return "", ""
-
-    # Find the last ';' such that the left part length <= max_len
-    cut = s.rfind(";", 0, max_len)  # searches in s[0:max_len)
-
-    if cut != -1:
-        left = s[:cut + 1]                  # include ';' so _1 ends with ';'
-        right = s[cut + 1:].lstrip()        # rest to _2
-        return left, right
-
-    # Edge case: no ';' before max_len (can't split without cutting a mutation)
-    # If it fits, we can still put it in _1; optionally add ';' if there's room.
-    if len(s) < max_len and not s.endswith(";"):
-        return s + ";", ""
-    if len(s) <= max_len and s.endswith(";"):
-        return s, ""
-
-    # Otherwise, keep everything in _2
-    return "", s
-
 df = pd.read_csv(fname, dtype=str, keep_default_na=False)
 
-# Ensure columns exist even if source column is missing
-if col not in df.columns:
-    df[col] = ""
+CHUNK_COUNT = 3
+MAX_LEN = 140
+TARGET_SUFFIX = "Differences mamailian"
 
-parts = df[col].apply(lambda x: pd.Series(split_safely(x)))
-df[col1] = parts[0]
-df[col2] = parts[1]
+def normalize_string(val: str) -> str:
+    if val is None:
+        return ""
+    text = str(val).strip()
+    if text and not text.endswith(";"):
+        text += ";"
+    return text
 
-# Place new columns right after the original column
-cols = [c for c in df.columns if c not in (col1, col2)]
-insert_at = cols.index(col) + 1 if col in cols else len(cols)
-cols = cols[:insert_at] + [col1, col2] + cols[insert_at:]
-df = df[cols]
+def chunk_mutations(val: str):
+    text = normalize_string(val)
+    if not text:
+        return [""] * CHUNK_COUNT
+
+    tokens = [t.strip() for t in text.split(";") if t.strip()]
+    token_chunks = [f"{t};" for t in tokens]
+
+    chunks = []
+    idx = 0
+    while len(chunks) < CHUNK_COUNT and idx < len(token_chunks):
+        chunk = ""
+        while idx < len(token_chunks):
+            piece = token_chunks[idx]
+            if not chunk:
+                chunk = piece
+                idx += 1
+                if len(chunk) > MAX_LEN:
+                    break
+                continue
+            if len(chunk) + len(piece) <= MAX_LEN:
+                chunk += piece
+                idx += 1
+            else:
+                break
+        chunks.append(chunk)
+
+    if idx < len(token_chunks):
+        tail = "".join(token_chunks[idx:])
+        if chunks:
+            chunks[-1] = (chunks[-1] + tail)
+        else:
+            chunks.append(tail)
+
+    while len(chunks) < CHUNK_COUNT:
+        chunks.append("")
+
+    return chunks[:CHUNK_COUNT]
+
+target_columns = [c for c in list(df.columns) if c.endswith(TARGET_SUFFIX)]
+
+for col in target_columns:
+    parts = pd.DataFrame(df[col].apply(chunk_mutations).tolist(),
+                         columns=[f"{col}_{i+1}" for i in range(CHUNK_COUNT)])
+    insert_at = df.columns.get_loc(col) + 1 if col in df.columns else len(df.columns)
+    for offset, new_col in enumerate(parts.columns):
+        if new_col in df.columns:
+            df.drop(columns=[new_col], inplace=True)
+        df.insert(insert_at + offset, new_col, parts[new_col])
 
 tmp = fname + ".tmp"
 df.to_csv(tmp, index=False)
