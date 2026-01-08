@@ -1,6 +1,20 @@
 import pandas as pd
 import sys
 
+
+def mutation_suffix(mutation: str) -> str:
+    """
+    Return the numeric+right-hand side of a mutation string (e.g. R143G -> 143G).
+    """
+    mutation = (mutation or "").strip().upper()
+    if not mutation:
+        return ""
+    for idx, char in enumerate(mutation):
+        if char.isdigit():
+            return mutation[idx:]
+    return mutation
+
+
 # Arguments for file paths and criteria
 mutations_file = sys.argv[1]
 output_file = sys.argv[2]
@@ -23,8 +37,14 @@ if pd.notna(mutations_df.iloc[0, 1]):
 else:
     sample_mutations = []
 
-# Convert sample mutations to a set for fast lookup
-list_mutations_set = set(sample_mutations)
+# Convert sample mutations into suffix map so we can match even when the first AA differs
+sample_suffix_map = {}
+for mut in sample_mutations:
+    suffix = mutation_suffix(mut)
+    if not suffix:
+        continue
+    sample_suffix_map.setdefault(suffix, set()).add(mut)
+sample_suffixes = set(sample_suffix_map.keys())
 
 # Read the Excel file into a DataFrame
 df = pd.read_excel(xlsx_file)
@@ -39,24 +59,32 @@ results_dict = {}
 no_matching_mutations_samples = []
 
 # Loop through each row in the filtered DataFrame
-for index, row in filtered_df.iterrows():
+for _, row in filtered_df.iterrows():
     mutations = row['mutation']
     # Ensure that mutations are consistently formatted (uppercase and stripped)
     if pd.notna(mutations):
-        row_mutations_set = set(mut.strip().upper() for mut in str(mutations).split(';'))
+        row_suffixes = set(
+            suffix
+            for mut in str(mutations).split(';')
+            if (suffix := mutation_suffix(mut))
+        )
     else:
-        row_mutations_set = set()
+        row_suffixes = set()
 
-    # Find the intersection of row mutations and predefined sample mutations
-    matching_mutations = row_mutations_set.intersection(list_mutations_set)
+    # Find the intersection of row mutations and predefined sample mutations using suffix comparison
+    matching_suffixes = row_suffixes.intersection(sample_suffixes)
 
-    if matching_mutations:
+    if matching_suffixes:
+        matched_strings = set()
+        for suffix in matching_suffixes:
+            matched_strings.update(sample_suffix_map.get(suffix, []))
+
         if sample_id in results_dict:
             # Directly update the set with matching mutations
-            results_dict[sample_id].update(matching_mutations)
+            results_dict[sample_id].update(matched_strings)
         else:
             # Start a new set of mutations for the sample
-            results_dict[sample_id] = set(matching_mutations)
+            results_dict[sample_id] = set(matched_strings)
     else:
         # If no matching mutations and the segment is M2 and mutation type is inhibition
         if segment == "M2" and mutation_type.lower() == "inhibition":

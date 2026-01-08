@@ -72,6 +72,14 @@ def first_best(series: pd.Series):
 agg = {col: first_best for col in merged.columns if col != "Sample"}
 merged = merged.groupby("Sample", as_index=False).agg(agg)
 
+# Normalize known mislabelled columns emitted upstream (e.g. NA1 -> NA)
+COL_NORMALIZATION = {
+    "NA1 inhibtion mutations": "NA inhibtion mutations",
+}
+for bad, good in COL_NORMALIZATION.items():
+    if bad in merged.columns and good not in merged.columns:
+        merged = merged.rename(columns={bad: good})
+
 # -------- ensure required cols & compute DR_* + Sekvens_Resultat --------
 def ensure_column(df: pd.DataFrame, col: str, fill="NA"):
     if col not in df.columns:
