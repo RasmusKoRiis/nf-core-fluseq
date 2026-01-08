@@ -1,29 +1,31 @@
 process REPORTAVIANFASTA {
     label 'process_single'
 
+    // Python helper scripts live in /project-bin on the container (mounted from repo bin/)
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
     containerOptions = "-v ${baseDir}/bin:/project-bin"
 
     /*
       Use `path` so Nextflow STAGES the files into CWD.
       These can be lists of paths (from .toList()) — Nextflow will copy them.
+      For context, the source data come from N:\Virologi\BioNumerics\RARI\Avian Influensa SQLite.
     */
     input:
-    path subtype                   // list or single
-    path coverage                  // list
-    path mutation_mamalian            // list
-    path lookup_1        // list
-    path lookup_2                    // list
-    path nextclade_summary_ha      // list
-    path nextclade_sample          // list
+    path subtype                   // list or single; subtype summary tables
+    path coverage                  // list; coverage QC per sample
+    path mutation_mamalian         // list; mammalian mutation annotations
+    path lookup_1                  // list; lookup tables (part 1)
+    path lookup_2                  // list; lookup tables (part 2)
+    path nextclade_summary_ha      // list; Nextclade summary for HA
+    path nextclade_sample          // list; per-sample Nextclade CSVs
     path id_map                    // single TSV (SampleID \t OriginalName)
-    val  runid
+    val  runid                     // used to name outputs / metadata
     val  release_version
-    val  filtered_fasta            // ignored here
+    val  filtered_fasta            // ignored here (passed along for parity with other reports)
     val  seq_instrument
-    val  samplesheet               // ignored here
-    path genin2
-    path flumut
+    val  samplesheet               // ignored here (useful context when debugging)
+    path genin2                    // staged so report scripts can pick up GENIN2 outputs
+    path flumut                    // staged FLUMUT outputs
 
     output:
     path("${runid}.csv"), emit: report
@@ -38,10 +40,10 @@ set -euo pipefail
 echo "[REPORTHUMANFASTA] staged CSVs:"
 ls -1 *.csv || true
 
-# 1) Merge staged CSVs into merged_report.csv (dedup by Sample, keep first non-empty per column)
+# STEP 1: merge all staged CSVs (reportfasta.py handles de-duplication logic)
 python /project-bin/reportfasta.py
 
-# 2) Join OriginalName + add meta, robust de-dup (no .str.split)
+# STEP 2: enrich merged report with ID mapping + metadata before QC
 export RUNID='${runid}'
 export SEQINST='${seq_instrument}'
 export RELVER='${release_version}'
@@ -157,10 +159,10 @@ out = out[front + rest]
 out.to_csv(f"{runid}_qc_input.csv", index=False)
 PY
 
-# 3) QC calculation -> FINAL report (adds DR_* + Sekvens_Resultat)
+# STEP 3: run QC calculation, producing the final CSV
 python /project-bin/report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
 
-# 4) Split "HA Differences mamailian" into _1/_2 (keep original), max 78 chars, don't split mid-mutation
+# STEP 4: post-process HA differences column for readability on downstream systems
 python - <<'PY'
 import os
 import pandas as pd
