@@ -143,11 +143,11 @@ process SUBTYPEFINDER {
     echo "\$subtype_txt" > "${meta.id}_subtype.txt"
 
     # ---------------------------
-    # Versions
+    # Versions (VALID YAML)
     # ---------------------------
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-    blastn: \$(blastn -version 2>&1 | sed -E 's#^.*blastn: ([^ ]+).*\$#\\1#')
-    END_VERSIONS
+    cat > versions.yml <<-END_VERSIONS
+"${task.process}":
+  blastn: \$(blastn -version 2>&1 | sed -E 's#^.*blastn: ([^ ]+).*\$#\\1#')
+END_VERSIONS
     """
 }
