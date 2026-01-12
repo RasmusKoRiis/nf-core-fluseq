@@ -320,9 +320,9 @@ workflow HUMAN {
     )
     ch_versions = ch_versions.mix(FASTQC.out.versions)
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
+    //CUSTOM_DUMPSOFTWAREVERSIONS (
+    //    ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    //)
 
     //
     // MODULE: MultiQC
