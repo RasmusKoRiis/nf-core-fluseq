@@ -205,7 +205,7 @@ workflow HUMAN {
         IRMA_ha_na_fasta, Channel.value(file(params.ha_database)),Channel.value(file(params.na_database))
     )
 
-    ch_versions = ch_versions.mix(SUBTYPEFINDER.out.versions.first())
+    //ch_versions = ch_versions.mix(SUBTYPEFINDER.out.versions.first())
 
 
     /// MUTATION CHANNELS

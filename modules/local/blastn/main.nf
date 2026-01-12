@@ -147,7 +147,7 @@ process SUBTYPEFINDER {
     # ---------------------------
     cat > versions.yml <<-END_VERSIONS
     "${task.process}":
-        blastn: \$(blastn -version 2>&1 | sed -E 's#^.*blastn: ([^ ]+).*\$#\\1#')
+        blastn: \$(blastn -version 2>&1 | head -n 1 | awk '{print \$3}')
     END_VERSIONS
     """
 }
