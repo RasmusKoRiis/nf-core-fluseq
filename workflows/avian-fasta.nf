@@ -354,6 +354,7 @@ workflow AVIANFASTA {
     COVERAGE.out.coverage_report.collect(),
     MUTATION.out.mamailian_mutation_report.collect(),
     MUTATION.out.vaccine_mutation_report.collect(),
+    MUTATION.out.full_mutation_list_report.collect(),
     TABLELOOKUP.out.lookup_report.collect(),
     TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
     NEXTCLADE.out.nextclade_summary_rapport.collect(),

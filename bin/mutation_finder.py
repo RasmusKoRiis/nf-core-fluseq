@@ -32,27 +32,34 @@ def find_differences(reference, seq):
     # Take the best alignment
     best_alignment = alignments[0]
     differences = []
+    all_positions = []
     ref_pos = 1  # Biological indexing starts at 1
 
     for i in range(len(best_alignment[0])):
         ref_char = best_alignment[0][i]
         seq_char = best_alignment[1][i]
 
-        if ref_char != seq_char:
-            if ref_char == "-":  # Insertion
+        if ref_char == "-":
+            if seq_char != "-":
                 if differences and differences[-1].startswith(f"ins{ref_pos}"):
                     differences[-1] += seq_char
                 else:
                     differences.append(f"ins{ref_pos}{seq_char}")
-            elif seq_char == "-":  # Deletion
-                differences.append(f"del{ref_pos}{ref_char}")
-            else:  # Substitution
-                differences.append(f"{ref_char}{ref_pos}{seq_char}")
+            continue
+
+        if seq_char == "-":  # Deletion
+            differences.append(f"del{ref_pos}{ref_char}")
+            all_positions.append(f"{ref_char}{ref_pos}-")
+        else:
+            token = f"{ref_char}{ref_pos}{seq_char}"
+            all_positions.append(token)
+            if ref_char != seq_char:
+                differences.append(token)
 
         if ref_char != "-":
             ref_pos += 1
 
-    return ";".join(differences)
+    return ";".join(differences), ";".join(all_positions)
 
 
 
@@ -73,9 +80,9 @@ for ref in SeqIO.parse(reference_file, 'fasta'):
     reference = Seq(str(ref.seq))
     for record in SeqIO.parse(sequence_file, 'fasta'):
         sequence = Seq(str(record.seq))
-        differences = find_differences(reference, sequence)
+        differences, all_positions = find_differences(reference, sequence)
         frameshift = check_frameshift(str(sequence))
-        sequences.append({'ID': record.id, 'Differences': differences})
+        sequences.append({'ID': record.id, 'Differences': differences, 'All_Positions': all_positions})
 
 # Create a DataFrame from the sequences
 df = pd.DataFrame(sequences)
@@ -91,6 +98,11 @@ if df.empty:
     empty_df.to_csv(output_file, index=False)
     output_file_report = output_file.replace('.csv', '_report.csv')
     empty_df.to_csv(output_file_report, index=False)
+    full_output = output_file.replace('.csv', '_full_mutation_list.csv')
+    full_output_report = full_output.replace('.csv', '_report.csv')
+    empty_full_df = pd.DataFrame(columns=["Sample", "All_Positions"])
+    empty_full_df.to_csv(full_output, index=False)
+    empty_full_df.to_csv(full_output_report, index=False)
     sys.exit(0)
 
 df['Differences'] = df.apply(process_differences, axis=1)
@@ -107,8 +119,7 @@ df.drop(columns=['Ref_Name'], inplace=True)
 df.drop(columns=['ID'], inplace=True)
 
 
-# Reorder the columns
-df = df[['Sample', 'Differences']]
+df = df[['Sample', 'Differences', 'All_Positions']]
 
 
 # Remove any instance of 'ins...' or 'del...' in the 'Differences' column
@@ -121,12 +132,21 @@ df['Differences'] = df['Differences'].str.strip(';')
 df['Differences'] = df['Differences'].replace('', 'No mutations found')
 
 # Save the final dataframe to a CSV file
-df.to_csv(output_file, index=False)
+df_main = df[['Sample', 'Differences']].copy()
+df_main.to_csv(output_file, index=False)
 
 output_file_report = output_file.replace('.csv', '_report.csv')
+full_output = output_file.replace('.csv', '_full_mutation_list.csv')
+full_output_report = full_output.replace('.csv', '_report.csv')
 
 new_name = segment + ' ' + 'Differences' + ' ' + type
-df.rename(columns={'Differences': new_name}, inplace=True)
+df_report = df_main.rename(columns={'Differences': new_name})
 
 # Save the final dataframe to a CSV file
-df.to_csv(output_file_report, index=False)
+df_report.to_csv(output_file_report, index=False)
+
+full_column_name = f"{segment} {type} full amino acid list"
+df_full = df[['Sample', 'All_Positions']].copy()
+df_full.rename(columns={'All_Positions': full_column_name}, inplace=True)
+df_full.to_csv(full_output, index=False)
+df_full.to_csv(full_output_report, index=False)

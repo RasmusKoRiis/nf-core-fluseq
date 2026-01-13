@@ -15,6 +15,7 @@ process REPORTAVIANFASTA {
     path coverage                  // list; coverage QC per sample
     path mutation_mamalian         // list; mammalian mutation annotations
     path mutation_vaccine          // list; vaccine mutation annotations
+    path mutation_full             // list; per-position amino acid summaries
     path lookup_1                  // list; lookup tables (part 1)
     path lookup_2                  // list; lookup tables (part 2)
     path nextclade_summary_ha      // list; Nextclade summary for HA

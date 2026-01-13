@@ -21,10 +21,12 @@ process MUTATION {
     tuple val(meta), path("*mamailian_mutation.csv"), path(subtype), emit: mamailian_mutation
     tuple val(meta), path("*inhibtion_mutation.csv"), path(subtype), emit: inhibtion_mutation
     tuple val(meta), path("*vaccine_mutation.csv"), path(subtype), emit: vaccine_mutation, optional: true
-    
+    tuple val(meta), path("*full_mutation_list.csv"), path(subtype), emit: full_mutation_list
+
     path("*mamailian_mutation_report.csv"), emit: mamailian_mutation_report
     path("*inhibtion_mutation_report.csv"), emit: inhibtion_mutation_report
     path("*vaccine_mutation_report.csv"), emit: vaccine_mutation_report, optional: true
+    path("*full_mutation_list_report.csv"), emit: full_mutation_list_report
 
     path "versions.yml", emit: versions
 
