@@ -339,13 +339,17 @@ workflow AVIANFASTA {
   // MODULE: TABLELOOKUP
   //
 
+  def ch_full_mutation_lists = MUTATION.out.full_mutation_list
+  def ch_full_inhib = ch_full_mutation_lists.filter { meta, f, subtype -> fnameOf(f) ==~ /.*_inhibtion_.*/ }
+  def ch_full_mamm  = ch_full_mutation_lists.filter { meta, f, subtype -> fnameOf(f) ==~ /.*_mamailian_.*/ }
+
 
   TABLELOOKUP  (
-      MUTATION.out.inhibtion_mutation, fullPath_inhibtion_mutation
+      ch_full_inhib, fullPath_inhibtion_mutation
   )
 
   TABLELOOKUP_MAMMALIAN  (
-      MUTATION.out.mamailian_mutation, fullPath_mammalian_mutation
+      ch_full_mamm, fullPath_mammalian_mutation
   )
 
   /* 14) Report (materialize leaf streams only) */
