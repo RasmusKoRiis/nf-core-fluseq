@@ -1,5 +1,0 @@
-##gff-version 3
-##sequence-region NC_007364.1 15 704
-NC_007364.1	feature	gene	15	704	.	+	.	gene_name="A_H3_NS"
-
-

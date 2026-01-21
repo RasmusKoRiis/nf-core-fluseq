@@ -1,5 +1,0 @@
-##gff-version 3
-##sequence-region NC_007360.1 45 1494
-NC_007360.1	feature	gene	34	1482	.	+	.	gene_name="A_H3_NP"
-
-
