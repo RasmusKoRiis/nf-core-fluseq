@@ -290,7 +290,8 @@ workflow HUMANFASTA {
     params.release_version,
     COVERAGE.out.filtered_fasta_report.collect(),
     params.seq_instrument,
-    Channel.value(file(params.input ?: params.fasta))
+    Channel.value(file(params.input ?: params.fasta)),
+    REASSORTMENT.out.genotype_report.collect()
   )
 
   /* Bring-up logs */

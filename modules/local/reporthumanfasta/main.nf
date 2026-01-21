@@ -23,6 +23,7 @@ process REPORTHUMANFASTA {
     val  filtered_fasta            // ignored here
     val  seq_instrument
     val  samplesheet               // ignored here
+    path reassortment_report       // list
 
     output:
     path("${runid}.csv"), emit: report

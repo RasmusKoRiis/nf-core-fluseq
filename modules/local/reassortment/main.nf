@@ -12,7 +12,8 @@ process REASSORTMENT {
     file reassortment_database                           // Multi-lineage reference DB
 
     output:
-    tuple val(meta), path("${meta.id}_reassortment_summary.csv"), emit: genotype_report
+    tuple val(meta), path("${meta.id}_reassortment_summary.csv"), emit: genotype
+    path("${meta.id}_reassortment_summary.csv"), emit: genotype_report
     path("versions.yml"), emit: versions
 
     script:
