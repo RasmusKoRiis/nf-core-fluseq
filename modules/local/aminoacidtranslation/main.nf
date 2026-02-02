@@ -62,6 +62,8 @@ process AMINOACIDTRANSLATION {
    
     done
 
+
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         nextclade: \$(echo \$(nextclade --version 2>&1) | sed 's/^.*nextclade //; s/ .*\$//')
