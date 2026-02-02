@@ -7,3 +7,8 @@ testing/
 testing*
 *.pyc
 assets/
+assets/reassortment_database.fasta
+assets/nextclade_references
+assets/sequence_references
+assets/nextclade_datasets
+

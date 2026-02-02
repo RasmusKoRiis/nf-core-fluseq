@@ -17,7 +17,6 @@ process AMPLIGONE {
 
     script:
     """
-
     ampligone \
         --input $fastq\
         --output ${meta.id}.fastq \
