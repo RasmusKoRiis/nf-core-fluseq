@@ -30,7 +30,7 @@ def process_file(input_file, meta_id, segment, type_):
     # -----------------------
     if 'HA' in segment:
         columns_to_keep = [
-            'Sample', 'clade', 'subclade', 'glycosylation', 'coverage',
+            'Sample', 'legacy-clade', 'subclade', 'glycosylation', 'coverage',
             'frameShifts', 'Differences', 'aaDeletions', 'aaInsertions',
             'qc.overallStatus', 'qc.mixedSites.totalMixedSites'
         ]
@@ -64,7 +64,7 @@ def process_file(input_file, meta_id, segment, type_):
         # -----------------------
         df_ha1 = filtered_df[
             [
-                'Sample', 'clade', 'subclade', 'glycosylation',
+                'Sample', 'legacy-clade', 'subclade', 'glycosylation',
                 'coverage', 'frameShifts', 'HA1', 'aaDeletions',
                 'aaInsertions', 'qc.overallStatus',
                 'qc.mixedSites.totalMixedSites'
@@ -72,7 +72,7 @@ def process_file(input_file, meta_id, segment, type_):
         ].copy()
 
         df_ha1.rename(columns={'HA1': 'Differences'}, inplace=True)
-        df_ha1.drop(columns=['clade', 'subclade', 'glycosylation', 'coverage', 'Differences'], inplace=True)
+        df_ha1.drop(columns=['legacy-clade', 'subclade', 'glycosylation', 'coverage', 'Differences'], inplace=True)
 
         # Rename columns to segment-specific names
         df_ha1.rename(columns={
@@ -95,7 +95,7 @@ def process_file(input_file, meta_id, segment, type_):
         # -----------------------
         df_ha2 = filtered_df[
             [
-                'Sample', 'clade', 'subclade', 'glycosylation',
+                'Sample', 'legacy-clade', 'subclade', 'glycosylation',
                 'coverage', 'frameShifts', 'HA2', 'aaDeletions',
                 'aaInsertions', 'qc.overallStatus',
                 'qc.mixedSites.totalMixedSites'
@@ -103,7 +103,7 @@ def process_file(input_file, meta_id, segment, type_):
         ].copy()
 
         df_ha2.rename(columns={'HA2': 'Differences'}, inplace=True)
-        df_ha2.drop(columns=['clade', 'subclade', 'glycosylation', 'coverage', 'Differences'], inplace=True)
+        df_ha2.drop(columns=['legacy-clade', 'subclade', 'glycosylation', 'coverage', 'Differences'], inplace=True)
 
         df_ha2.rename(columns={
             'frameShifts': f'frameShifts {segment}2',
