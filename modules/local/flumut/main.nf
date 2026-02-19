@@ -2,7 +2,7 @@
 process FLUMUT {
     tag "$meta.id"
     label 'process_medium'
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
    
 
 
