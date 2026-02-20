@@ -4,7 +4,7 @@ process REPORT_AVIAN {
     containerOptions "-v ${baseDir}/bin:/project-bin"   // reportavian.py lives here
 
     /*
-     * Six lists of CSV paths – exactly what you pass with .collect()
+     * Five lists of CSV paths + run ID.
      * Each list arrives as a Bash array; we don’t have to touch them.
      */
     input:
@@ -12,8 +12,8 @@ process REPORT_AVIAN {
     path genotype
     path coverage
     path mammalian_mutations
-    path lookup_inhibition
-    path lookup_mammalian
+    path nextclade
+    val  runid
 
     /*
      * One merged file + (optionally) keep all csvs for provenance.

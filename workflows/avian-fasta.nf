@@ -164,8 +164,24 @@ elif sample_col != "Sample Name":
 else:
     df["Sample Name"] = df["Sample Name"]
 
+SEGMENT_SUFFIXES = {"HA", "NA", "PB1", "PB2", "PA", "NP", "NS", "MP", "M"}
+
+def normalize_sample_name(value: str) -> str:
+    s = str(value).strip()
+    if not s:
+        return "NA"
+    # Keep only the leading ID when Genotypr emits headers like UID_HA.
+    if "|" in s:
+        s = s.split("|", 1)[0].strip()
+    if "_" in s:
+        left, right = s.rsplit("_", 1)
+        if left and right.upper() in SEGMENT_SUFFIXES:
+            return left.strip() or "NA"
+    return s
+
 df = df[["Sample Name", "Genotype_Genin2"]]
 df = df.applymap(lambda x: (str(x).strip() if str(x).strip() else "NA"))
+df["Sample Name"] = df["Sample Name"].map(normalize_sample_name)
 df = df.drop_duplicates(subset=["Sample Name"], keep="first")
 
 tmp = out.with_suffix('.tmp')
