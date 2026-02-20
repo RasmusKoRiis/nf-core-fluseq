@@ -123,6 +123,58 @@ process REHEADER_TO_UID {
   """
 }
 
+process SLIM_GENIN2_REPORT {
+  tag { genin2_csv.simpleName }
+  label 'process_single'
+
+  container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
+
+  input:
+  path genin2_csv
+
+  output:
+  path('*_trimmed.csv'), emit: genin2_report_trimmed
+
+  script:
+  """
+  python - <<'PY'
+import pandas as pd
+from pathlib import Path
+
+inp = Path("${genin2_csv}")
+out = inp.with_name(f"{inp.stem}_trimmed.csv")
+
+df = pd.read_csv(inp, dtype=str, keep_default_na=False)
+
+if "Genotype_Genin2" not in df.columns and "Genotype" in df.columns:
+    df = df.rename(columns={"Genotype": "Genotype_Genin2"})
+if "Genotype_Genin2" not in df.columns:
+    df["Genotype_Genin2"] = "NA"
+
+sample_col = None
+for cand in ["Sample Name","Sample","SampleID","SequenceID","sample_id","id","ID","Name"]:
+    if cand in df.columns:
+        sample_col = cand
+        break
+
+if sample_col is None:
+    df["Sample Name"] = inp.stem
+elif sample_col != "Sample Name":
+    df["Sample Name"] = df[sample_col]
+else:
+    df["Sample Name"] = df["Sample Name"]
+
+df = df[["Sample Name", "Genotype_Genin2"]]
+df = df.applymap(lambda x: (str(x).strip() if str(x).strip() else "NA"))
+df = df.drop_duplicates(subset=["Sample Name"], keep="first")
+
+tmp = out.with_suffix('.tmp')
+df.to_csv(tmp, index=False)
+tmp.replace(out)
+PY
+  """
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    GROOVY HELPERS
    ────────────────────────────────────────────────────────────────────────── */
@@ -309,7 +361,9 @@ workflow AVIANFASTA {
         FASTA_CONFIGURATIONFASTA.out.fasta_genin
   )
 
-  GENIN2.out.genin2_report.view()
+  SLIM_GENIN2_REPORT( GENIN2.out.genin2_report )
+
+  SLIM_GENIN2_REPORT.out.genin2_report_trimmed.view()
 
 
   //
@@ -369,8 +423,9 @@ workflow AVIANFASTA {
     COVERAGE.out.filtered_fasta_report.collect(),
     params.seq_instrument,
     Channel.value(file(params.input ?: params.fasta)),
-    GENIN2.out.genin2_report.collect(),
-    FLUMUT_CONVERSION.out.flumut_report.collect()
+    SLIM_GENIN2_REPORT.out.genin2_report_trimmed.collect(),
+    FLUMUT_CONVERSION.out.flumut_report.collect(),
+    REASSORTMENT.out.genotype_report.collect()
   )
 
   /* Bring-up logs */

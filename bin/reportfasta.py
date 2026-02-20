@@ -7,7 +7,7 @@ import numpy as np
 EXCLUDE = {"merged_report.csv", "fluseq_merged_report.csv", "id_map.csv"}
 csv_files = [f for f in glob.glob("*.csv") if os.path.basename(f) not in EXCLUDE]
 
-KEY_CANDIDATES = ["Sample", "SampleID", "SequenceID", "sample_id", "id", "ID", "Name"]
+KEY_CANDIDATES = ["Sample", "Sample Name", "SampleID", "SequenceID", "sample_id", "id", "ID", "Name"]
 
 def infer_sample_from_filename(path: str) -> str:
     base = os.path.basename(path)

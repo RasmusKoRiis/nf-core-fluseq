@@ -28,6 +28,7 @@ process REPORTAVIANFASTA {
     val  samplesheet               // ignored here (useful context when debugging)
     path genin2                    // staged so report scripts can pick up GENIN2 outputs
     path flumut                    // staged FLUMUT outputs
+    path reassortment              // staged REASSORTMENT outputs
 
     output:
     path("${runid}.csv"), emit: report
