@@ -13,10 +13,78 @@ Reassortment flag:
 """
 
 import argparse
+import re
 import pandas as pd
 
 EXPECTED_SEGMENTS   = ['PB2', 'PB1', 'PA', 'HA', 'NP', 'NA', 'MP', 'NS']
 IDENTITY_THRESHOLD  = 80.0  # %
+
+SEGMENT_ALIASES = {
+    'M': 'MP',
+    'M1': 'MP',
+    'M2': 'MP',
+    'HA1': 'HA',
+    'HA2': 'HA',
+    'NS1': 'NS',
+    'NS2': 'NS',
+}
+
+FALLBACK_SEGMENT_PATTERNS = [
+    'PB2', 'PB1', 'PA', 'HA', 'NP', 'NA', 'MP', 'NS',
+    'M2', 'M1', 'M', 'HA2', 'HA1', 'NS2', 'NS1',
+]
+
+
+def canonicalize_segment(token) -> str:
+    """Normalize observed segment labels to report schema labels."""
+    if token is None or pd.isna(token):
+        return pd.NA
+    t = str(token).strip().upper()
+    if not t:
+        return pd.NA
+    if t in EXPECTED_SEGMENTS:
+        return t
+    if t in SEGMENT_ALIASES:
+        return SEGMENT_ALIASES[t]
+    return pd.NA
+
+
+def infer_segment_from_qseqid(qseqid) -> str:
+    """
+    Infer segment from heterogeneous query IDs.
+    Supports legacy IDs like sample_HA and more relaxed forms like
+    sample_HA_flumut or sample|01-HA-H5N1.
+    """
+    if qseqid is None or pd.isna(qseqid):
+        return pd.NA
+
+    raw = str(qseqid).strip()
+    if not raw:
+        return pd.NA
+    upper = raw.upper()
+
+    # 1) Legacy behavior: last token after underscore.
+    legacy = re.search(r'_([^_]+)$', upper)
+    if legacy:
+        seg = canonicalize_segment(legacy.group(1))
+        if not pd.isna(seg):
+            return seg
+
+    # 2) Token scan across common delimiters.
+    tokens = [tok for tok in re.split(r'[^A-Z0-9]+', upper) if tok]
+    for tok in tokens:
+        seg = canonicalize_segment(tok)
+        if not pd.isna(seg):
+            return seg
+
+    # 3) Boundary-based fallback scan in full ID string.
+    for pat in FALLBACK_SEGMENT_PATTERNS:
+        if re.search(rf'(?<![A-Z0-9]){pat}(?![A-Z0-9])', upper):
+            seg = canonicalize_segment(pat)
+            if not pd.isna(seg):
+                return seg
+
+    return pd.NA
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
@@ -33,14 +101,15 @@ def main() -> None:
             'qstart','qend','sstart','send','evalue','bitscore']
     df = pd.read_csv(args.blast, sep='\t', names=cols)
 
-    # Segment name comes after the last “_” in the *query* id
-    df['segment'] = df['qseqid'].str.extract(r'_([^_]+)$')
+    # Infer segment from query id using tolerant parsing.
+    df['segment'] = df['qseqid'].apply(infer_segment_from_qseqid)
 
     # Strain name is EVERYTHING before the first “|” in the *subject* id
     df['strain']  = df['sseqid'].str.split('|').str[0]
 
     # Best hit per segment = highest % identity
-    best = (df.sort_values('pident', ascending=False)
+    best = (df.dropna(subset=['segment'])
+              .sort_values('pident', ascending=False)
               .drop_duplicates('segment'))
 
     # Build one‑line output

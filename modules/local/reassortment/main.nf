@@ -1,7 +1,7 @@
 process REASSORTMENT {
     tag "$meta.id"
     label 'process_single'
-    //errorStrategy 'ignore'
+    errorStrategy 'ignore'
 
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
     containerOptions = "-v ${baseDir}/bin:/project-bin"
