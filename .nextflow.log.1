@@ -1,0 +1,63 @@
+Mar-09 09:59:51.598 [main] DEBUG nextflow.cli.Launcher - $> nextflow run . -offline -preview --file human-fastq --outdir /tmp/nf-fluseq-preview
+Mar-09 09:59:51.692 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 24.10.2
+Mar-09 09:59:51.738 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/rasmuskopperud.riis/.nextflow/plugins; core-plugins: nf-amazon@2.9.2,nf-azure@1.10.2,nf-cloudcache@0.4.2,nf-codecommit@0.2.2,nf-console@1.1.4,nf-google@1.15.2,nf-tower@1.9.3,nf-wave@1.7.4
+Mar-09 09:59:51.774 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Mar-09 09:59:51.775 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Mar-09 09:59:51.779 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Mar-09 09:59:51.795 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Mar-09 09:59:52.923 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
+Mar-09 09:59:52.926 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
+Mar-09 09:59:52.948 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/rasmuskopperud.riis/.nextflow/secrets/store.json
+Mar-09 09:59:52.952 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@25673087] - activable => nextflow.secret.LocalSecretsProvider@25673087
+Mar-09 09:59:52.969 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Mar-09 09:59:53.860 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
+Mar-09 09:59:53.893 [main] DEBUG nextflow.cli.CmdRun - * PREVIEW * null [grave_wescoff] DSL2 - revision: 532ab50f26
+Mar-09 09:59:53.896 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins declared=[nf-validation]
+Mar-09 09:59:53.897 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Mar-09 09:59:53.898 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[nf-validation]
+Mar-09 09:59:53.898 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-validation version: latest
+Mar-09 09:59:53.899 [main] ERROR o.p.update.DefaultUpdateRepository - Operation not permitted
+java.net.SocketException: Operation not permitted
+	at java.base/java.net.Socket.createImpl(Socket.java:533)
+	at java.base/java.net.Socket.connect(Socket.java:632)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.BaseSSLSocketImpl.connect(BaseSSLSocketImpl.java:174)
+	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:183)
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:533)
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:638)
+	at java.base/sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:266)
+	at java.base/sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:380)
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:193)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1242)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1128)
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:179)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1665)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1589)
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:224)
+	at java.base/java.net.URL.openStream(URL.java:1161)
+	at org.pf4j.update.DefaultUpdateRepository.initPlugins(DefaultUpdateRepository.java:96)
+	at org.pf4j.update.DefaultUpdateRepository.getPlugins(DefaultUpdateRepository.java:80)
+	at org.pf4j.update.UpdateManager.getPluginsMap(UpdateManager.java:149)
+	at org.pf4j.update.UpdateManager.getLastPluginRelease(UpdateManager.java:392)
+	at nextflow.plugin.PluginUpdater.load0(PluginUpdater.groovy:321)
+	at nextflow.plugin.PluginUpdater.installPlugin(PluginUpdater.groovy:198)
+	at nextflow.plugin.PluginUpdater.prepareAndStart(PluginUpdater.groovy:145)
+	at nextflow.plugin.PluginsFacade.start(PluginsFacade.groovy:335)
+	at nextflow.plugin.PluginsFacade.start(PluginsFacade.groovy:340)
+	at nextflow.plugin.PluginsFacade.load(PluginsFacade.groovy:239)
+	at nextflow.plugin.Plugins.load(Plugins.groovy:52)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:342)
+	at nextflow.cli.Launcher.run(Launcher.groovy:503)
+	at nextflow.cli.Launcher.main(Launcher.groovy:658)
+Mar-09 09:59:53.901 [main] ERROR nextflow.cli.Launcher - @unknown
+java.lang.IllegalStateException: Cannot find latest version of nf-validation plugin
+	at nextflow.plugin.PluginUpdater.load0(PluginUpdater.groovy:328)
+	at nextflow.plugin.PluginUpdater.installPlugin(PluginUpdater.groovy:198)
+	at nextflow.plugin.PluginUpdater.prepareAndStart(PluginUpdater.groovy:145)
+	at nextflow.plugin.PluginsFacade.start(PluginsFacade.groovy:335)
+	at nextflow.plugin.PluginsFacade.start(PluginsFacade.groovy:340)
+	at nextflow.plugin.PluginsFacade.load(PluginsFacade.groovy:239)
+	at nextflow.plugin.Plugins.load(Plugins.groovy:52)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:342)
+	at nextflow.cli.Launcher.run(Launcher.groovy:503)
+	at nextflow.cli.Launcher.main(Launcher.groovy:658)

@@ -1,0 +1,1 @@
+2026-03-09 10:07:12	8.6s	shrivelled_sammet	OK	532ab50f2638ed3cf557f79b56723fd8	6485184c-00b0-4ed4-8511-9c81f9c61c30	nextflow run . -offline -preview --file human-fastq --outdir /tmp/nf-fluseq-preview

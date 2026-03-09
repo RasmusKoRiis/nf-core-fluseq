@@ -22,6 +22,7 @@ process REPORTHUMAN {
     path(irma_depth)
     val seq_instrument
     path(samplesheet)
+    path(reassortment_report)
     
     output:
 
