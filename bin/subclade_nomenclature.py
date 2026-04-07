@@ -49,9 +49,13 @@ OUTPUT_COLUMNS = [
     "Sample",
     "Subclade_Nomenclature_Profile",
     "Subclade_Nomenclature_Clade",
+    "Subclade_Nomenclature_Clade_Long",
     "Subclade_Nomenclature_Subclade",
     "Subclade_Nomenclature_Key_Mutations",
+    "Subclade_Nomenclature_Lineage_Key_Mutations",
     "Subclade_Nomenclature_Clade_Key_Mutations",
+    "Subclade_Nomenclature_Closest_Subclade",
+    "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations",
     "Subclade_Nomenclature_Subclade_Match_Fraction",
     "Subclade_Nomenclature_Clade_Match_Fraction",
     "Subclade_Nomenclature_Source",
@@ -78,6 +82,13 @@ def read_fasta(paths):
         if header is not None:
             records.append((path, header, "".join(seq)))
     return records
+
+
+def read_single_fasta(path):
+    records = read_fasta([path])
+    if not records:
+        raise ValueError(f"No FASTA records found in {path}")
+    return clean_seq(records[0][2]).replace("-", "")
 
 
 def read_first_token(path):
@@ -132,6 +143,55 @@ def clean_seq(seq):
     return re.sub(r"\s+", "", seq).upper().replace("U", "T")
 
 
+def build_reference_to_query_map(reference, query):
+    reference = clean_seq(reference).replace("-", "")
+    query = clean_seq(query).replace("-", "")
+    n = len(reference)
+    m = len(query)
+    gap = -5
+    match = 2
+    mismatch = -1
+
+    prev = [j * gap for j in range(m + 1)]
+    trace = [bytearray(m + 1) for _ in range(n + 1)]
+    for j in range(1, m + 1):
+        trace[0][j] = 2
+    for i in range(1, n + 1):
+        curr = [i * gap] + [0] * m
+        trace[i][0] = 1
+        ref_base = reference[i - 1]
+        for j in range(1, m + 1):
+            diag = prev[j - 1] + (match if ref_base == query[j - 1] else mismatch)
+            up = prev[j] + gap
+            left = curr[j - 1] + gap
+            if diag >= up and diag >= left:
+                curr[j] = diag
+                trace[i][j] = 0
+            elif up >= left:
+                curr[j] = up
+                trace[i][j] = 1
+            else:
+                curr[j] = left
+                trace[i][j] = 2
+        prev = curr
+
+    ref_to_query = [None] * (n + 1)
+    i = n
+    j = m
+    while i > 0 or j > 0:
+        step = trace[i][j]
+        if i > 0 and j > 0 and step == 0:
+            ref_to_query[i] = j
+            i -= 1
+            j -= 1
+        elif i > 0 and (j == 0 or step == 1):
+            ref_to_query[i] = None
+            i -= 1
+        else:
+            j -= 1
+    return ref_to_query, query
+
+
 def translate_codon(codon):
     codon = codon.upper()
     if codon == "---":
@@ -143,14 +203,17 @@ def translate_codon(codon):
     return CODON_TABLE.get(codon, "X")
 
 
-def observed_state(seq, locus, position, features):
+def observed_state(seq, locus, position, features, ref_to_query=None):
     try:
         pos = int(position)
     except (TypeError, ValueError):
         return ""
 
     if locus == "nuc":
-        idx = pos - 1
+        query_pos = ref_to_query[pos] if ref_to_query and pos < len(ref_to_query) else pos
+        if query_pos is None:
+            return "-"
+        idx = query_pos - 1
         if 0 <= idx < len(seq):
             return seq[idx]
         return ""
@@ -158,8 +221,17 @@ def observed_state(seq, locus, position, features):
     start = features.get(locus)
     if start is None:
         return ""
-    idx = start - 1 + (pos - 1) * 3
-    return translate_codon(seq[idx:idx + 3])
+    ref_positions = [start + (pos - 1) * 3 + offset for offset in range(3)]
+    codon = []
+    for ref_pos in ref_positions:
+        query_pos = ref_to_query[ref_pos] if ref_to_query and ref_pos < len(ref_to_query) else ref_pos
+        if query_pos is None:
+            return "-"
+        idx = query_pos - 1
+        if not (0 <= idx < len(seq)):
+            return ""
+        codon.append(seq[idx])
+    return translate_codon("".join(codon))
 
 
 def format_mutation(rule, observed=None):
@@ -251,9 +323,46 @@ def read_yaml_rules(path):
     return definitions, parents, clade_links
 
 
-def read_clade_yaml_rules(path, subclade_definitions):
+def mutation_key(rule):
+    return (rule["locus"], str(rule["site"]), rule["alt"])
+
+
+def merge_rules(rule_sets):
+    merged = []
+    seen = set()
+    for rules in rule_sets:
+        for rule in rules:
+            key = mutation_key(rule)
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(rule)
+    return merged
+
+
+def lineage_names(name, parents):
+    names = []
+    seen = set()
+    current = name
+    while current and current not in seen:
+        seen.add(current)
+        names.append(current)
+        current = parents.get(current, "")
+    return list(reversed(names))
+
+
+def lineage_rule_set(name, definitions, parents):
+    return merge_rules(definitions.get(item, []) for item in lineage_names(name, parents))
+
+
+def read_clade_yaml_rules(path, subclade_definitions, subclade_parents):
     definitions = {}
     parents = {}
+    long_names = {}
+    raw_rules = {}
+    raw_parents = {}
+    raw_display_names = {}
+    raw_aliases = {}
     if not os.path.isdir(path):
         raise FileNotFoundError(f"Missing clade YAML directory: {path}")
     for filename in sorted(os.listdir(path)):
@@ -274,19 +383,51 @@ def read_clade_yaml_rules(path, subclade_definitions):
             if locus and site and alt:
                 rules.append({"locus": locus, "site": site, "alt": alt})
         alias_of = str(record.get("alias_of") or "").strip()
-        if not rules and alias_of in subclade_definitions:
-            rules = subclade_definitions[alias_of]
-        definitions[display_name] = rules
         parent = str(record.get("parent") or "").strip()
-        parents[display_name] = "" if parent.lower() == "none" else parent
-    return definitions, parents
+        raw_rules[name] = rules
+        raw_parents[name] = "" if parent.lower() == "none" else parent
+        raw_display_names[name] = display_name
+        raw_aliases[name] = alias_of
+
+    memo = {}
+
+    def clade_lineage_rules(name):
+        if name in memo:
+            return memo[name]
+        alias_of = raw_aliases.get(name, "")
+        if alias_of in subclade_definitions:
+            rules = merge_rules([
+                lineage_rule_set(alias_of, subclade_definitions, subclade_parents),
+                raw_rules.get(name, []),
+            ])
+        else:
+            rule_sets = []
+            parent = raw_parents.get(name, "")
+            if parent in raw_rules:
+                rule_sets.append(clade_lineage_rules(parent))
+            rule_sets.append(raw_rules.get(name, []))
+            rules = merge_rules(rule_sets)
+        memo[name] = rules
+        return rules
+
+    for name in sorted(raw_rules):
+        display_name = raw_display_names[name]
+        rules = clade_lineage_rules(name)
+        definitions[display_name] = rules
+        long_names[display_name] = name
+        parents[display_name] = raw_parents.get(name, "")
+        if name != display_name:
+            definitions[name] = rules
+            long_names[name] = name
+            parents[name] = raw_parents.get(name, "")
+    return definitions, parents, long_names
 
 
-def evaluate_rule_set(seq, rules, features):
+def evaluate_rule_set(seq, rules, features, ref_to_query=None):
     details = []
     matched = []
     for rule in rules:
-        observed = observed_state(seq, rule["locus"], rule["site"], features)
+        observed = observed_state(seq, rule["locus"], rule["site"], features, ref_to_query)
         ok = observed == rule["alt"]
         detail = {
             "rule": rule,
@@ -309,6 +450,14 @@ def evaluate_rule_set(seq, rules, features):
     }
 
 
+def missing_mutations(evaluation):
+    missing = []
+    for detail in evaluation.get("details", []):
+        if not detail.get("matched"):
+            missing.append(format_mutation(detail["rule"], detail.get("observed")))
+    return missing
+
+
 def parent_depth(name, parents):
     depth = 0
     seen = set()
@@ -320,18 +469,36 @@ def parent_depth(name, parents):
     return depth
 
 
-def call_hierarchical(seq, definitions, parents, features):
+def call_hierarchical(seq, definitions, parents, features, ref_to_query=None):
     evaluations = {
-        name: evaluate_rule_set(seq, rules, features)
+        name: evaluate_rule_set(seq, rules, features, ref_to_query)
         for name, rules in definitions.items()
     }
-    exact = [name for name, ev in evaluations.items() if ev["exact"]]
+
+    memo = {}
+
+    def exact_with_parents(name):
+        if name in memo:
+            return memo[name]
+        ev = evaluations.get(name)
+        if ev is None or not ev["exact"]:
+            memo[name] = False
+            return False
+        parent = parents.get(name, "")
+        if not parent:
+            memo[name] = True
+            return True
+        memo[name] = exact_with_parents(parent)
+        return memo[name]
+
+    exact = [name for name in definitions if exact_with_parents(name)]
     if exact:
         name = sorted(
             exact,
             key=lambda n: (parent_depth(n, parents), len(definitions[n]), n),
             reverse=True,
         )[0]
+        evaluations[name]["candidate"] = name
         return name, evaluations[name], True
 
     if evaluations:
@@ -340,28 +507,22 @@ def call_hierarchical(seq, definitions, parents, features):
             key=lambda n: (evaluations[n]["fraction"], evaluations[n]["matched"], parent_depth(n, parents), n),
             reverse=True,
         )[0]
+        evaluations[name]["candidate"] = name
         return "Unassigned", evaluations[name], False
 
-    return "Unassigned", {"fraction": 0.0, "matched_mutations": []}, False
+    return "Unassigned", {"fraction": 0.0, "matched_mutations": [], "candidate": ""}, False
 
 
-def call_flat(seq, definitions, features):
-    evaluations = {
-        name: evaluate_rule_set(seq, rules, features)
-        for name, rules in definitions.items()
-    }
-    exact = [name for name, ev in evaluations.items() if ev["exact"]]
-    if exact:
-        name = sorted(exact, key=lambda n: (n.count("."), len(definitions[n]), len(n), n), reverse=True)[0]
-        return name, evaluations[name], True
-    if evaluations:
-        name = sorted(
-            evaluations,
-            key=lambda n: (evaluations[n]["fraction"], evaluations[n]["matched"], n.count("."), len(n), n),
-            reverse=True,
-        )[0]
-        return "Unassigned", evaluations[name], False
-    return "Unassigned", {"fraction": 0.0, "matched_mutations": []}, False
+def linked_clade_for_subclade(subclade, parents, clade_links):
+    seen = set()
+    current = subclade
+    while current and current not in seen:
+        seen.add(current)
+        clade = clade_links.get(current)
+        if clade:
+            return clade
+        current = parents.get(current, "")
+    return ""
 
 
 def call_sample(sample_id, subtype, fasta_paths, rules_dir):
@@ -384,27 +545,48 @@ def call_sample(sample_id, subtype, fasta_paths, rules_dir):
         row["Subclade_Nomenclature_Subclade"] = "No HA sequence"
         return row
 
-    seq = clean_seq(ha_record[2])
+    seq = clean_seq(ha_record[2]).replace("-", "")
     rule_path = os.path.join(rules_dir, profile["rule_dir"])
+    reference = read_single_fasta(os.path.join(rule_path, "reference.fasta"))
+    ref_to_query, seq = build_reference_to_query_map(reference, seq)
     sub_defs, sub_parents, subclade_to_clade = read_yaml_rules(os.path.join(rule_path, "subclades"))
-    clade_defs, _clade_parents = read_clade_yaml_rules(os.path.join(rule_path, "clades"), sub_defs)
+    clade_defs, _clade_parents, clade_long_names = read_clade_yaml_rules(
+        os.path.join(rule_path, "clades"),
+        sub_defs,
+        sub_parents,
+    )
 
-    subclade, sub_eval, _sub_exact = call_hierarchical(seq, sub_defs, sub_parents, profile["features"])
-    clade, clade_eval, _clade_exact = call_flat(seq, clade_defs, profile["features"])
-    if subclade != "Unassigned" and subclade in subclade_to_clade:
-        linked_clade = subclade_to_clade[subclade]
-        if linked_clade in clade_defs:
+    subclade, sub_eval, _sub_exact = call_hierarchical(seq, sub_defs, sub_parents, profile["features"], ref_to_query)
+    candidate_subclade = sub_eval.get("candidate", "")
+    lineage_eval = {"matched_mutations": [], "fraction": 0.0}
+    if subclade != "Unassigned":
+        lineage_rules = lineage_rule_set(subclade, sub_defs, sub_parents)
+        lineage_eval = evaluate_rule_set(seq, lineage_rules, profile["features"], ref_to_query)
+    clade = "Unassigned"
+    clade_long = "Unassigned"
+    clade_eval = {"fraction": 0.0, "matched_mutations": []}
+    if subclade != "Unassigned":
+        linked_clade = linked_clade_for_subclade(subclade, sub_parents, subclade_to_clade)
+        if linked_clade:
             clade = linked_clade
-            clade_eval = evaluate_rule_set(seq, clade_defs[linked_clade], profile["features"])
+            clade_long = clade_long_names.get(linked_clade, linked_clade)
+            if linked_clade in clade_defs:
+                clade_eval = evaluate_rule_set(seq, clade_defs[linked_clade], profile["features"], ref_to_query)
     subclade_mutations = ";".join(sub_eval.get("matched_mutations", [])) if subclade != "Unassigned" else ""
+    lineage_mutations = ";".join(lineage_eval.get("matched_mutations", [])) if subclade != "Unassigned" else ""
     clade_mutations = ";".join(clade_eval.get("matched_mutations", [])) if clade != "Unassigned" else ""
+    missing = ";".join(missing_mutations(sub_eval)) if subclade == "Unassigned" else ""
 
     row.update({
         "Subclade_Nomenclature_Profile": profile_name,
         "Subclade_Nomenclature_Clade": clade,
+        "Subclade_Nomenclature_Clade_Long": clade_long,
         "Subclade_Nomenclature_Subclade": subclade,
         "Subclade_Nomenclature_Key_Mutations": subclade_mutations or "NA",
+        "Subclade_Nomenclature_Lineage_Key_Mutations": lineage_mutations or "NA",
         "Subclade_Nomenclature_Clade_Key_Mutations": clade_mutations or "NA",
+        "Subclade_Nomenclature_Closest_Subclade": candidate_subclade or "NA",
+        "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations": missing or "NA",
         "Subclade_Nomenclature_Subclade_Match_Fraction": f"{sub_eval.get('fraction', 0.0):.3f}",
         "Subclade_Nomenclature_Clade_Match_Fraction": f"{clade_eval.get('fraction', 0.0):.3f}",
         "Subclade_Nomenclature_Source": profile["source"],

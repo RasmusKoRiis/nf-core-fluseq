@@ -261,10 +261,13 @@ workflow HUMAN {
 
     SUBCLADE_NOMENCLATURE_RULES()
     ch_subclade_nomenclature_rules = SUBCLADE_NOMENCLATURE_RULES.out.rules_dir.first()
+    ch_subclade_nomenclature_script = Channel.value(file("$projectDir/bin/subclade_nomenclature.py", checkIfExists: true))
     ch_versions = ch_versions.mix(SUBCLADE_NOMENCLATURE_RULES.out.versions.first())
 
     SUBCLADE_NOMENCLATURE (
-        COVERAGE.out.filtered_fasta, ch_subclade_nomenclature_rules
+        COVERAGE.out.filtered_fasta,
+        ch_subclade_nomenclature_rules,
+        ch_subclade_nomenclature_script
     )
 
     ch_versions = ch_versions.mix(SUBCLADE_NOMENCLATURE.out.versions.first())

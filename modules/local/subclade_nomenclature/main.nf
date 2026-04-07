@@ -25,6 +25,11 @@ downloads = {
     "H1N1pdm_HA": "https://github.com/influenza-clade-nomenclature/seasonal_A-H1N1pdm_HA/archive/refs/heads/main.tar.gz",
     "B-Vic_HA": "https://github.com/influenza-clade-nomenclature/seasonal_B-Vic_HA/archive/refs/heads/main.tar.gz",
 }
+references = {
+    "H3N2_HA": "CY163680.1",
+    "H1N1pdm_HA": "CY121680.1",
+    "B-Vic_HA": "KX058884.1",
+}
 
 for profile, url in downloads.items():
     archive_path = f"{profile}.tar.gz"
@@ -49,6 +54,17 @@ for profile, url in downloads.items():
                 extracted += 1
     if extracted == 0:
         raise RuntimeError(f"No clade/subclade YAML files extracted from {url}")
+
+    ref_url = (
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+        f"?db=nuccore&id={references[profile]}&rettype=fasta&retmode=text"
+    )
+    with urllib.request.urlopen(ref_url, timeout=120) as response:
+        reference = response.read()
+    if not reference.startswith(b">"):
+        raise RuntimeError(f"Unexpected reference FASTA downloaded from {ref_url}")
+    with open(os.path.join(out_root, "reference.fasta"), "wb") as handle:
+        handle.write(reference)
 PY
 
 cat > versions.yml <<END_VERSIONS
@@ -64,11 +80,10 @@ process SUBCLADE_NOMENCLATURE {
     errorStrategy 'ignore'
 
     container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin"
-
     input:
     tuple val(meta), path(fasta), path(subtype), path(coverage_csv)
     path rules_dir
+    path caller_script
 
     output:
     tuple val(meta), path("${meta.id}_subclade_nomenclature.csv"), emit: calls
@@ -80,7 +95,7 @@ process SUBCLADE_NOMENCLATURE {
 
     script:
     """
-    python /project-bin/subclade_nomenclature.py \\
+    python ${caller_script} \\
         --sample-id ${meta.id} \\
         --subtype-file ${subtype} \\
         --rules-dir ${rules_dir} \\
