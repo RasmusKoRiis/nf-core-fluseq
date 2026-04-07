@@ -51,10 +51,10 @@ for profile, url in downloads.items():
         raise RuntimeError(f"No clade/subclade YAML files extracted from {url}")
 PY
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: $(python --version 2>&1)
-    END_VERSIONS
+cat > versions.yml <<END_VERSIONS
+"SUBCLADE_NOMENCLATURE_RULES":
+    python: $(python --version 2>&1)
+END_VERSIONS
     '''
 }
 
