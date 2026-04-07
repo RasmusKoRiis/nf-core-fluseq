@@ -53,6 +53,7 @@ include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
 include { IRMA                        } from '../modules/local/irma/main'
 include { AMINOACIDTRANSLATION        } from '../modules/local/aminoacidtranslation/main'
 include { NEXTCLADE                   } from '../modules/local/nextclade/main'
+include { SUBCLADE_NOMENCLATURE; SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature/main'
 include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
 include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
@@ -254,13 +255,27 @@ workflow HUMAN {
 
     ch_versions = ch_versions.mix(COVERAGE.out.versions.first())
 
+    COVERAGE.out.filtered_fasta
+        .map { meta, fasta, subtype, coverage_csv -> tuple(meta, fasta, subtype) }
+        .set { filtered_fasta_for_nextclade }
+
+    SUBCLADE_NOMENCLATURE_RULES()
+    ch_subclade_nomenclature_rules = SUBCLADE_NOMENCLATURE_RULES.out.rules_dir.first()
+    ch_versions = ch_versions.mix(SUBCLADE_NOMENCLATURE_RULES.out.versions.first())
+
+    SUBCLADE_NOMENCLATURE (
+        COVERAGE.out.filtered_fasta, ch_subclade_nomenclature_rules
+    )
+
+    ch_versions = ch_versions.mix(SUBCLADE_NOMENCLATURE.out.versions.first())
+
 
     //
     // MODULE: NEXTCLADE
     //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
     NEXTCLADE (
-        COVERAGE.out.filtered_fasta
+        filtered_fasta_for_nextclade
     )
 
     ch_versions = ch_versions.mix(NEXTCLADE.out.versions.first())
@@ -309,7 +324,8 @@ workflow HUMAN {
         TECHNICAL.out.depth_files_report.collect(),
         seq_instrument,
         Channel.value(file(params.input)),
-        REASSORTMENT.out.genotype_report.collect()
+        REASSORTMENT.out.genotype_report.collect(),
+        SUBCLADE_NOMENCLATURE.out.report.collect()
 
     )
     

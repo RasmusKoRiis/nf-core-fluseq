@@ -24,6 +24,7 @@ process REPORTHUMANFASTA {
     val  seq_instrument
     val  samplesheet               // ignored here
     path reassortment_report       // list
+    path subclade_nomenclature_report // list
 
     output:
     path("${runid}.csv"), emit: report

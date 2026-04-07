@@ -23,6 +23,7 @@ process REPORTHUMAN {
     val seq_instrument
     path(samplesheet)
     path(reassortment_report)
+    path(subclade_nomenclature_report)
     
     output:
 

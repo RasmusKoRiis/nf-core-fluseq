@@ -1,0 +1,248 @@
+Mar-09 10:07:08.803 [main] DEBUG nextflow.cli.Launcher - $> nextflow run . -offline -preview --file human-fastq --outdir /tmp/nf-fluseq-preview
+Mar-09 10:07:08.898 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 24.10.2
+Mar-09 10:07:08.930 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/rasmuskopperud.riis/.nextflow/plugins; core-plugins: nf-amazon@2.9.2,nf-azure@1.10.2,nf-cloudcache@0.4.2,nf-codecommit@0.2.2,nf-console@1.1.4,nf-google@1.15.2,nf-tower@1.9.3,nf-wave@1.7.4
+Mar-09 10:07:08.959 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Mar-09 10:07:08.960 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Mar-09 10:07:08.964 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Mar-09 10:07:08.979 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Mar-09 10:07:10.159 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
+Mar-09 10:07:10.163 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
+Mar-09 10:07:10.185 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/rasmuskopperud.riis/.nextflow/secrets/store.json
+Mar-09 10:07:10.189 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@3c87fdf2] - activable => nextflow.secret.LocalSecretsProvider@3c87fdf2
+Mar-09 10:07:10.209 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Mar-09 10:07:11.738 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
+Mar-09 10:07:11.759 [main] DEBUG nextflow.cli.CmdRun - * PREVIEW * null [shrivelled_sammet] DSL2 - revision: 532ab50f26
+Mar-09 10:07:11.762 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins declared=[nf-validation]
+Mar-09 10:07:11.763 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Mar-09 10:07:11.764 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[nf-validation]
+Mar-09 10:07:11.764 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-validation version: latest
+Mar-09 10:07:12.086 [main] INFO  org.pf4j.AbstractPluginManager - Plugin 'nf-validation@1.1.4' resolved
+Mar-09 10:07:12.087 [main] INFO  org.pf4j.AbstractPluginManager - Start plugin 'nf-validation@1.1.4'
+Mar-09 10:07:12.111 [main] DEBUG nextflow.plugin.BasePlugin - Plugin started nf-validation@1.1.4
+Mar-09 10:07:12.189 [main] DEBUG nextflow.Session - Session UUID: 6485184c-00b0-4ed4-8511-9c81f9c61c30
+Mar-09 10:07:12.189 [main] DEBUG nextflow.Session - Run name: shrivelled_sammet
+Mar-09 10:07:12.190 [main] DEBUG nextflow.Session - Executor pool size: 8
+Mar-09 10:07:12.202 [main] DEBUG nextflow.file.FilePorter - File porter settings maxRetries=3; maxTransfers=50; pollTimeout=null
+Mar-09 10:07:12.210 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Mar-09 10:07:12.246 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 24.10.2 build 5932
+  Created: 27-11-2024 21:23 UTC (22:23 CEST)
+  System: Linux 6.17.0-14-generic
+  Runtime: Groovy 4.0.23 on OpenJDK 64-Bit Server VM 17.0.10+7
+  Encoding: UTF-8 (UTF-8)
+  Process: 3461632@up-rari-2 [10.202.206.25]
+  CPUs: 8 - Mem: 62.8 GB (35.6 GB) - Swap: 8 GB (8 GB)
+Mar-09 10:07:12.279 [main] DEBUG nextflow.Session - Work-dir: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/work [ext2/ext3]
+Mar-09 10:07:12.335 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Mar-09 10:07:12.347 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Mar-09 10:07:12.416 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Mar-09 10:07:12.431 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Mar-09 10:07:12.535 [main] DEBUG nextflow.Session - Session start
+Mar-09 10:07:12.538 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /tmp/nf-fluseq-preview/pipeline_info/execution_trace_2026-03-09_10-07-11.txt
+Mar-09 10:07:12.546 [main] DEBUG nextflow.Session - Using default localLib path: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/lib
+Mar-09 10:07:12.551 [main] DEBUG nextflow.Session - Adding to the classpath library: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/lib
+Mar-09 10:07:12.552 [main] DEBUG nextflow.Session - Adding to the classpath library: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/lib/nfcore_external_java_deps.jar
+Mar-09 10:07:13.131 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Mar-09 10:07:13.150 [main] DEBUG nextflow.script.IncludeDef - Loading included plugin extensions with names: [validateParameters:validateParameters, paramsHelp:paramsHelp]; plugin Id: nf-validation
+Mar-09 10:07:13.181 [main] DEBUG nextflow.validation.SchemaValidator - Starting parameters validation
+Mar-09 10:07:13.326 [main] WARN  nextflow.validation.SchemaValidator - The following invalid input values have been detected:
+
+* --release_version: master
+* --data_origin: BioNumerics
+* --reassortment_database: assets/reassortment_database.fasta
+
+
+Mar-09 10:07:13.341 [main] DEBUG nextflow.validation.SchemaValidator - Finishing parameters validation
+Mar-09 10:07:13.346 [main] WARN  nextflow.Nextflow - [nf-core/fluseq] You are attempting to run the pipeline without any custom configuration!
+
+This will be dependent on your local compute environment but can be achieved via one or more of the following:
+   (1) Using an existing pipeline profile e.g. `-profile docker` or `-profile singularity`
+   (2) Using an existing nf-core/configs for your Institution e.g. `-profile crick` or `-profile uppmax`
+   (3) Using your own local custom config e.g. `-c /path/to/your/custom.config`
+
+Please refer to the quick start section and usage docs for the pipeline.
+ 
+Mar-09 10:07:13.646 [main] DEBUG nextflow.script.IncludeDef - Loading included plugin extensions with names: [paramsSummaryLog:paramsSummaryLog, paramsSummaryMap:paramsSummaryMap]; plugin Id: nf-validation
+Mar-09 10:07:13.661 [main] INFO  nextflow.Nextflow - 
+
+-[2m----------------------------------------------------[0m-
+                                        [0;32m,--.[0;30m/[0;32m,-.[0m
+[0;34m        ___     __   __   __   ___     [0;32m/,-._.--~'[0m
+[0;34m  |\ | |__  __ /  ` /  \ |__) |__         [0;33m}  {[0m
+[0;34m  | \| |       \__, \__/ |  \ |___     [0;32m\`-._,-`-,[0m
+                                        [0;32m`._,._,'[0m
+[0;35m  nf-core/fluseq v1.0dev[0m
+-[2m----------------------------------------------------[0m-
+[1mCore Nextflow options[0m
+  [0;34mrunName              : [0;32mshrivelled_sammet[0m
+  [0;34mlaunchDir            : [0;32m/home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq[0m
+  [0;34mworkDir              : [0;32m/home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/work[0m
+  [0;34mprojectDir           : [0;32m/home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq[0m
+  [0;34muserName             : [0;32mrasmuskopperud.riis@fhi.no[0m
+  [0;34mprofile              : [0;32mstandard[0m
+  [0;34mconfigFiles          : [0;32m[0m
+
+[1mInput/output options[0m
+  [0;34moutdir               : [0;32m/tmp/nf-fluseq-preview[0m
+
+[1mOther parameters[0m
+  [0;34mreference            : [0;32massets/references[0m
+  [0;34mseq_quality_thershold: [0;32m80[0m
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+-[2m----------------------------------------------------[0m-
+If you use nf-core/fluseq for your analysis please cite:
+
+* The nf-core framework
+  https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+  https://github.com/nf-core/fluseq/blob/master/CITATIONS.md
+
+Mar-09 10:07:16.374 [main] DEBUG nextflow.script.IncludeDef - Loading included plugin extensions with names: [paramsSummaryLog:paramsSummaryLog, paramsSummaryMap:paramsSummaryMap]; plugin Id: nf-validation
+Mar-09 10:07:16.383 [main] INFO  nextflow.Nextflow - 
+
+-[2m----------------------------------------------------[0m-
+                                        [0;32m,--.[0;30m/[0;32m,-.[0m
+[0;34m        ___     __   __   __   ___     [0;32m/,-._.--~'[0m
+[0;34m  |\ | |__  __ /  ` /  \ |__) |__         [0;33m}  {[0m
+[0;34m  | \| |       \__, \__/ |  \ |___     [0;32m\`-._,-`-,[0m
+                                        [0;32m`._,._,'[0m
+[0;35m  nf-core/fluseq v1.0dev[0m
+-[2m----------------------------------------------------[0m-
+[1mCore Nextflow options[0m
+  [0;34mrunName              : [0;32mshrivelled_sammet[0m
+  [0;34mlaunchDir            : [0;32m/home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq[0m
+  [0;34mworkDir              : [0;32m/home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/work[0m
+  [0;34mprojectDir           : [0;32m/home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq[0m
+  [0;34muserName             : [0;32mrasmuskopperud.riis@fhi.no[0m
+  [0;34mprofile              : [0;32mstandard[0m
+  [0;34mconfigFiles          : [0;32m[0m
+
+[1mInput/output options[0m
+  [0;34moutdir               : [0;32m/tmp/nf-fluseq-preview[0m
+
+[1mOther parameters[0m
+  [0;34mreference            : [0;32massets/references[0m
+  [0;34mseq_quality_thershold: [0;32m80[0m
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+-[2m----------------------------------------------------[0m-
+If you use nf-core/fluseq for your analysis please cite:
+
+* The nf-core framework
+  https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+  https://github.com/nf-core/fluseq/blob/master/CITATIONS.md
+
+Mar-09 10:07:19.225 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_low` matches labels `process_low` for process with name FLUSEQ:HUMAN:CAT_FASTQ
+Mar-09 10:07:19.229 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:CAT_FASTQ` matches process FLUSEQ:HUMAN:CAT_FASTQ
+Mar-09 10:07:19.249 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.249 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.257 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Mar-09 10:07:19.266 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=62.8 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Mar-09 10:07:19.269 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: local)
+Mar-09 10:07:19.358 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_medium` matches labels `process_medium` for process with name FLUSEQ:HUMAN:CHOPPER
+Mar-09 10:07:19.359 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:CHOPPER` matches process FLUSEQ:HUMAN:CHOPPER
+Mar-09 10:07:19.363 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.363 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.383 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_medium` matches labels `process_medium` for process with name FLUSEQ:HUMAN:IRMA
+Mar-09 10:07:19.390 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.390 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.405 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:TECHNICAL
+Mar-09 10:07:19.407 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:TECHNICAL` matches process FLUSEQ:HUMAN:TECHNICAL
+Mar-09 10:07:19.414 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.414 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.443 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:SUBTYPEFINDER
+Mar-09 10:07:19.448 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.448 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.477 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:FASTA_CONFIGURATION
+Mar-09 10:07:19.478 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:FASTA_CONFIGURATION` matches process FLUSEQ:HUMAN:FASTA_CONFIGURATION
+Mar-09 10:07:19.483 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.483 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.496 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:REASSORTMENT
+Mar-09 10:07:19.500 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.500 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.515 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:COVERAGE
+Mar-09 10:07:19.517 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:COVERAGE` matches process FLUSEQ:HUMAN:COVERAGE
+Mar-09 10:07:19.522 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.522 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.542 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:NEXTCLADE
+Mar-09 10:07:19.547 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.547 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.568 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:MUTATIONHUMAN
+Mar-09 10:07:19.569 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:MUTATIONHUMAN` matches process FLUSEQ:HUMAN:MUTATIONHUMAN
+Mar-09 10:07:19.574 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.574 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.593 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:TABLELOOKUP
+Mar-09 10:07:19.598 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.598 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.650 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:REPORTHUMAN
+Mar-09 10:07:19.655 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.655 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.673 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_medium` matches labels `process_medium` for process with name FLUSEQ:HUMAN:FASTQC
+Mar-09 10:07:19.675 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:FASTQC` matches process FLUSEQ:HUMAN:FASTQC
+Mar-09 10:07:19.680 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.680 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.720 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:CUSTOM_DUMPSOFTWAREVERSIONS
+Mar-09 10:07:19.721 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:CUSTOM_DUMPSOFTWAREVERSIONS` matches process FLUSEQ:HUMAN:CUSTOM_DUMPSOFTWAREVERSIONS
+Mar-09 10:07:19.724 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.724 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.811 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withLabel:process_single` matches labels `process_single` for process with name FLUSEQ:HUMAN:MULTIQC
+Mar-09 10:07:19.812 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:MULTIQC` matches process FLUSEQ:HUMAN:MULTIQC
+Mar-09 10:07:19.815 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Mar-09 10:07:19.816 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Mar-09 10:07:19.826 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: MUTATIONHUMAN, FLUSEQ:HUMAN:SUBTYPEFINDER, REPORTHUMANFASTA, FLUSEQ:HUMAN:TABLELOOKUP, FLUSEQ:HUMAN:REPORTHUMAN, FLUSEQ:HUMAN:COVERAGE, GENOTYPING, TECHNICAL, FLUSEQ:HUMAN:MULTIQC, DEPTH_ANALYSIS, SEGMENTIFENTIFIER, MUTATION, CAT_FASTQ, FLUSEQ:HUMAN:IRMA, EMIT_FASTA_RECORD, CHOPPER, FLUSEQ:HUMAN:FASTA_CONFIGURATION, SLIM_GENIN2_REPORT, REPORTAVIANFASTA, FLUMUT_CONVERSION, REHEADER_TO_UID, FLUMUT, REPORT_AVIAN, WRITE_ID_MAP, NEXTCLADE, REASSORTMENT, FASTQC, TABLELOOKUP, FLUSEQ:HUMAN:FASTQC, COVERAGE, FASTA_CONFIGURATIONFASTA, MULTIQC, FLUSEQ:HUMAN:CUSTOM_DUMPSOFTWAREVERSIONS, FLUSEQ:HUMAN:TECHNICAL, FLUSEQ:HUMAN:NEXTCLADE, TABLELOOKUP_MAMMALIAN, SUBTYPEFINDER, IRMA, SAMPLESHEET_CHECK, FLUSEQ:HUMAN:CAT_FASTQ, GENIN2, BASERATIO, FLUSEQ:HUMAN:CHOPPER, FLUSEQ:HUMAN:REASSORTMENT, AMINOACIDTRANSLATION, CUSTOM_DUMPSOFTWAREVERSIONS, REPORTHUMAN, FASTA_CONFIGURATION, FLUSEQ:HUMAN:MUTATIONHUMAN
+Mar-09 10:07:19.835 [main] DEBUG nextflow.script.ScriptRunner - Parsed script files:
+  Script_d87f29a47518f5f8: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/flumut_conversion/main.nf
+  Script_f50431882f339d98: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/avian-fasta.nf
+  Script_6ee2f5252a5a230e: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/main.nf
+  Script_15fe823775b85f7c: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/irma/main.nf
+  Script_dffd1e449b88fc55: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/genin2/main.nf
+  Script_ef78c9dcbbc47eb2: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/reporthumanfasta/main.nf
+  Script_962e7d092e463c46: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/nf-core/custom/dumpsoftwareversions/main.nf
+  Script_8836f16d492f35b9: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/nf-core/cat/fastq/main.nf
+  Script_38d19985353c9040: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/nextclade/main.nf
+  Script_96598ca95591fd47: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/mutationhuman/main.nf
+  Script_5c4e049f174cba26: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/tablelookup/main.nf
+  Script_ac2716c0d96826d7: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/seqkit/main.nf
+  Script_f106d9d727769b74: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/blastn/main.nf
+  Script_2124495bd763b557: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../subworkflows/local/../../modules/local/samplesheet_check.nf
+  Script_2636179feddc45e7: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/avian.nf
+  Script_13ffe3beadc8ec65: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/technical/main.nf
+  Script_83eb67320f9b8974: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/mutation/main.nf
+  Script_8fb49c456b866eeb: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/seqkitfasta/main.nf
+  Script_1a6d27592c031448: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/blastnfasta/main.nf
+  Script_cf047d3eaad92547: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/nf-core/multiqc/main.nf
+  Script_0ef4d6b9ba58655a: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/depth_analysis/main.nf
+  Script_5894435f58ea2696: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/coverage/main.nf
+  Script_4ba798786ecd6418: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/nf-core/fastqc/main.nf
+  Script_d893e33ad4eb0785: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/human.nf
+  Script_cee6678f10b63552: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/reporthuman/main.nf
+  Script_4e39ebac6969f901: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/flumut/main.nf
+  Script_e19f1653a20035d5: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/chopper/main.nf
+  Script_c0a70f7c22b7e5a1: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/human-fasta.nf
+  Script_b75c0ce1a0fa4d26: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/reassortment/main.nf
+  Script_f53f6edf75a1211a: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/genotyping/main.nf
+  Script_3e1ccb830dfd5a49: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../subworkflows/local/input_check.nf
+  Script_c806350635b1d678: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/tablelookup_mammalian/main.nf
+  Script_395371d0b5f36bda: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/reportavianfasta/main.nf
+  Script_79f643788f1f86c0: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/baseratio/main.nf
+  Script_9b1df55987b4d87b: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/report_avian/main.nf
+  Script_88dc52c4139f4a34: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/./workflows/../modules/local/aminoacidtranslation/main.nf
+Mar-09 10:07:19.849 [main] INFO  nextflow.Nextflow - -[0;35m[nf-core/fluseq][0;32m Pipeline completed successfully[0m-
+Mar-09 10:07:19.855 [main] INFO  nextflow.Nextflow - -[0;35m[nf-core/fluseq][0;32m Pipeline completed successfully[0m-
+Mar-09 10:07:19.860 [main] DEBUG n.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=0; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=0ms; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=0; peakCpus=0; peakMemory=0; ]
+Mar-09 10:07:19.860 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow completed -- saving trace file
+Mar-09 10:07:19.861 [main] DEBUG nextflow.trace.ReportObserver - Workflow completed -- rendering execution report
+Mar-09 10:07:19.878 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: local) - terminating tasks monitor poll loop
+Mar-09 10:07:20.282 [main] DEBUG nextflow.trace.TimelineObserver - Workflow completed -- rendering execution timeline
+Mar-09 10:07:20.592 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Mar-09 10:07:20.621 [main] INFO  org.pf4j.AbstractPluginManager - Stop plugin 'nf-validation@1.1.4'
+Mar-09 10:07:20.622 [main] DEBUG nextflow.plugin.BasePlugin - Plugin stopped nf-validation
+Mar-09 10:07:20.625 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'FileTransfer' shutdown completed (hard=false)
+Mar-09 10:07:20.626 [main] DEBUG nextflow.file.SortFileCollector - FileCollector temp dir not removed: null
+Mar-09 10:07:20.626 [main] DEBUG nextflow.file.SortFileCollector - FileCollector temp dir not removed: null
+Mar-09 10:07:20.627 [main] DEBUG nextflow.file.SortFileCollector - FileCollector temp dir not removed: null
+Mar-09 10:07:20.627 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

@@ -45,6 +45,7 @@ include { MUTATIONHUMAN        } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP          } from '../modules/local/tablelookup/main'
 include { REPORTHUMANFASTA     } from '../modules/local/reporthumanfasta/main'
 include { NEXTCLADE            } from '../modules/local/nextclade/main'
+include { SUBCLADE_NOMENCLATURE; SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature/main'
 include { REASSORTMENT         } from '../modules/local/reassortment/main'
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -266,8 +267,20 @@ workflow HUMANFASTA {
   /* 10) Coverage */
   COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_thershold )
 
+  COVERAGE.out.filtered_fasta
+    .map { meta, fasta, subtype, coverage_csv -> tuple(meta, fasta, subtype) }
+    .set { ch_filtered_fasta_for_nextclade }
+
+  SUBCLADE_NOMENCLATURE_RULES()
+  ch_subclade_nomenclature_rules = SUBCLADE_NOMENCLATURE_RULES.out.rules_dir.first()
+
+  SUBCLADE_NOMENCLATURE(
+    COVERAGE.out.filtered_fasta,
+    ch_subclade_nomenclature_rules
+  )
+
   /* 11) Nextclade */
-  NEXTCLADE( COVERAGE.out.filtered_fasta )
+  NEXTCLADE( ch_filtered_fasta_for_nextclade )
 
   /* 12) Mutation vs references */
   MUTATIONHUMAN( NEXTCLADE.out.aminoacid_sequence, Channel.value(ref_dir_all) )
@@ -291,7 +304,8 @@ workflow HUMANFASTA {
     COVERAGE.out.filtered_fasta_report.collect(),
     params.seq_instrument,
     Channel.value(file(params.input ?: params.fasta)),
-    REASSORTMENT.out.genotype_report.collect()
+    REASSORTMENT.out.genotype_report.collect(),
+    SUBCLADE_NOMENCLATURE.out.report.collect()
   )
 
   /* Bring-up logs */

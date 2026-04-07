@@ -1,1 +1,5 @@
 2026-03-09 10:07:12	8.6s	shrivelled_sammet	OK	532ab50f2638ed3cf557f79b56723fd8	6485184c-00b0-4ed4-8511-9c81f9c61c30	nextflow run . -offline -preview --file human-fastq --outdir /tmp/nf-fluseq-preview
+2026-04-07 12:02:37	-	determined_ampere	-	532ab50f2638ed3cf557f79b56723fd8	bc5cffb5-8fc9-456f-a009-5e4e7937db4d	nextflow run main.nf --help
+2026-04-07 12:09:37	-	deadly_thompson	-	532ab50f2638ed3cf557f79b56723fd8	a6884076-8bca-4767-ac5c-727f3e9a7f36	nextflow run main.nf --help
+2026-04-07 12:13:17	-	sleepy_newton	-	532ab50f2638ed3cf557f79b56723fd8	258714a5-72b0-4d94-8f42-95b477eb45a6	nextflow run main.nf --help
+2026-04-07 12:20:40	-	soggy_avogadro	-	532ab50f2638ed3cf557f79b56723fd8	442cf651-7a2e-474e-9c57-a6ca3b7f375d	nextflow run main.nf --help
