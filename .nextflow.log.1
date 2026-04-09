@@ -1,22 +1,22 @@
-Apr-07 15:21:52.143 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf --help
-Apr-07 15:21:52.267 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 24.10.2
-Apr-07 15:21:52.296 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/rasmuskopperud.riis/.nextflow/plugins; core-plugins: nf-amazon@2.9.2,nf-azure@1.10.2,nf-cloudcache@0.4.2,nf-codecommit@0.2.2,nf-console@1.1.4,nf-google@1.15.2,nf-tower@1.9.3,nf-wave@1.7.4
-Apr-07 15:21:52.324 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
-Apr-07 15:21:52.325 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
-Apr-07 15:21:52.329 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
-Apr-07 15:21:52.345 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
-Apr-07 15:21:52.375 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
-Apr-07 15:21:52.379 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
-Apr-07 15:21:52.429 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/rasmuskopperud.riis/.nextflow/secrets/store.json
-Apr-07 15:21:52.435 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@673bb956] - activable => nextflow.secret.LocalSecretsProvider@673bb956
-Apr-07 15:21:52.455 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
-Apr-07 15:21:54.171 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
-Apr-07 15:21:54.193 [main] DEBUG nextflow.cli.CmdRun - Launching `main.nf` [elegant_mercator] DSL2 - revision: 532ab50f26
-Apr-07 15:21:54.198 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins declared=[nf-validation]
-Apr-07 15:21:54.200 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
-Apr-07 15:21:54.200 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[nf-validation]
-Apr-07 15:21:54.201 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-validation version: latest
-Apr-07 15:21:54.202 [main] ERROR o.p.update.DefaultUpdateRepository - Operation not permitted
+Apr-07 16:06:35.085 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf --help
+Apr-07 16:06:35.202 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 24.10.2
+Apr-07 16:06:35.228 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/rasmuskopperud.riis/.nextflow/plugins; core-plugins: nf-amazon@2.9.2,nf-azure@1.10.2,nf-cloudcache@0.4.2,nf-codecommit@0.2.2,nf-console@1.1.4,nf-google@1.15.2,nf-tower@1.9.3,nf-wave@1.7.4
+Apr-07 16:06:35.256 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-07 16:06:35.257 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-07 16:06:35.261 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Apr-07 16:06:35.276 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-07 16:06:35.308 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
+Apr-07 16:06:35.312 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/rasmuskopperud.riis/Coding/work_folder/nf-core-fluseq/nextflow.config
+Apr-07 16:06:35.364 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/rasmuskopperud.riis/.nextflow/secrets/store.json
+Apr-07 16:06:35.370 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@673bb956] - activable => nextflow.secret.LocalSecretsProvider@673bb956
+Apr-07 16:06:35.390 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-07 16:06:37.090 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
+Apr-07 16:06:37.111 [main] DEBUG nextflow.cli.CmdRun - Launching `main.nf` [irreverent_waddington] DSL2 - revision: 532ab50f26
+Apr-07 16:06:37.115 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins declared=[nf-validation]
+Apr-07 16:06:37.116 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-07 16:06:37.116 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[nf-validation]
+Apr-07 16:06:37.117 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-validation version: latest
+Apr-07 16:06:37.118 [main] ERROR o.p.update.DefaultUpdateRepository - Operation not permitted
 java.net.SocketException: Operation not permitted
 	at java.base/java.net.Socket.createImpl(Socket.java:533)
 	at java.base/java.net.Socket.connect(Socket.java:632)
@@ -49,7 +49,7 @@ java.net.SocketException: Operation not permitted
 	at nextflow.cli.CmdRun.run(CmdRun.groovy:342)
 	at nextflow.cli.Launcher.run(Launcher.groovy:503)
 	at nextflow.cli.Launcher.main(Launcher.groovy:658)
-Apr-07 15:21:54.205 [main] ERROR nextflow.cli.Launcher - @unknown
+Apr-07 16:06:37.120 [main] ERROR nextflow.cli.Launcher - @unknown
 java.lang.IllegalStateException: Cannot find latest version of nf-validation plugin
 	at nextflow.plugin.PluginUpdater.load0(PluginUpdater.groovy:328)
 	at nextflow.plugin.PluginUpdater.installPlugin(PluginUpdater.groovy:198)
