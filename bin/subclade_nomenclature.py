@@ -58,6 +58,7 @@ OUTPUT_COLUMNS = [
     "Subclade_Nomenclature_Clade_Key_Mutations",
     "Subclade_Nomenclature_Closest_Subclade",
     "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations",
+    "Subclade_Nomenclature_Unique_Mutations",
     "Subclade_Nomenclature_Subclade_Match_Fraction",
     "Subclade_Nomenclature_Clade_Match_Fraction",
     "Subclade_Nomenclature_Source",
@@ -234,6 +235,55 @@ def observed_state(seq, locus, position, features, ref_to_query=None):
             return ""
         codon.append(seq[idx])
     return translate_codon("".join(codon))
+
+
+def feature_lengths(reference, features):
+    reference = clean_seq(reference).replace("-", "")
+    ordered = sorted(features.items(), key=lambda item: item[1])
+    lengths = {}
+    for index, (locus, start) in enumerate(ordered):
+        end = ordered[index + 1][1] - 1 if index + 1 < len(ordered) else len(reference)
+        lengths[locus] = max(0, (end - start + 1) // 3)
+    return lengths
+
+
+def observed_mutations(seq, reference, features, ref_to_query=None):
+    reference = clean_seq(reference).replace("-", "")
+    mutations = []
+    seen = set()
+    aligned_positions = []
+    if ref_to_query:
+        aligned_positions = [index for index in range(1, len(ref_to_query)) if ref_to_query[index] is not None]
+    first_aligned = min(aligned_positions) if aligned_positions else 1
+    last_aligned = max(aligned_positions) if aligned_positions else len(reference)
+
+    for pos, ref_base in enumerate(reference, start=1):
+        if pos < first_aligned or pos > last_aligned:
+            continue
+        observed = observed_state(seq, "nuc", pos, features, ref_to_query)
+        if not observed or observed in {"N"} or observed == ref_base:
+            continue
+        key = ("nuc", str(pos), observed)
+        if key not in seen:
+            seen.add(key)
+            mutations.append({"locus": "nuc", "site": str(pos), "alt": observed})
+
+    for locus, length in feature_lengths(reference, features).items():
+        for pos in range(1, length + 1):
+            start = features[locus] + (pos - 1) * 3
+            end = start + 2
+            if start < first_aligned or end > last_aligned:
+                continue
+            ref_aa = observed_state(reference, locus, pos, features)
+            observed = observed_state(seq, locus, pos, features, ref_to_query)
+            if not observed or observed in {"X"} or observed == ref_aa:
+                continue
+            key = (locus, str(pos), observed)
+            if key not in seen:
+                seen.add(key)
+                mutations.append({"locus": locus, "site": str(pos), "alt": observed})
+
+    return mutations
 
 
 def format_mutation(rule, observed=None):
@@ -517,26 +567,21 @@ def call_hierarchical(seq, definitions, parents, features, ref_to_query=None):
         for name in definitions
     }
 
-    exact = [name for name, ev in lineage_evaluations.items() if ev["exact"]]
-    if exact:
-        name = sorted(
-            exact,
-            key=lambda n: (parent_depth(n, parents), len(lineage_rule_set(n, definitions, parents)), n),
-            reverse=True,
-        )[0]
-        evaluations[name]["candidate"] = name
-        evaluations[name]["lineage_evaluation"] = lineage_evaluations[name]
-        return name, evaluations[name], True
-
     if lineage_evaluations:
         name = sorted(
             lineage_evaluations,
-            key=lambda n: (lineage_evaluations[n]["fraction"], lineage_evaluations[n]["matched"], parent_depth(n, parents), n),
+            key=lambda n: (
+                lineage_evaluations[n]["matched"],
+                lineage_evaluations[n]["fraction"],
+                parent_depth(n, parents),
+                len(lineage_rule_set(n, definitions, parents)),
+                n,
+            ),
             reverse=True,
         )[0]
         evaluations[name]["candidate"] = name
         evaluations[name]["lineage_evaluation"] = lineage_evaluations[name]
-        return "Unassigned", evaluations[name], False
+        return (name if lineage_evaluations[name]["exact"] else "Unassigned"), evaluations[name], lineage_evaluations[name]["exact"]
 
     return "Unassigned", {"fraction": 0.0, "matched_mutations": [], "candidate": ""}, False
 
@@ -584,36 +629,43 @@ def call_sample(sample_id, subtype, fasta_paths, rules_dir):
         sub_parents,
     )
 
-    subclade, sub_eval, _sub_exact = call_hierarchical(seq, sub_defs, sub_parents, profile["features"], ref_to_query)
+    subclade, sub_eval, sub_exact = call_hierarchical(seq, sub_defs, sub_parents, profile["features"], ref_to_query)
     candidate_subclade = sub_eval.get("candidate", "")
     lineage_target = subclade if subclade != "Unassigned" else candidate_subclade
     lineage_path = " -> ".join(lineage_names(lineage_target, sub_parents)) if lineage_target else ""
     lineage_additions = lineage_additive_mutations(lineage_target, sub_defs, sub_parents) if lineage_target else ""
     lineage_eval = {"matched_mutations": [], "fraction": 0.0}
-    if subclade != "Unassigned":
-        lineage_rules = lineage_rule_set(subclade, sub_defs, sub_parents)
+    lineage_rules = []
+    if lineage_target:
+        lineage_rules = lineage_rule_set(lineage_target, sub_defs, sub_parents)
         lineage_eval = evaluate_rule_set(seq, lineage_rules, profile["features"], ref_to_query)
     clade = "Unassigned"
     clade_long = "Unassigned"
     clade_eval = {"fraction": 0.0, "matched_mutations": []}
-    if subclade != "Unassigned":
-        linked_clade = linked_clade_for_subclade(subclade, sub_parents, subclade_to_clade)
+    if lineage_target:
+        linked_clade = linked_clade_for_subclade(lineage_target, sub_parents, subclade_to_clade)
         if linked_clade:
             clade = linked_clade
             clade_long = clade_long_names.get(linked_clade, linked_clade)
             if linked_clade in clade_defs:
                 clade_eval = evaluate_rule_set(seq, clade_defs[linked_clade], profile["features"], ref_to_query)
-    subclade_mutations = ";".join(sub_eval.get("matched_mutations", [])) if subclade != "Unassigned" else ""
-    lineage_mutations = ";".join(lineage_eval.get("matched_mutations", [])) if subclade != "Unassigned" else ""
+    subclade_mutations = ";".join(sub_eval.get("matched_mutations", [])) if lineage_target else ""
+    lineage_mutations = ";".join(lineage_eval.get("matched_mutations", [])) if lineage_target else ""
     clade_mutations = ";".join(clade_eval.get("matched_mutations", [])) if clade != "Unassigned" else ""
-    sub_eval_for_report = sub_eval.get("lineage_evaluation", sub_eval) if subclade == "Unassigned" else sub_eval
-    missing = ";".join(missing_mutations(sub_eval_for_report)) if subclade == "Unassigned" else ""
+    sub_eval_for_report = sub_eval.get("lineage_evaluation", lineage_eval) if lineage_target else sub_eval
+    missing = ";".join(missing_mutations(sub_eval_for_report)) if lineage_target and not sub_exact else ""
+    lineage_keys = {mutation_key(rule) for rule in lineage_rules}
+    unique_mutations = ";".join(
+        format_mutation(rule)
+        for rule in observed_mutations(seq, reference, profile["features"], ref_to_query)
+        if mutation_key(rule) not in lineage_keys
+    )
 
     row.update({
         "Subclade_Nomenclature_Profile": profile_name,
         "Subclade_Nomenclature_Clade": clade,
         "Subclade_Nomenclature_Clade_Long": clade_long,
-        "Subclade_Nomenclature_Subclade": subclade,
+        "Subclade_Nomenclature_Subclade": lineage_target or "Unassigned",
         "Subclade_Nomenclature_Lineage_Path": lineage_path or "NA",
         "Subclade_Nomenclature_Key_Mutations": subclade_mutations or "NA",
         "Subclade_Nomenclature_Lineage_Additive_Mutations": lineage_additions or "NA",
@@ -621,6 +673,7 @@ def call_sample(sample_id, subtype, fasta_paths, rules_dir):
         "Subclade_Nomenclature_Clade_Key_Mutations": clade_mutations or "NA",
         "Subclade_Nomenclature_Closest_Subclade": candidate_subclade or "NA",
         "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations": missing or "NA",
+        "Subclade_Nomenclature_Unique_Mutations": unique_mutations or "NA",
         "Subclade_Nomenclature_Subclade_Match_Fraction": f"{sub_eval_for_report.get('fraction', 0.0):.3f}",
         "Subclade_Nomenclature_Clade_Match_Fraction": f"{clade_eval.get('fraction', 0.0):.3f}",
         "Subclade_Nomenclature_Source": profile["source"],
