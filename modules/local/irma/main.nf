@@ -12,7 +12,9 @@ process IRMA {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
-    container 'docker.io/cdcgov/irma:latest'
+    //container 'docker.io/cdcgov/irma:latest'
+    container 'docker.io/cdcgov/irma:v1.3.1'
+
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         //'https://depot.galaxyproject.org/singularity/irma:1.0.3--pl5321hdfd78af_0':
