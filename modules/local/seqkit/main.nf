@@ -66,7 +66,7 @@ process FASTA_CONFIGURATION {
             case "\$number" in
                 "04") segment="01-HA" ;;
                 "06") segment="02-NA" ;;
-                "07") segment="03-M" ;;
+                "07") segment="03-MP" ;;
                 "02") segment="04-PB1" ;;
                 "01") segment="05-PB2" ;;
                 "05") segment="06-NP" ;;

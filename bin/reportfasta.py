@@ -75,9 +75,16 @@ merged = merged.groupby("Sample", as_index=False).agg(agg)
 # Normalize known mislabelled columns emitted upstream (e.g. NA1 -> NA)
 COL_NORMALIZATION = {
     "NA1 inhibtion mutations": "NA inhibtion mutations",
+    "Coverage-MP": "Coverage-M",
 }
 for bad, good in COL_NORMALIZATION.items():
-    if bad in merged.columns and good not in merged.columns:
+    if bad in merged.columns and good in merged.columns:
+        merged[good] = merged[good].where(
+            merged[good].astype(str).str.strip().str.upper().isin({"", "NA", "NAN", "NONE"}).eq(False),
+            merged[bad]
+        )
+        merged = merged.drop(columns=[bad])
+    elif bad in merged.columns:
         merged = merged.rename(columns={bad: good})
 
 # -------- ensure required cols & compute DR_* + Sekvens_Resultat --------
