@@ -1,13 +1,25 @@
-Elaborate a bit on.nextflow*
+# Nextflow runtime artifacts
+.nextflow*
+.nf-test/
+.nf-test.log
+nxf-tmp*
 work/
-data/
 results/
-.DS_Store
+pipeline_info/
+null/
+
+# Local data and test runs
+data/
 testing/
 testing*
-*.pyc
+
+# Python and operating-system artifacts
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Large/reference assets managed outside Git
 assets/
-assets/reassortment_database.fasta
-assets/nextclade_references
-assets/sequence_references
-assets/nextclade_datasets
+!assets/methods_description_template.yml
+!assets/multiqc_config.yml
+!assets/schema_input.json

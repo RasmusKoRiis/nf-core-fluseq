@@ -1,0 +1,155 @@
+nextflow_process {
+
+    name "Test Process SURVEILLANCE_SUMMARY"
+    script "modules/local/surveillance_summary/main.nf"
+    process "SURVEILLANCE_SUMMARY"
+
+    def fixtureDir = new File("tests/data/surveillance_summary").canonicalPath
+    def summaryScript = new File("bin/surveillance_summary.py").canonicalPath
+
+    test("human-fastq surveillance outputs") {
+
+        when {
+            process {
+                """
+                input[0] = "human-fastq"
+                input[1] = [ file("${fixtureDir}/sample_flumut.fasta") ]
+                input[2] = [ file("${fixtureDir}/sample_coverage.csv") ]
+                input[3] = [ file("${fixtureDir}/sample_subtype.csv") ]
+                input[4] = [ file("${fixtureDir}/ha_SAMPLE1.tsv"), file("${fixtureDir}/na_SAMPLE1.tsv") ]
+                input[5] = [ file("${fixtureDir}/sample_reassortment.csv") ]
+                input[6] = [ file("${fixtureDir}/sample_resistance.csv") ]
+                input[7] = [ file("${fixtureDir}/Inhibtion_Mutations_of_Intrest_2324.tsv") ]
+                input[8] = file("${summaryScript}")
+                """
+            }
+        }
+
+        then {
+            def jsonSlurper = new groovy.json.JsonSlurper()
+            assertAll(
+                { assert process.success },
+                { assert process.trace.tasks().size() == 1 },
+                { assert process.out.segment_qc.size() == 1 },
+                { assert process.out.reassortment_summary.size() == 1 },
+                { assert process.out.resistance_summary.size() == 1 },
+                { assert process.out.sample_summary.size() == 1 },
+                {
+                    def qcLines = path(process.out.segment_qc.get(0)).text.trim().readLines()
+                    assert qcLines.size() == 9
+                    assert qcLines[0] == "sample	segment	qc_status	sequence_length	expected_length	coverage_percent	n_fraction	mixed_iupac_count	mixed_iupac_fraction	qc_reason"
+                    assert qcLines.any { it.startsWith("SAMPLE1	HA	") }
+                },
+                {
+                    def reassortmentLines = path(process.out.reassortment_summary.get(0)).text.trim().readLines()
+                    assert reassortmentLines.size() == 2
+                    assert reassortmentLines[1].contains("SAMPLE1	Detected	2	LineageA;LineageB")
+                },
+                {
+                    def resistanceLines = path(process.out.resistance_summary.get(0)).text.trim().readLines()
+                    assert resistanceLines.size() == 2
+                    assert resistanceLines[1].contains("SAMPLE1	HA	detected	H275Y")
+                    assert resistanceLines[1].contains("2324")
+                },
+                {
+                    def summary = jsonSlurper.parseText(path(process.out.sample_summary.get(0)).text)
+                    assert summary.schema_version == "1.0.0"
+                    assert summary.samples.size() == 1
+                    assert summary.samples[0].mode == "human-fastq"
+                    assert summary.samples[0].subtype == "H1N1"
+                    assert summary.samples[0].mixed_infection.status == "flagged"
+                    assert summary.samples[0].reassortment.status == "Detected"
+                    assert summary.samples[0].subtype_confidence.HA.level == "low"
+                    assert summary.samples[0].subtype_confidence.NA.level == "low"
+                }
+            )
+        }
+    }
+
+    test("human-fasta surveillance outputs") {
+
+        when {
+            process {
+                """
+                input[0] = "human-fasta"
+                input[1] = [ file("${fixtureDir}/sample_flumut.fasta") ]
+                input[2] = [ file("${fixtureDir}/sample_coverage.csv") ]
+                input[3] = [ file("${fixtureDir}/sample_subtype.csv") ]
+                input[4] = [ file("${fixtureDir}/ha_SAMPLE1.tsv"), file("${fixtureDir}/na_SAMPLE1.tsv") ]
+                input[5] = [ file("${fixtureDir}/sample_reassortment.csv") ]
+                input[6] = [ file("${fixtureDir}/sample_resistance.csv") ]
+                input[7] = [ file("${fixtureDir}/Inhibtion_Mutations_of_Intrest_2324.tsv") ]
+                input[8] = file("${summaryScript}")
+                """
+            }
+        }
+
+        then {
+            def summary = new groovy.json.JsonSlurper().parseText(path(process.out.sample_summary.get(0)).text)
+            assertAll(
+                { assert process.success },
+                { assert process.out.segment_qc.size() == 1 },
+                { assert summary.samples[0].mode == "human-fasta" },
+                { assert summary.interpretation.contains("public-health surveillance") }
+            )
+        }
+    }
+
+    test("avian-fastq surveillance outputs") {
+
+        when {
+            process {
+                """
+                input[0] = "avian-fastq"
+                input[1] = [ file("${fixtureDir}/sample_flumut.fasta") ]
+                input[2] = [ file("${fixtureDir}/sample_coverage.csv") ]
+                input[3] = [ file("${fixtureDir}/sample_subtype.csv") ]
+                input[4] = [ file("${fixtureDir}/ha_SAMPLE1.tsv"), file("${fixtureDir}/na_SAMPLE1.tsv") ]
+                input[5] = [ file("${fixtureDir}/sample_reassortment.csv") ]
+                input[6] = [ file("${fixtureDir}/sample_resistance.csv") ]
+                input[7] = [ file("${fixtureDir}/Inhibtion_Mutations_of_Intrest_2324.tsv") ]
+                input[8] = file("${summaryScript}")
+                """
+            }
+        }
+
+        then {
+            def summary = new groovy.json.JsonSlurper().parseText(path(process.out.sample_summary.get(0)).text)
+            assertAll(
+                { assert process.success },
+                { assert process.out.reassortment_summary.size() == 1 },
+                { assert summary.samples[0].mode == "avian-fastq" },
+                { assert summary.samples[0].segment_qc.keySet().sort() == ["HA", "M", "NA", "NP", "NS", "PA", "PB1", "PB2"] }
+            )
+        }
+    }
+
+    test("avian-fasta surveillance outputs") {
+
+        when {
+            process {
+                """
+                input[0] = "avian-fasta"
+                input[1] = [ file("${fixtureDir}/sample_flumut.fasta") ]
+                input[2] = [ file("${fixtureDir}/sample_coverage.csv") ]
+                input[3] = [ file("${fixtureDir}/sample_subtype.csv") ]
+                input[4] = [ file("${fixtureDir}/ha_SAMPLE1.tsv"), file("${fixtureDir}/na_SAMPLE1.tsv") ]
+                input[5] = [ file("${fixtureDir}/sample_reassortment.csv") ]
+                input[6] = [ file("${fixtureDir}/sample_resistance.csv") ]
+                input[7] = [ file("${fixtureDir}/Inhibtion_Mutations_of_Intrest_2324.tsv") ]
+                input[8] = file("${summaryScript}")
+                """
+            }
+        }
+
+        then {
+            def summary = new groovy.json.JsonSlurper().parseText(path(process.out.sample_summary.get(0)).text)
+            assertAll(
+                { assert process.success },
+                { assert process.out.resistance_summary.size() == 1 },
+                { assert summary.samples[0].mode == "avian-fasta" },
+                { assert summary.resistance_databases[0].name == "Inhibtion_Mutations_of_Intrest_2324.tsv" }
+            )
+        }
+    }
+}

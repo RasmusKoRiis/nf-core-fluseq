@@ -66,6 +66,7 @@ include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/ma
 include { BASERATIO                   } from '../modules/local/baseratio/main'
 include { CHOPPER                     } from '../modules/local/chopper/main'
 include { REASSORTMENT                } from '../modules/local/reassortment/main'
+include { SURVEILLANCE_SUMMARY        } from '../modules/local/surveillance_summary/main'
 
 
 
@@ -302,6 +303,21 @@ workflow HUMAN {
     TABLELOOKUP  (
         MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db))
         
+    )
+
+    SURVEILLANCE_SUMMARY(
+        params.file,
+        FASTA_CONFIGURATION.out.fasta_flumut.map { meta, fasta -> fasta }.collect(),
+        COVERAGE.out.coverage_report.collect(),
+        SUBTYPEFINDER.out.subtype_report.collect(),
+        SUBTYPEFINDER.out.subtype_hits
+            .map { meta, ha_hits, na_hits -> [ha_hits, na_hits] }
+            .flatten()
+            .collect(),
+        REASSORTMENT.out.genotype_report.collect(),
+        TABLELOOKUP.out.lookup_report.collect(),
+        Channel.value([file(params.inhibtion_mutation_db)]),
+        Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 
     //

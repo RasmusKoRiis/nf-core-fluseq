@@ -51,6 +51,7 @@ include { TABLELOOKUP_MAMMALIAN       } from '../modules/local/tablelookup_mamma
 include { FLUMUT                      } from '../modules/local/flumut/main'
 include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion/main'
 include { GENIN2                      } from '../modules/local/genin2/main'
+include { SURVEILLANCE_SUMMARY         } from '../modules/local/surveillance_summary/main'
 
 /* ──────────────────────────────────────────────────────────────────────────
    PROCESSES
@@ -420,6 +421,24 @@ workflow AVIANFASTA {
 
   TABLELOOKUP_MAMMALIAN  (
       ch_full_mamm, fullPath_mammalian_mutation
+  )
+
+  SURVEILLANCE_SUMMARY(
+    params.file,
+    FASTA_CONFIGURATIONFASTA.out.fasta_flumut.map { meta, fasta -> fasta }.collect(),
+    COVERAGE.out.coverage_report.collect(),
+    SUBTYPEFINDER.out.subtype_report.collect(),
+    SUBTYPEFINDER.out.subtype_hits
+      .map { meta, ha_hits, na_hits -> [ha_hits, na_hits] }
+      .flatten()
+      .collect(),
+    REASSORTMENT.out.genotype_report.collect(),
+    TABLELOOKUP.out.lookup_report
+      .mix(TABLELOOKUP_MAMMALIAN.out.lookup_report)
+      .mix(FLUMUT_CONVERSION.out.flumut_report)
+      .collect(),
+    Channel.value([file(params.inhibtion_mutation_db), file(params.mamalian_mutation_db)]),
+    Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
   )
 
   /* 14) Report (materialize leaf streams only) */

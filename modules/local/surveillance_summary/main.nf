@@ -1,0 +1,44 @@
+process SURVEILLANCE_SUMMARY {
+    tag "${mode}"
+    label 'process_single'
+
+    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
+
+    input:
+    val mode
+    path fasta
+    path coverage
+    path subtype
+    path subtype_hits
+    path reassortment
+    path resistance
+    path resistance_databases
+    path summary_script
+
+    output:
+    path "segment_qc.tsv", emit: segment_qc
+    path "reassortment_summary.tsv", emit: reassortment_summary
+    path "resistance_summary.tsv", emit: resistance_summary
+    path "sample_summary.json", emit: sample_summary
+    path "versions.yml", emit: versions
+
+    script:
+    """
+    python ${summary_script} \
+        --mode '${mode}' \
+        --fasta ${fasta} \
+        --coverage ${coverage} \
+        --subtype ${subtype} \
+        --subtype-hits ${subtype_hits} \
+        --reassortment ${reassortment} \
+        --resistance ${resistance} \
+        --resistance-databases ${resistance_databases}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        surveillance_summary: "1.0.0"
+        python: \$(python --version 2>&1 | awk '{print \$2}')
+    END_VERSIONS
+    """
+}
+
