@@ -44,13 +44,13 @@ process FASTA_CONFIGURATIONFASTA {
 
   # Map a segment token to numbered label; VIC/VICVIC swaps PB1/PB2 numbers
   map_segment_label() {
-    seg="$1"   # HA NA M PB1 PB2 NP PA NS
+    seg="$1"   # HA NA M/MP PB1 PB2 NP PA NS
     case "$subtype" in
       VIC|VICVIC)
         case "$seg" in
           HA)  echo "01-HA" ;;
           NA)  echo "02-NA" ;;
-          M)   echo "03-M"  ;;
+          M|MP) echo "03-MP" ;;
           PB1) echo "04-PB1" ;;  # VIC swap
           PB2) echo "05-PB2" ;;  # VIC swap
           NP)  echo "06-NP" ;;
@@ -63,7 +63,7 @@ process FASTA_CONFIGURATIONFASTA {
         case "$seg" in
           HA)  echo "01-HA" ;;
           NA)  echo "02-NA" ;;
-          M)   echo "03-M"  ;;
+          M|MP) echo "03-MP" ;;
           PB1) echo "04-PB1" ;;
           PB2) echo "05-PB2" ;;
           NP)  echo "06-NP" ;;
@@ -78,7 +78,7 @@ process FASTA_CONFIGURATIONFASTA {
   # flumut/genin combined headers need bare segment token; change M -> MP
   seg_token_for_fg() {
     seg="$1"
-    if [ "$seg" = "M" ]; then
+    if [ "$seg" = "M" ] || [ "$seg" = "MP" ]; then
       echo "MP"
     else
       echo "$seg"
@@ -108,9 +108,9 @@ process FASTA_CONFIGURATIONFASTA {
     fn="$1"
     u="$(printf "%s" "$fn" | tr '[:lower:]' '[:upper:]')"
 
-    # Special-case MP in filenames -> treat as M token
+    # Preserve MP when BLAST has identified the matrix segment that way.
     if echo "$u" | grep -Eq '(^|[^A-Z0-9])MP([^A-Z0-9]|$)'; then
-      echo "M"
+      echo "MP"
       return
     fi
 

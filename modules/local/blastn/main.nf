@@ -19,6 +19,7 @@ process SUBTYPEFINDER {
     path("*_subtype.status.tsv"), emit: subtype_status
     path("*_subtype.errors.txt"), optional: true, emit: subtype_errors
     tuple val(meta), path("*.tsv"), emit: subtype_file_test
+    tuple val(meta), path("ha_${meta.id}.tsv"), path("na_${meta.id}.tsv"), emit: subtype_hits
     path("versions.yml"), emit: versions
 
     when:

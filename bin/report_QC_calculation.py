@@ -25,10 +25,14 @@ COVERAGE_COL = {
     'PB2': 'Coverage-PB2',
 }
 
+COVERAGE_ALIASES = {
+    'MP': ['Coverage-MP', 'Coverage-M'],
+}
+
 FRAMESHIFT_COLS = {
     'HA': ['frameShifts HA1', 'frameShifts HA2'],
     'NA': ['frameShifts NA'],
-    'MP': ['frameShifts M1', 'frameShifts M2'],
+    'MP': ['frameShifts M1', 'frameShifts M2', 'frameShifts MP1', 'frameShifts MP2'],
     'NP': ['frameShifts NP'],
     'NS': ['frameShifts NS'],
     'PA': ['frameShifts PA'],
@@ -39,7 +43,7 @@ FRAMESHIFT_COLS = {
 MIXED_COLS = {
     'HA': ['Nextclade Mixed Sites HA1', 'Nextclade Mixed Sites HA2'],
     'NA': ['Nextclade Mixed Sites NA'],
-    'MP': ['Nextclade Mixed Sites M1', 'Nextclade Mixed Sites M2'],
+    'MP': ['Nextclade Mixed Sites M1', 'Nextclade Mixed Sites M2', 'Nextclade Mixed Sites MP1', 'Nextclade Mixed Sites MP2'],
     'NP': ['Nextclade Mixed Sites NP'],
     'NS': ['Nextclade Mixed Sites NS'],
     'PA': ['Nextclade Mixed Sites PA'],
@@ -53,40 +57,92 @@ SEGMENT_ORDER = ['HA', 'NA', 'MP', 'NP', 'NS', 'PA', 'PB1', 'PB2']
 # -----------------------------------------
 # Core summarisation logic
 # -----------------------------------------
+MISSING_TOKENS = {"", "NA", "NAN", "NONE", "NULL", "N/A", "-"}
+
+SUBTYPE_RESULT_MAP = {
+    "H3N2": "A/H3N2",
+    "H1N1": "A/H1N1",
+    "VICVIC": "B/Victoria",
+    "VIC": "B/Victoria",
+    "YAMYAM": "B/Yamagata",
+    "YAM": "B/Yamagata",
+}
+
+def is_missing_value(value) -> bool:
+    if value is None or pd.isna(value):
+        return True
+    return str(value).strip().upper() in MISSING_TOKENS
+
+def get_coverage_value(row: pd.Series, seg: str):
+    for col in COVERAGE_ALIASES.get(seg, [COVERAGE_COL[seg]]):
+        value = row.get(col)
+        if not is_missing_value(value):
+            return value
+    return row.get(COVERAGE_COL[seg])
+
+def has_low_or_missing_coverage(row: pd.Series, seg: str) -> bool:
+    cov_raw = get_coverage_value(row, seg)
+    if is_missing_value(cov_raw):
+        return True
+
+    cov_val = pd.to_numeric(cov_raw, errors="coerce")
+    if pd.isna(cov_val):
+        return True
+
+    return float(cov_val) < 80
+
 def qc_summary(row: pd.Series) -> str:
     """Return QC summary string for one row."""
     segments_out = []
     for seg in SEGMENT_ORDER:
         issues = []
 
-        # Frameshift: any column not equal 'No frameShifts' (case/space-insensitive)
+        # Frameshift: any present value not equal to "No frameShifts".
         for col in FRAMESHIFT_COLS[seg]:
             val = row.get(col)
-            if pd.isna(val):
+            if is_missing_value(val):
                 continue
-            if str(val).strip().lower() != 'no frameshifts':
-                issues.append('FS')
+            if str(val).strip().lower() != "no frameshifts":
+                issues.append("FS")
                 break
 
-        # Low coverage: coerce to numeric first
-        cov_raw = row.get(COVERAGE_COL[seg])
-        cov_val = pd.to_numeric(cov_raw, errors='coerce')
-        if pd.notna(cov_val) and (cov_val > 0.1) and (cov_val < 80):
-            issues.append('LC')
+        # Low coverage includes absent, non-numeric, zero, and <80% coverage.
+        if has_low_or_missing_coverage(row, seg):
+            issues.append("LC")
 
-        # Mixed sites: coerce each to numeric and sum
+        # Mixed sites: coerce each to numeric and sum.
         ms_sum = 0.0
         for col in MIXED_COLS[seg]:
-            v = pd.to_numeric(row.get(col), errors='coerce')
+            v = pd.to_numeric(row.get(col), errors="coerce")
             if pd.notna(v):
                 ms_sum += float(v)
         if ms_sum > 3:
-            issues.append('MS')
+            issues.append("MS")
 
         if issues:
             segments_out.append(f"{seg}:{','.join(sorted(issues))}")
 
-    return '|'.join(segments_out)
+    return "|".join(segments_out)
+
+def has_minimum_result_coverage(row: pd.Series) -> bool:
+    for seg in ("HA", "NA"):
+        cov_raw = get_coverage_value(row, seg)
+        if is_missing_value(cov_raw):
+            return False
+        cov_val = pd.to_numeric(cov_raw, errors="coerce")
+        if pd.isna(cov_val) or float(cov_val) < 30:
+            return False
+    return True
+
+def strict_sekvens_resultat(row: pd.Series) -> str:
+    subtype = str(row.get("Subtype", "")).strip()
+    if not subtype or subtype.upper() in MISSING_TOKENS:
+        return "NA"
+
+    if not has_minimum_result_coverage(row):
+        return "NA"
+
+    return SUBTYPE_RESULT_MAP.get(subtype, subtype)
 
 
 def process_file(in_csv: Path, out_csv: Path) -> None:
@@ -97,7 +153,7 @@ def process_file(in_csv: Path, out_csv: Path) -> None:
         # strip spaces and normalize common empty-like tokens to NA
         df[obj_cols] = df[obj_cols].apply(lambda s: s.str.replace(r'[\u00A0\u200B\uFEFF]', ' ', regex=True).str.strip())
         df[obj_cols] = df[obj_cols].replace(
-            to_replace=r'^(?i)(?:na|nan|none|null|n/?a|-)?$',
+            to_replace=r'(?i)^(?:na|nan|none|null|n/?a|-)?$',
             value=pd.NA,
             regex=True
         )
@@ -112,7 +168,9 @@ def process_file(in_csv: Path, out_csv: Path) -> None:
     # GISAID comment: "Review" if any issues, else empty string
     df['GISAID_Comment'] = df['NGS_QC_Sum'].apply(lambda x: 'Review' if str(x).strip() else '')
 
-
+    # Only call a sequence result when HA and NA coverage are both at least 30%.
+    if 'Subtype' in df.columns:
+        df['Sekvens_Resultat'] = df.apply(strict_sekvens_resultat, axis=1)
 
     # Write with NA shown explicitly
     df.to_csv(out_csv, index=False, na_rep='NA')

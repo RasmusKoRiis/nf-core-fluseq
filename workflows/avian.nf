@@ -62,6 +62,8 @@ include { REPORT_AVIAN                } from '../modules/local/report_avian/main
 include { FLUMUT                      } from '../modules/local/flumut/main'
 include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion/main'
 include { GENIN2                      } from '../modules/local/genin2/main'
+include { REASSORTMENT                } from '../modules/local/reassortment/main'
+include { SURVEILLANCE_SUMMARY        } from '../modules/local/surveillance_summary/main'
 
 
 
@@ -218,6 +220,11 @@ workflow AVIAN {
          fasta_subtype 
     )
 
+    REASSORTMENT(
+        FASTA_CONFIGURATION.out.fasta_flumut,
+        Channel.value(file(params.reassortment_database))
+    )
+
 
     //
     // MODULE: FLUMUT
@@ -286,6 +293,21 @@ workflow AVIAN {
         AMINOACIDTRANSLATION.out.mutation_lookup_csv, Channel.value(file(params.mamalian_mutation_db))
     )
 
+
+    SURVEILLANCE_SUMMARY(
+        params.file,
+        FASTA_CONFIGURATION.out.fasta_flumut.map { meta, fasta -> fasta }.collect(),
+        COVERAGE.out.coverage_report.collect(),
+        SUBTYPEFINDER.out.subtype_report.collect(),
+        SUBTYPEFINDER.out.subtype_hits
+            .map { meta, ha_hits, na_hits -> [ha_hits, na_hits] }
+            .flatten()
+            .collect(),
+        REASSORTMENT.out.genotype_report.collect(),
+        TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
+        Channel.value([file(params.mamalian_mutation_db)]),
+        Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
+    )
 
     //
     // MODULE: REPORT

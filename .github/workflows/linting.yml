@@ -1,4 +1,7 @@
 name: nf-core linting
+permissions:
+  contents: read
+  pull-requests: write
 # This workflow is triggered on pushes and PRs to the repository.
 # It runs the `nf-core lint` and markdown lint tests to ensure
 # that the code meets the nf-core guidelines.
@@ -14,7 +17,7 @@ jobs:
   EditorConfig:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - uses: actions/setup-node@v3
 
@@ -27,7 +30,7 @@ jobs:
   Prettier:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - uses: actions/setup-node@v3
 
@@ -40,7 +43,7 @@ jobs:
   PythonBlack:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Check code lints with Black
         uses: psf/black@stable
@@ -71,10 +74,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out pipeline code
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Install Nextflow
-        uses: nf-core/setup-nextflow@v1
+        uses: nf-core/setup-nextflow@b9f764e8ba5c76b712ace14ecbfcef0e40ae2dd8 # v1.5.2
 
       - uses: actions/setup-python@v4
         with:

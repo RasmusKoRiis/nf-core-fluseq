@@ -303,4 +303,6 @@ if __name__ == "__main__":
     type_ = sys.argv[4]
 
     segment = transform_string(segment)
+    if segment == "MP":
+        segment = "M"
     process_file(input_file, meta_id, segment, type_)
