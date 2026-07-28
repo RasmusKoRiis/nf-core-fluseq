@@ -1,75 +1,315 @@
-# Report data dictionary
+# Human report data dictionary
 
-This document describes the CSV produced by the human report workflow
-(`modules/local/reporthuman/main.nf`).  The file is first assembled by
-[`bin/report.py`](../bin/report.py), then receives `RunID`, `Instrument ID`,
-`Date`, and `Release Version`, and is finally processed by
-[`bin/report_QC_calculation.py`](../bin/report_QC_calculation.py).  The avian
-and FASTA workflows use closely related report builders; fields not listed
-below are pass-through columns from their staged input CSVs and should be
-documented by the producing module.
+This document describes the sample-level CSV produced by the human FASTQ
+workflow (`modules/local/reporthuman/main.nf`). It documents columns as
+**families** because segment-specific columns use the same calculation and only
+differ by segment or protein name.
 
-## Conventions
+## Pattern notation and dimensions
 
-* One row represents one `Sample`.  Duplicate sample rows are collapsed; the
-  first non-null value selected by the merge is not necessarily the most recent
-  or highest-quality result.
-* `NA` means unavailable, not calculated, or not applicable.  It is not a
-  negative result.  Empty QC summaries mean that no issue was detected.
-* Coverage is a percentage, rounded to two decimals.  Other numeric values are
-  rounded to five decimals; `IRMA_noise` is rounded to five decimals.
-* “Source” identifies the upstream report/table or the calculation in the
-  named script. Exact software/database versions should be read from the run's
-  `software_versions.yml` and parameters from `params.json`.
+The dictionary uses two reusable tokens. They are deliberately defined once so
+new segment columns can be added by extending a domain list rather than copying
+a row:
 
-## Columns
+| Token | Allowed values | Examples |
+|---|---|---|
+| `<SEGMENT>` | `HA`, `NA`, `M`/`MP`, `NP`, `NS`, `PA`, `PB1`, `PB2` | `Coverage-<SEGMENT>`, `DEPTH_<SEGMENT>`, reassortment `<SEGMENT>` |
+| `<PROTEIN>` | `HA1`, `HA2`, `M1`, `M2`, `NA`, `NP`, `NS`, `PA`, `PB1`, `PB2` | `aaDeletions <PROTEIN>`, `Nextclade QC <PROTEIN>` |
+| `<REFERENCE>` | `human`, `human_vaccine`, `inhibition_human` | `<PROTEIN> Differences <REFERENCE>` |
 
-| Column | Meaning and units | How it is made | Source | Important weakness / interpretation |
-|---|---|---|---|---|
-| `Sample` | Sample identifier | Sample-sheet `SequenceID` (or upstream sample key); `!` changed to `-` | Input samplesheet and staged CSVs | Identifier normalisation can merge distinct names; duplicates are collapsed |
-| `Sekvens_Resultat` | Human-readable influenza type/subtype | Maps `H3N2`→`A/H3N2`, `H1N1`→`A/H1N1`, `VIC(VIC)`→`B/Victoria`, `YAM(YAM)`→`B/Yamagata`; otherwise retains `Subtype` (QC script only reports it when HA and NA coverage ≥30%) | `Subtype` from Nextclade/subtype analysis | A subtype label is not proof of complete genome quality; low coverage can be reported as `NA` |
-| `RunID` | Pipeline run identifier | Constant supplied to the Nextflow process | Workflow parameter | Describes the run, not sample-level provenance |
-| `Instrument ID` | Sequencing instrument identifier | Constant supplied to the process | Workflow parameter | May be missing, manually entered, or shared by many samples |
-| `Date` | Report generation date (`YYYY-MM-DD`) | Shell `date` at report-process execution | Execution environment clock | Not the collection, sequencing, or analysis date; clock/time-zone errors are possible |
-| `Release Version` | Pipeline/reference release label | Constant supplied to the process | Workflow parameter | Does not by itself identify every database/tool version |
-| `Coverage-HA`, `Coverage-M`, `Coverage-NA`, `Coverage-NP`, `Coverage-NS`, `Coverage-PA`, `Coverage-PB1`, `Coverage-PB2` | Percent of each influenza segment meeting the coverage criterion | Numeric conversion and rounding in `report.py`; `M` denotes the MP segment | Coverage module output | Threshold and reference depend on upstream configuration; missing/non-numeric values become `NA` |
-| `DEPTH_HA`, `DEPTH_MP`, `DEPTH_NA`, `DEPTH_NP`, `DEPTH_NS`, `DEPTH_PA`, `DEPTH_PB1`, `DEPTH_PB2` | Per-segment read depth (depth units) | Passed through from depth analysis | `depth_analysis*` outputs | Mean/median and position handling depend on the producing script; depth alone does not establish correctness |
-| `Nextclade QC HA1`, `Nextclade QC M1`, `Nextclade QC NA`, `Nextclade QC NP`, `Nextclade QC NS`, `Nextclade QC PA`, `Nextclade QC PB1`, `Nextclade QC PB2` | Nextclade quality-control result for a segment/protein | Passed through from Nextclade summaries | Nextclade summary output | Tool/reference version and QC thresholds can change; a QC flag is not a diagnosis |
-| `Subtype` | Subtype/type reported by upstream analysis | Passed through; used to derive `Sekvens_Resultat` | Nextclade/subtype analysis | Ambiguous or contaminated samples may receive an unstable label |
-| `clade`, `clade NA`, `subclade` | Nextclade clade/subclade assignments | Passed through from Nextclade and nomenclature steps | Nextclade and `subclade_nomenclature.py` | Nomenclature is reference-release dependent and may be `NA` for novel/divergent viruses |
-| `aaDeletions HA1`, `aaDeletions M1`, `aaDeletions M2`, `aaDeletions NA`, `aaDeletions NP`, `aaDeletions NS`, `aaDeletions PA`, `aaDeletions PB1`, `aaDeletions PB2` | Amino-acid deletion positions | Passed through from Nextclade amino-acid mutation output | Nextclade | Calls are limited to covered/reference-aligned positions; mixed/low-quality bases can hide events |
-| `aaInsertions HA1`, `aaInsertions M1`, `aaInsertions M2`, `aaInsertions NA`, `aaInsertions NP`, `aaInsertions NS`, `aaInsertions PA`, `aaInsertions PB1`, `aaInsertions PB2` | Amino-acid insertion positions/sequences | Passed through from Nextclade | Nextclade | Same alignment and coverage limitations as deletion calls |
-| `frameShifts HA1`, `frameShifts M1`, `frameShifts M2`, `frameShifts NA`, `frameShifts NP`, `frameShifts NS`, `frameShifts PA`, `frameShifts PB1`, `frameShifts PB2` | Detected coding-frame shifts | Passed through; interpreted by QC as an `FS` issue unless `No frameShifts` | Nextclade | Sequencing errors and partial segments can create false calls; absence is not evidence of intact biology |
-| `glycosylation` | Predicted glycosylation-site changes | Passed through from mutation analysis | Mutation/Nextclade output | Prediction depends on complete local amino-acid context and reference; it is not an experimentally measured glycan |
-| `HA1 Differences human`, `HA1 Differences human_vaccine`, `HA2 Differences human`, `HA2 Differences human_vaccine`, `M1 Differences human`, `M2 Differences human`, `NA Differences human`, `NA Differences human_vaccine`, `NA Differences inhibition_human`, `NP Differences human`, `NS1 Differences human`, `PA Differences human`, `PA Differences inhibition_human`, `PB1 Differences human`, `PB2 Differences human`, `SigPep Differences human` | Amino-acid differences from the named human reference, vaccine, or inhibition reference; positions/changes as encoded by upstream output | Passed through from mutation comparison tables | `mutation_human.py`, vaccine and inhibition comparison outputs | “Difference” is relative to a reference, not necessarily a functional mutation; reference choice and alignment affect results |
-| `M2 inhibtion mutations` | M2 mutations relevant to adamantane resistance | Passed through from inhibition mutation analysis | `mutation_finder.py` / lookup table | Column name contains the historical `inhibtion` typo; interpretation depends on lookup database |
-| `NA inhibtion mutations` | NA mutations relevant to neuraminidase-inhibitor resistance | Passed through from inhibition mutation analysis | Mutation finder / resistance lookup | Same reference/database and coverage limitations; typo is retained for compatibility |
-| `PA inhibtion mutations` | PA mutations relevant to baloxavir resistance | Passed through from inhibition mutation analysis | Mutation finder / resistance lookup | Same limitations; a detected mutation is not a phenotypic susceptibility measurement |
-| `DR_Res_Adamantine` | Adamantane resistance classification | `NA` if source missing; `AANI` if source says “No matching mutations”; otherwise `Review` | Derived in `report.py` | Heuristic string classification; `AANI` is a workflow code and should not be read as susceptibility |
-| `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, `DR_Res_Laninamivir` | Neuraminidase-inhibitor resistance classification | Same rule using `NA inhibtion mutations` | Derived in `report.py` | Does not model genotype–phenotype uncertainty, mixtures, or drug-specific evidence |
-| `DR_Res_Baloxavir` | Baloxavir resistance classification | `NA`/`AANS`/`Review` rule using `PA inhibtion mutations` | Derived in `report.py` | Heuristic and reference dependent; `AANS` is a workflow code |
-| `DR_M2_Mut` | M2 resistance mutation detail | Source missing→`NA`; flagged review→mutation text; otherwise `No Mutations` | Derived in `report.py` | “No Mutations” means no match in the lookup, not proof of susceptibility |
-| `DR_NA_Mut` | NA resistance mutation detail | Source missing→`NA`; any NA drug marked `Review`→mutation text; otherwise `No Mutations` | Derived in `report.py` | Collapses four drugs into one detail field and can obscure drug-specific evidence |
-| `DR_PA_Mut` | PA resistance mutation detail | Source missing→`NA`; baloxavir review→mutation text; otherwise `No Mutations` | Derived in `report.py` | Lookup-based and not a phenotypic assay |
-| `IRMA_altmatch` | IRMA alternative-match indicator/count | Passed through from IRMA report | IRMA | Meaning and coding are IRMA-version dependent; not comparable without that version |
-| `IRMA_chimeric` | IRMA chimeric-read/segment flag | Passed through from IRMA | IRMA | Algorithmic flag; may reflect technical artefact or true reassortment |
-| `IRMA_failQC`, `IRMA_passQC` | IRMA overall QC fail/pass indicators | Passed through from IRMA | IRMA | The two flags may both be absent/ambiguous; thresholds are tool/configuration dependent |
-| `IRMA_initial`, `IRMA_match`, `IRMA_nomatch` | IRMA initial/matched/non-matched segment or reference counts/statuses | Passed through from IRMA | IRMA | Exact semantics depend on IRMA report schema and version |
-| `IRMA_noise` | IRMA noise metric | Numeric conversion and rounding to five decimals | IRMA | Scale and recommended cutoff are version/configuration dependent |
-| `NGS_QC_Sum` | Compact segment QC summary, e.g. `HA:MS|PB1:LC,FS` | `report_QC_calculation.py`: `LC` for missing/non-numeric/<80% coverage, `FS` for frame shift, `MS` for >3 mixed sites; segments joined with `|` | Coverage, Nextclade frame-shift and mixed-site fields | Thresholds are hard-coded; an empty value means no listed issue, not complete validation |
-| `GISAID_Comment` | Submission review suggestion | `Review` when `NGS_QC_Sum` is non-empty; otherwise empty | Derived in `report_QC_calculation.py` | Administrative recommendation only; it does not replace curator review or GISAID validation |
+`M` and `MP` are aliases for the matrix (MP) genome segment; the spelling in a
+specific output is retained for compatibility. `NS1` and `SigPep` are special
+protein/reference names used only by the human difference outputs. A literal
+`GISAID_<SEGMENT>_*` family, if introduced by a report variant, follows the same
+rule: the token is the segment and the suffix defines the GISAID attribute; it
+must not be interpreted as a new algorithm without a corresponding source row.
 
-## Provenance and reproducibility
+## Compact column inventory
 
-The report is a merge of every readable CSV staged in the report process working
-directory.  Therefore, the complete provenance of a value includes the input
-file, pipeline parameters, reference datasets, and software versions.  Retain
-the run's `samplesheet.valid.csv`, `params.json`, `software_versions.yml`,
-Nextflow execution report, and the staged upstream CSVs with the report.
+| Pattern or field | Meaning | Produced from | Main limitation |
+|---|---|---|---|
+| `Sample`; `RunID`; `Instrument ID`; `Date`; `Release Version` | Sample and run provenance | Samplesheet, workflow parameters, and report execution date | Run metadata does not fully identify reference/database revisions |
+| `Subtype`; `Sekvens_Resultat` | Raw subtype call and display-ready result | BLASTN classification of HA and NA; final coverage gate | A best database hit is not a phylogenetic or phenotypic classification |
+| `Coverage-<SEGMENT>` | Percent of selected denominator containing a non-`N` consensus character | IRMA amended consensus and `coverage_finder.py` | Segment detection is applied to sequence text rather than its header; denominator normally falls back to observed sequence length |
+| `IRMA_<STAT>`; `DEPTH_<SEGMENT>` | IRMA read-flow counts, alternate-match noise ratio, and stage-4 segment read counts | IRMA `READ_COUNTS.txt` and `sequence_quality.py` | `DEPTH_<SEGMENT>` is not mean per-base depth; absent IRMA records become zero |
+| `clade`; `clade NA`; `legacy-clade`; `subclade`; `glycosylation`; `HA_glycosylation_{1,2,3}` | Nextclade clade and motif annotations | Nextclade dataset-specific analysis | Meaning changes with dataset and revision |
+| `Nextclade QC <PROTEIN>`; `Nextclade Mixed Sites <PROTEIN>` | Segment/protein QC status and mixed-site count | Nextclade `qc.overallStatus` and `qc.mixedSites.totalMixedSites` | HA and M values are copied into both protein columns, so downstream mixed-site sums double them |
+| `aaDeletions <PROTEIN>`; `aaInsertions <PROTEIN>`; `frameShifts <PROTEIN>` | Reference-relative amino-acid indels and coding-frame disruptions | Nextclade alignment, translation, and mutation calling | Calls depend on consensus quality, reference coordinates, and alignment |
+| `<PROTEIN> Differences <REFERENCE>`; `NS1 Differences human`; `SigPep Differences human` | Amino-acid substitutions relative to a named reference family | Nextclade translations followed by `mutation_finder.py` | These are reference differences, not necessarily important or causal mutations |
+| `M2 inhibtion mutations`; `NA inhibtion mutations`; `PA inhibtion mutations`; `DR_Res_*`; `DR_*_Mut` | Lookup matches, drug review codes, and mutation detail | Local Excel lookup table, `table_lookup.py`, and `report.py` | Genotypic lookup is not a phenotypic susceptibility test; historical `inhibtion` spelling is retained |
+| `<SEGMENT>` reassortment fields; `Reassortment` | Best reference strain/identity per segment and overall reassortment flag | BLASTN and `detect_reassortment.py` | Strain-mismatch heuristic, not a phylogenetic reassortment analysis |
+| `Subclade_Nomenclature_<ATTRIBUTE>` | Seasonal HA clade/subclade rule match, evidence, closest match, and source | Local rule caller and influenza-clade-nomenclature YAML definitions | Rules are downloaded from unpinned `main` branches |
+| `NGS_QC_Sum`; `GISAID_Comment` | Compact review flags and submission suggestion | `report_QC_calculation.py` | Hard-coded review thresholds do not replace manual QC or submission validation |
 
-The merge is intentionally permissive: unreadable CSVs are skipped, missing
-columns are created as `NA`, and one row per sample is retained.  These choices
-make a report robust to incomplete runs but can conceal missing inputs.  A
-report should consequently be reviewed together with process logs and QC
-outputs, especially when a high proportion of fields are `NA`.
+`<STAT>` expands to `initial`, `failQC`, `passQC`, `chimeric`, `nomatch`,
+`match`, `altmatch`, or `noise`. `<ATTRIBUTE>` expands to the suffixes listed
+in the subclade section below. The report merger can also preserve arbitrary
+columns from readable staged CSVs or the samplesheet; those are outside this
+stable contract and must be documented by their producing module.
 
+## How the values are calculated
+
+### Report assembly and missing values
+
+`report.py` reads every CSV staged in the report process, concatenates them, and
+groups by `Sample`. For each column it retains the first available value in
+staging order. It creates expected-but-missing columns as `NA`, changes `!` to
+`-` in sample identifiers, converts coverage values to numbers rounded to two
+decimals, and rounds `IRMA_noise` to five decimals. Samples present only in the
+samplesheet are appended with unavailable analysis fields.
+
+This design allows incomplete runs to produce a report, but it can hide a failed
+upstream process. CSV files that cannot be read are skipped with a warning, and
+multiple conflicting results are not ranked by date or quality.
+
+### Subtype and sequence result
+
+`Subtype` is called with NCBI BLAST+ 2.15.0 from the IRMA amended HA and NA
+consensus sequences:
+
+1. HA and NA are searched separately against the configured local reference
+   FASTA files using `blastn -task blastn -outfmt 6 -max_target_seqs 2`.
+2. Hits are ordered by bit score and then percent identity; the first hit is
+   retained.
+3. A call is accepted when alignment length is at least 20% of the expected
+   coding length: 340.2 nt for HA (`0.2 × 1701`) and 282 nt for NA
+   (`0.2 × 1410`). There is no explicit minimum percent-identity threshold.
+4. The second underscore-separated token of each reference identifier supplies
+   the HA and NA labels; the two labels are concatenated into `Subtype`.
+5. `Sekvens_Resultat` maps `H3N2` to `A/H3N2`, `H1N1` to `A/H1N1`, `VIC` or
+   `VICVIC` to `B/Victoria`, and `YAM` or `YAMYAM` to `B/Yamagata`. The result is
+   forced to `NA` unless both `Coverage-HA` and `Coverage-NA` are at least 30%.
+
+The database content and identifier convention are therefore part of the
+method. A short local alignment can pass the call threshold, and concatenating
+independent HA and NA calls can obscure mixed infections.
+
+### Consensus coverage
+
+Coverage is calculated from the IRMA consensus, not from aligned read
+depth:
+
+```text
+Coverage-segment = 100 × (consensus length − number of N characters)
+                         / selected denominator
+```
+
+The implementation receives the segment name but uses it only for the output
+column. To choose a denominator, it searches the **sequence characters** for a
+literal marker such as `HA-`, `NA-`, or `PB2-`; it does not inspect the FASTA
+header or the segment argument. If a marker is found, the hard-coded denominator
+is HA 1800, NA 1450, PB2/PB1 2400, PA 2300, NP 1600, NS 920, or M 1100 nt. If
+no marker is found—as expected for an ordinary nucleotide sequence—the
+denominator is the observed consensus length. In that usual case, the value is
+simply the percentage of consensus characters that are not `N`, rather than the
+percentage of the expected full segment recovered.
+
+Only `N`/`n` is treated as uncovered; every other IUPAC ambiguity code counts as
+covered. Terminally missing sequence is invisible when observed length is used.
+The metric can exceed 100% in a hard-coded-denominator branch because it is not
+capped. Values are rounded to two decimals. These behaviors are important
+limitations of the current implementation and should be corrected before the
+field is interpreted as segment completeness.
+
+### IRMA assembly statistics
+
+IRMA v1.3.1 (`IRMA FLU-minion`) assembles the filtered FASTQ reads into amended
+consensus sequences. `sequence_quality.py` extracts the `Reads` value from
+specific records in IRMA `READ_COUNTS.txt`:
+
+| Pattern | Exact meaning in this report |
+|---|---|
+| `IRMA_initial` | Reads at record `1-initial` |
+| `IRMA_failQC`; `IRMA_passQC` | Reads at `2-failQC` and `2-passQC` |
+| `IRMA_chimeric`; `IRMA_nomatch`; `IRMA_match`; `IRMA_altmatch` | Reads at the corresponding `3-*` records |
+| `DEPTH_{segment}` | `Reads` from each `4-*_<segment>` record |
+| `IRMA_noise` | `IRMA_altmatch / IRMA_match` |
+
+If an expected record is absent, most IRMA counters are set to zero. A zero can
+therefore mean either a true zero or a missing record. Division by zero can
+produce an unavailable or infinite noise value. Interpretation depends on the
+IRMA module and configuration used for the run.
+
+### Nextclade annotations and structural mutations
+
+Only consensus segments that pass the pipeline's configurable sequence-quality
+threshold are sent to Nextclade. The module selects a subtype- and
+segment-specific Nextclade dataset, aligns each sequence to that dataset's
+reference, translates annotated coding sequences, calls reference-relative
+mutations, assigns clades where supported, and applies the dataset's QC rules.
+
+The report transformer reads these native Nextclade fields:
+
+| Report family | Native Nextclade field |
+|---|---|
+| clade fields | `clade`, `legacy-clade`, and `subclade` |
+| QC | `qc.overallStatus` |
+| mixed sites | `qc.mixedSites.totalMixedSites` |
+| structural changes | `aaDeletions`, `aaInsertions`, and `frameShifts` |
+| glycosylation | dataset-provided `glycosylation` annotation |
+
+HA and M annotations are split into protein-specific columns (`HA1`/`HA2` and
+`M1`/`M2`). The converter copies the same segment-level QC status, mixed-site
+count, frameshift, insertion, and deletion value into both protein columns.
+Consequently, final QC sums the HA and M mixed-site count twice: two mixed sites
+in HA or M become a sum of four and pass the `MS > 3` trigger.
+`HA_glycosylation_1` through `_3` are storage chunks of at most 22
+comma-separated glycosylation entries each; they are not three biological
+classes. Missing calls are rendered as strings such as `No frameShifts` or
+`No aaDeletions`.
+
+Nextclade positions are 1-based reference coordinates. Its QC output is a
+screening aid: a warning warrants review but does not prove that a sequence is
+incorrect. Dataset identity and revision must be retained because references,
+clade definitions, motifs, and QC thresholds are dataset-specific.
+
+### Reference-difference mutation families
+
+The `Differences` columns are not taken directly from the Nextclade mutation
+columns. Nextclade first produces translated amino-acid FASTA files. For each
+protein, subtype, and reference family present, `mutation_finder.py` then:
+
+1. loads `sequence_references/<family>/<subtype>/<protein>.fasta`;
+2. globally aligns the reference and sample protein with Biopython
+   `PairwiseAligner`, gap-open score −10 and gap-extension score −1;
+3. uses the first highest-scoring alignment;
+4. records substitutions as `referenceAA + 1-based position + sampleAA` and
+   separates entries with semicolons; and
+5. removes insertion and deletion tokens from the report-facing `Differences`
+   value, writing `No mutations found` when no substitution remains.
+
+The families are `human` for the standard human reference,
+`human_vaccine` for HA/NA vaccine references, and `inhibition_human` for M2,
+NA, and PA resistance-reference comparisons. Because the alignment's match and
+mismatch defaults are not set explicitly, results can vary with the installed
+Biopython version. A difference only means “different from this reference”; it
+does not establish antigenic, clinical, or resistance significance.
+
+### Resistance lookup and derived review codes
+
+`table_lookup.py` filters the configured Excel database by subtype and protein
+(`M2`, `NA1`, or `PA`). It compares each sample substitution with database
+entries using only the numeric position plus alternate amino acid. For example,
+`R143G` and `K143G` both match suffix `143G`; the reference amino acid is
+ignored. Matches become `{M2,NA,PA} inhibtion mutations`; otherwise the value is
+`No matching mutations found`.
+
+`report.py` then applies a string-based summary:
+
+| Source | Drug fields | No database match | At least one match |
+|---|---|---|---|
+| M2 | `DR_Res_Adamantine` | `AANI` | `Review` |
+| NA | `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, `DR_Res_Laninamivir` | `AANI` | `Review` |
+| PA | `DR_Res_Baloxavir` | `AANS` | `Review` |
+
+If the lookup source is absent, the classification is `NA`. `DR_M2_Mut`,
+`DR_NA_Mut`, and `DR_PA_Mut` contain the matched mutation text when review is
+required, `No Mutations` when no lookup match was found, and `NA` when the
+source is absent.
+
+These are workflow review codes, not susceptible/resistant phenotypes. The NA
+classification applies the same mutation list to four drugs and does not model
+mutation-specific evidence strength, mixtures, background effects, or assay
+results. Reproducibility requires archiving the exact Excel lookup database.
+
+### Reassortment screen
+
+Each segment consensus is searched with BLASTN against the configured local
+reassortment database. Subject headers are expected to contain
+`STRAIN|LINEAGE|SEGMENT|ACCESSION`. For every segment, the row with the highest
+percent identity is selected:
+
+- `{segment}` contains `STRAIN(percent_identity)` when identity is at least 80%,
+  `TooLow(identity)` below 80%, or `Missing` when no hit is available.
+- `Reassortment` is `No` when all eight accepted hits name one strain, `Yes`
+  when they name multiple strains, `Unknown` if any segment is missing, and
+  `Unknown (Less Likely)` when any best hit is below 80%.
+
+This is a database-similarity screen. It does not infer phylogenetic trees,
+ancestral segment exchange, or statistical support; results depend strongly on
+database composition, subject-header quality, and ties among best hits.
+
+### Seasonal HA subclade nomenclature
+
+`Subclade_Nomenclature_*` is a custom rule-based call for supported seasonal HA
+profiles: A/H3N2, A/H1N1pdm, and B/Victoria. The workflow downloads
+machine-readable clade/subclade YAML definitions from the
+`influenza-clade-nomenclature` repositories and obtains a profile-specific NCBI
+reference sequence. The caller globally aligns HA nucleotide sequence to the
+reference (match +2, mismatch −1, gap −5), translates profile features, and
+compares observed nucleotide and amino-acid states with hierarchical defining
+mutation rules.
+
+| Suffix after `Subclade_Nomenclature_` | Meaning |
+|---|---|
+| `Profile`; `Source` | Selected virus profile and rule repository |
+| `Clade`; `Clade_Long`; `Subclade`; `Lineage_Path` | Assigned labels and parent path |
+| `Key_Mutations`; `Lineage_Additive_Mutations`; `Lineage_Key_Mutations`; `Clade_Key_Mutations` | Observed rule-defining mutations at different hierarchy levels |
+| `Closest_Subclade`; `Closest_Subclade_Missing_Mutations`; `Unique_Mutations` | Best incomplete match, missing defining states, and observed non-lineage changes |
+| `Subclade_Match_Fraction`; `Clade_Match_Fraction` | Matched rules divided by evaluated rules, rounded to three decimals |
+
+Candidates are ranked by matched-rule count, match fraction, hierarchy depth,
+rule-set size, and name. Although the internal caller marks a non-exact result
+as unassigned, the report currently writes the best candidate into both
+`Subclade` and `Closest_Subclade`; missing defining mutations and the match
+fraction must therefore be checked before treating the label as an exact call.
+These genetic labels facilitate surveillance and do not necessarily
+represent distinct phenotypes. Because the workflow downloads the current
+`main` branch, rule revisions can change results unless the downloaded rules
+are archived with the run.
+
+### Final NGS QC summary
+
+`report_QC_calculation.py` evaluates each of the eight genome segments in the
+order HA, NA, MP, NP, NS, PA, PB1, PB2:
+
+- `LC` (low coverage): coverage is absent, non-numeric, or below 80%;
+- `FS` (frame shift): any protein field for that segment has a non-missing value
+  other than exactly `No frameShifts`;
+- `MS` (mixed sites): the sum of the segment's protein-specific Nextclade mixed
+  site counts is greater than 3.
+
+Issues are written as `segment:codes` and joined with `|`, for example
+`HA:MS|PB1:FS,LC`. `GISAID_Comment` is `Review` when `NGS_QC_Sum` is non-empty
+and otherwise empty. Missing coverage is intentionally treated as a QC problem,
+but missing frame-shift and mixed-site data are not; an empty summary therefore
+does not prove that all QC inputs were present.
+
+## Provenance required to reproduce a value
+
+Retain these artifacts with the report:
+
+- input samplesheet and raw/staged upstream CSVs;
+- `params.json`, especially all database/reference paths and quality thresholds;
+- `software_versions.yml` and container image digests;
+- the exact subtype, resistance, reassortment, and sequence-reference databases;
+- downloaded Nextclade datasets; and
+- downloaded influenza-clade-nomenclature YAML rules and reference FASTA files.
+
+`Release Version` alone is insufficient because several external datasets are
+retrieved or supplied independently of the pipeline release.
+
+## Software and reference sources
+
+- Local implementations: [`report.py`](../bin/report.py),
+  [`report_QC_calculation.py`](../bin/report_QC_calculation.py),
+  [`coverage_finder.py`](../bin/coverage_finder.py),
+  [`sequence_quality.py`](../bin/sequence_quality.py),
+  [`mutation_finder.py`](../bin/mutation_finder.py),
+  [`table_lookup.py`](../bin/table_lookup.py),
+  [`detect_reassortment.py`](../bin/detect_reassortment.py), and
+  [`subclade_nomenclature.py`](../bin/subclade_nomenclature.py).
+- [IRMA documentation](https://wonder.cdc.gov/amd/flu/irma/irma.html),
+  [IRMA output guide](https://wonder.cdc.gov/amd/flu/irma/output.html), and the
+  [IRMA method paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC5011931/).
+- [Nextclade tabular output definitions](https://docs.nextstrain.org/projects/nextclade/en/stable/user/output-files/04-results-tsv.html),
+  [quality-control method](https://docs.nextstrain.org/projects/nextclade/en/stable/user/algorithm/06-quality-control.html),
+  and [dataset documentation](https://docs.nextstrain.org/projects/nextclade/en/stable/user/datasets.html).
+- [NCBI BLAST+ command-line manual](https://www.ncbi.nlm.nih.gov/books/NBK279684/)
+  and [tabular output documentation](https://www.ncbi.nlm.nih.gov/books/NBK569862/).
+- [Biopython pairwise-alignment documentation](https://biopython.org/docs/latest/Tutorial/chapter_pairwise.html).
+- Seasonal influenza nomenclature definitions for
+  [A/H3N2 HA](https://github.com/influenza-clade-nomenclature/seasonal_A-H3N2_HA),
+  [A/H1N1pdm HA](https://github.com/influenza-clade-nomenclature/seasonal_A-H1N1pdm_HA),
+  and [B/Victoria HA](https://github.com/influenza-clade-nomenclature/seasonal_B-Vic_HA),
+  plus the [nomenclature method paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC12904685/).
