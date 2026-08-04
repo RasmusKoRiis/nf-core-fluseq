@@ -68,7 +68,8 @@ merged_data['Sample'] = merged_data['Sample'].astype(str).str.replace('!', '-', 
 
 # ────────────────────────── ensure required columns ─────────
 required_columns = [
-    'Sample', 'Sekvens_Resultat', 'Coverage-HA', 'Coverage-M', 'Coverage-NA', 'Coverage-NP',
+    'Sample', 'Mutation reference', 'Vaccine mutation reference', 'Sekvens_Resultat',
+    'Coverage-HA', 'Coverage-M', 'Coverage-NA', 'Coverage-NP',
     'Coverage-NS', 'Coverage-PA', 'Coverage-PB1', 'Coverage-PB2', 'DEPTH_HA', 'DEPTH_MP',
     'DEPTH_NA', 'DEPTH_NP', 'DEPTH_NS', 'DEPTH_PA', 'DEPTH_PB1', 'DEPTH_PB2', 'DR_M2_Mut',
     'DR_NA_Mut', 'DR_PA_Mut', 'DR_Res_Adamantine', 'DR_Res_Baloxavir', 'DR_Res_Oseltamivir',

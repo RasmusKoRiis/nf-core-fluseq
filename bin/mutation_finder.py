@@ -14,12 +14,40 @@ subtype = sys.argv[4]
 output_file = sys.argv[5]
 type = sys.argv[6]
 
+REFERENCE_COLUMN_BY_TYPE = {
+    'human': 'Mutation reference',
+    'mamailian': 'Mutation reference',
+    'human_vaccine': 'Vaccine mutation reference',
+}
+reference_column = REFERENCE_COLUMN_BY_TYPE.get(type)
+
+
 
 reference_file = os.path.join(reference_file, type + '/' + subtype + '/' + segment + '.fasta')
 print("python reference: {}".format(reference_file))
 
 print("python segment: {}".format(segment))
 
+
+def mutation_reference_name(description, reference_segment):
+    """Return the reference FASTA description without its segment suffix."""
+    segment_name = reference_segment.upper()
+    suffixes = {segment_name}
+
+    # Some reference records use the parent segment name for translated products.
+    if segment_name.startswith('HA'):
+        suffixes.add('HA')
+    elif segment_name.startswith('NA'):
+        suffixes.add('NA')
+    elif segment_name.startswith('NS'):
+        suffixes.add('NS')
+    elif segment_name in {'M', 'M1', 'M2', 'MP'}:
+        suffixes.update({'M', 'MP'})
+    elif segment_name in {'SIG', 'SIGPEP'}:
+        suffixes.update({'SIG', 'SIGPEP'})
+
+    suffix_pattern = '|'.join(re.escape(suffix) for suffix in sorted(suffixes, key=len, reverse=True))
+    return re.sub(rf'\s*_(?:{suffix_pattern})$', '', description.strip(), count=1, flags=re.IGNORECASE).rstrip()
 
 # Function to align sequences and find differences
 def find_differences(reference, seq):
@@ -78,11 +106,15 @@ sequences = []
 print(sequence_file)
 for ref in SeqIO.parse(reference_file, 'fasta'):
     reference = Seq(str(ref.seq))
+    reference_name = mutation_reference_name(ref.description, segment)
     for record in SeqIO.parse(sequence_file, 'fasta'):
         sequence = Seq(str(record.seq))
         differences, all_positions = find_differences(reference, sequence)
         frameshift = check_frameshift(str(sequence))
-        sequences.append({'ID': record.id, 'Differences': differences, 'All_Positions': all_positions})
+        result = {'ID': record.id, 'Differences': differences, 'All_Positions': all_positions}
+        if reference_column:
+            result[reference_column] = reference_name
+        sequences.append(result)
 
 # Create a DataFrame from the sequences
 df = pd.DataFrame(sequences)
@@ -97,12 +129,18 @@ if df.empty:
     # Save the empty CSVs so downstream steps have output files
     empty_df.to_csv(output_file, index=False)
     output_file_report = output_file.replace('.csv', '_report.csv')
-    empty_df.to_csv(output_file_report, index=False)
+    report_columns = ["Sample", "Differences"]
+    if reference_column:
+        report_columns.append(reference_column)
+    pd.DataFrame(columns=report_columns).to_csv(output_file_report, index=False)
     full_output = output_file.replace('.csv', '_full_mutation_list.csv')
     full_output_report = full_output.replace('.csv', '_report.csv')
     empty_full_df = pd.DataFrame(columns=["Sample", "All_Positions"])
     empty_full_df.to_csv(full_output, index=False)
-    empty_full_df.to_csv(full_output_report, index=False)
+    full_report_columns = ["Sample", "All_Positions"]
+    if reference_column:
+        full_report_columns.append(reference_column)
+    pd.DataFrame(columns=full_report_columns).to_csv(full_output_report, index=False)
     sys.exit(0)
 
 df['Differences'] = df.apply(process_differences, axis=1)
@@ -119,7 +157,10 @@ df.drop(columns=['Ref_Name'], inplace=True)
 df.drop(columns=['ID'], inplace=True)
 
 
-df = df[['Sample', 'Differences', 'All_Positions']]
+selected_columns = ['Sample', 'Differences', 'All_Positions']
+if reference_column:
+    selected_columns.append(reference_column)
+df = df[selected_columns]
 
 
 # Remove any instance of 'ins...' or 'del...' in the 'Differences' column
@@ -140,13 +181,19 @@ full_output = output_file.replace('.csv', '_full_mutation_list.csv')
 full_output_report = full_output.replace('.csv', '_report.csv')
 
 new_name = segment + ' ' + 'Differences' + ' ' + type
-df_report = df_main.rename(columns={'Differences': new_name})
+report_columns = ['Sample', 'Differences']
+if reference_column:
+    report_columns.append(reference_column)
+df_report = df[report_columns].rename(columns={'Differences': new_name})
 
 # Save the final dataframe to a CSV file
 df_report.to_csv(output_file_report, index=False)
 
 full_column_name = f"{segment} {type} full amino acid list"
-df_full = df[['Sample', 'All_Positions']].copy()
+full_columns = ['Sample', 'All_Positions']
+if reference_column:
+    full_columns.append(reference_column)
+df_full = df[full_columns].copy()
 df_full.rename(columns={'All_Positions': full_column_name}, inplace=True)
 df_full.to_csv(full_output, index=False)
 df_full.to_csv(full_output_report, index=False)

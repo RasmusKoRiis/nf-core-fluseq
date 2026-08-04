@@ -6,6 +6,7 @@ import numpy as np
 # -------- inputs / exclusions --------
 EXCLUDE = {"merged_report.csv", "fluseq_merged_report.csv", "id_map.csv"}
 csv_files = [f for f in glob.glob("*.csv") if os.path.basename(f) not in EXCLUDE]
+REFERENCE_COLUMNS = ["Mutation reference", "Vaccine mutation reference"]
 
 KEY_CANDIDATES = ["Sample", "Sample Name", "SampleID", "SequenceID", "sample_id", "id", "ID", "Name"]
 
@@ -49,7 +50,7 @@ for f in csv_files:
 
 # If nothing to merge, output a safe skeleton
 if not frames:
-    pd.DataFrame(columns=["Sample"]).to_csv("merged_report.csv", index=False)
+    pd.DataFrame(columns=["Sample", *REFERENCE_COLUMNS]).to_csv("merged_report.csv", index=False)
     raise SystemExit(0)
 
 merged = pd.concat(frames, ignore_index=True, sort=False)
@@ -94,6 +95,7 @@ def ensure_column(df: pd.DataFrame, col: str, fill="NA"):
 
 # Columns referenced by DR and QC logic
 required = [
+    *REFERENCE_COLUMNS,
     "Subtype",
     "M2 inhibtion mutations",
     "NA inhibtion mutations",
