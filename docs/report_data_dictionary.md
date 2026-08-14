@@ -113,7 +113,7 @@ field is interpreted as segment completeness.
 
 ### IRMA assembly statistics
 
-IRMA v1.3.1 (`IRMA FLU-minion`) assembles the filtered FASTQ reads into amended
+IRMA v1.3.5 (`IRMA FLU-minion`) assembles the filtered FASTQ reads into amended
 consensus sequences. `sequence_quality.py` extracts the `Reads` value from
 specific records in IRMA `READ_COUNTS.txt`:
 

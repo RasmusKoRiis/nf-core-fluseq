@@ -13,7 +13,8 @@ process IRMA {
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
     //container 'docker.io/cdcgov/irma:latest'
-    container 'docker.io/cdcgov/irma:v1.3.1'
+    // v1.3.4+ fixes FASTQ deduplication/inflation for tab-delimited ONT headers.
+    container 'docker.io/cdcgov/irma:v1.3.5'
 
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
