@@ -15,6 +15,8 @@ process IRMA {
     //container 'docker.io/cdcgov/irma:latest'
     // v1.3.4+ fixes FASTQ deduplication/inflation for tab-delimited ONT headers.
     container 'docker.io/cdcgov/irma:v1.3.5'
+    // The hardened image defaults to UID 65532, which cannot write host-owned work directories.
+    containerOptions = '-u $(id -u):$(id -g)'
 
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
