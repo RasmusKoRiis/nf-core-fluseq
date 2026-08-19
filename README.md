@@ -77,8 +77,23 @@ nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
 Use the wrapper when only the drug-resistance result is needed:
 
 ```bash
-bash bin/fasta_drug_resistance_wrapper.sh runid_name ../outdir_name input.fasta
+bash bin/fasta_drug_resistance_wrapper.sh runid_name results work input.fasta
 ```
+
+The wrapper can also be downloaded as a standalone file into an empty run
+directory. It will download the pipeline repository automatically when it is
+not already running from a checkout:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/RasmusKoRiis/nf-core-fluseq/master/bin/fasta_drug_resistance_wrapper.sh
+bash fasta_drug_resistance_wrapper.sh runid_name results work input.fasta
+```
+
+This keeps the persistent Nextflow cache in `work/`, the pipeline checkout in
+`nf-core-fluseq/`, and the requested outputs in `results/`, all below the
+directory from which the wrapper was started. Both the results and work
+directories may instead be absolute paths. Set `FLUSEQ_REPO_DIR` if the
+pipeline checkout location needs to be changed.
 
 The wrapper runs the required FASTA parsing, HA/NA subtyping and amino-acid
 translation steps, but skips genotyping, reassortment, coverage, clade analysis,
@@ -90,7 +105,7 @@ Set `FLUSEQ_PROFILE` to use a profile other than Docker, and append `-resume` to
 reuse completed work:
 
 ```bash
-FLUSEQ_PROFILE=apptainer bash bin/fasta_drug_resistance_wrapper.sh runid_name ../outdir_name input.fasta -resume
+FLUSEQ_PROFILE=apptainer bash bin/fasta_drug_resistance_wrapper.sh runid_name results work input.fasta -resume
 ```
 
 #### Avian Influenza FASTQ analysis
