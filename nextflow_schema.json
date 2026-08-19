@@ -301,6 +301,11 @@
             "type": "string",
             "default": "human-fastq"
         },
+        "drug_resistance_only": {
+            "type": "boolean",
+            "default": false,
+            "description": "For the human FASTA workflow, run only the prerequisite subtype/translation steps and drug-resistance analysis."
+        },
         "ha_database": {
             "type": "string",
             "default": "assets/human_HA.fasta"

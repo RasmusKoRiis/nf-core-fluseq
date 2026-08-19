@@ -25,7 +25,8 @@ process REASSORTMENT {
     python /project-bin/detect_reassortment.py \\
         --blast ${prefix}_blast.tsv \\
         --output ${prefix}_reassortment_summary.csv \\
-        --sample ${prefix}
+        --sample ${prefix} \\
+        --metadata /project-bin/reassortment_reference_metadata.csv
 
     echo "${task.process}:" > versions.yml
     echo "    blast: \$(blastn -version 2>&1 | head -n 1)" >> versions.yml

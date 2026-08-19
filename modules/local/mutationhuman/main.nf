@@ -36,6 +36,7 @@ process MUTATIONHUMAN  {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def drugResistanceOnly = params.drug_resistance_only == true
     // TODO nf-core: Where possible, a command MUST be provided to obtain the version number of the software e.g. 1.10
     //               If the software is unable to output a version number on the command-line then it can be manually specified
     //               e.g. https://github.com/nf-core/modules/blob/master/modules/nf-core/homer/annotatepeaks/main.nf
@@ -47,6 +48,7 @@ process MUTATIONHUMAN  {
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
     subtype_name=\$(cat ${subtype} )
+    drug_resistance_only=${drugResistanceOnly}
   
     #Subtype fix for B (not optimal)
     if [[ "\$subtype_name" == "VIC" ]]; then
@@ -81,7 +83,7 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - DEFAULT
 
-        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* && "\${segment}" != *"BM2"* ]]; then 
+        if [[ "\$drug_resistance_only" != "true" && "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* && "\${segment}" != *"BM2"* ]]; then
 
             python /project-bin/mutation_finder.py \
                 \$fasta_file \
@@ -121,7 +123,7 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - VACCINE
         
-        if [[ ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
+        if [[ "\$drug_resistance_only" != "true" && ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
 
         python /project-bin/mutation_finder.py \
             \$fasta_file \

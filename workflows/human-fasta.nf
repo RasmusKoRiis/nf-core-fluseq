@@ -23,6 +23,7 @@ params.runid                      = params.runid ?: 'unknown'
 params.seq_instrument             = 'unknown'
 params.release_version            = params.release_version ?: 'unknown'
 params.input                      = params.input ?: ''
+params.drug_resistance_only       = params.drug_resistance_only == null ? false : params.drug_resistance_only
 
 /* ──────────────────────────────────────────────────────────────────────────
    MODULES (paths follow your original layout)
@@ -43,6 +44,7 @@ include { COVERAGE             } from '../modules/local/coverage/main'
 include { FASTA_CONFIGURATIONFASTA  } from '../modules/local/seqkitfasta/main'
 include { MUTATIONHUMAN        } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP          } from '../modules/local/tablelookup/main'
+include { DRUG_RESISTANCE_REPORT } from '../modules/local/drug_resistance_report/main'
 include { REPORTHUMANFASTA     } from '../modules/local/reporthumanfasta/main'
 include { NEXTCLADE            } from '../modules/local/nextclade/main'
 include { SUBCLADE_NOMENCLATURE; SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature/main'
@@ -174,15 +176,16 @@ workflow HUMANFASTA {
 
   if ( !params.fasta ) error "Missing required parameter: --fasta"
 
+  def drugResistanceOnly = params.drug_resistance_only.toString().toBoolean()
+
   // Refs/DBs
-  def ref_fasta             = file("${params.sequence_references}/references_2324.fasta")
   def ref_dir_all           = file(params.sequence_references)
   def ha_db                 = file(params.ha_database)
   def na_db                 = file(params.na_database)
-  def genotype_db           = file(params.genotype_database)
-  def nextclade_dataset_dir = file(params.nextclade_dataset) // used inside module
   def inhib_mut_db          = file(params.inhibtion_mutation_db)
-  def reassortment_db       = file(params.reassortment_database)
+  def ref_fasta             = drugResistanceOnly ? null : file("${params.sequence_references}/references_2324.fasta")
+  def genotype_db           = drugResistanceOnly ? null : file(params.genotype_database)
+  def reassortment_db       = drugResistanceOnly ? null : file(params.reassortment_database)
 
   /* 1) Split multi-FASTA → per-record UID FASTAs */
   Channel
@@ -199,15 +202,14 @@ workflow HUMANFASTA {
 
   EMIT_FASTA_RECORD( ch_records )
 
-  /* 2) UID ↔ OriginalName map (materialize once) */
-  EMIT_FASTA_RECORD.out
+  /* 2) UID ↔ OriginalName map for both full and resistance-only reports */
+  ch_id_pairs_list = EMIT_FASTA_RECORD.out
     .map { uid, core, f -> tuple(uid?.toString()?.trim(), core?.toString()?.trim()) }
     .distinct()
     .toList()
-    .set { ch_id_pairs_list }
 
   WRITE_ID_MAP( ch_id_pairs_list )
-  WRITE_ID_MAP.out.id_map.set { ch_id_map_file }
+  ch_id_map_file = WRITE_ID_MAP.out.id_map
 
   /* 3) Per-sample bundles (meta + files) — plain tuples only */
   EMIT_FASTA_RECORD.out
@@ -215,8 +217,10 @@ workflow HUMANFASTA {
     .map { uid, cores, files -> tuple([ id: uid, orig: (cores ? cores[0] : uid) ], files) }
     .set { ch_sample_info }
 
-  /* 4) Optionally run SEGMENTIFENTIFIER (not consumed for grouping here) */
-  SEGMENTIFENTIFIER( ch_sample_info, ref_fasta )
+  /* 4) SEGMENTIFENTIFIER is informational and is not needed by resistance-only mode. */
+  if ( !drugResistanceOnly ) {
+    SEGMENTIFENTIFIER( ch_sample_info, ref_fasta )
+  }
 
   /* 5) Build segment groups from our own files (avoid GroupTupleOp traps) */
   ch_sample_info
@@ -243,16 +247,18 @@ workflow HUMANFASTA {
   REHEADER_TO_UID( ch_subtype_pairs )
   SUBTYPEFINDER( REHEADER_TO_UID.out, ha_db, na_db )
 
-  /* 7) GENOTYPING: all FASTAs per sample */
-  ch_segments_grouped
-    .map { meta, files ->
-      def fas = files.findAll { f -> fnameOf(f) ==~ /(?i).*\.fa(sta)?$/ }
-      fas ? tuple(meta, fas) : null
-    }
-    .filter { it != null }
-    .set { ch_genotyping }
+  /* 7) GENOTYPING: full workflow only */
+  def ch_genotyping = null
+  if ( !drugResistanceOnly ) {
+    ch_genotyping = ch_segments_grouped
+      .map { meta, files ->
+        def fas = files.findAll { f -> fnameOf(f) ==~ /(?i).*\.fa(sta)?$/ }
+        fas ? tuple(meta, fas) : null
+      }
+      .filter { it != null }
 
-  GENOTYPING( ch_genotyping, genotype_db )
+    GENOTYPING( ch_genotyping, genotype_db )
+  }
 
   /* 8) FASTA CONFIGURATION input = (meta, files, subtype) */
     ch_segments_grouped
@@ -262,28 +268,40 @@ workflow HUMANFASTA {
     // Call the new robust module
     FASTA_CONFIGURATIONFASTA( ch_segments_with_subtype )
 
-  /* 9) REASSORTMENT */
-  REASSORTMENT( FASTA_CONFIGURATIONFASTA.out.fasta_flumut, Channel.value(reassortment_db) )
+  /* 9-11) Select the smallest valid input path to Nextclade. */
+  def ch_nextclade_input
+  if ( drugResistanceOnly ) {
+    // Drug resistance uses only NA, PA and M2. The M segment is required to
+    // produce the M2 translation, while HA/NA were already used for subtyping.
+    ch_nextclade_input = FASTA_CONFIGURATIONFASTA.out.fasta
+      .map { meta, fasta, subtype ->
+        def resistanceFasta = flattenAny([fasta]).findAll { f ->
+          def name = fnameOf(f)?.toUpperCase() ?: ''
+          name.contains('-NA-') || name.contains('-PA-') || name.contains('-MP-')
+        }
+        resistanceFasta ? tuple(meta, resistanceFasta, subtype) : null
+      }
+      .filter { it != null }
+  } else {
+    REASSORTMENT( FASTA_CONFIGURATIONFASTA.out.fasta_flumut, Channel.value(reassortment_db) )
 
-  /* 10) Coverage */
-  COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_thershold )
+    COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_thershold )
 
-  COVERAGE.out.filtered_fasta
-    .map { meta, fasta, subtype, coverage_csv -> tuple(meta, fasta, subtype) }
-    .set { ch_filtered_fasta_for_nextclade }
+    ch_nextclade_input = COVERAGE.out.filtered_fasta
+      .map { meta, fasta, subtype, coverage_csv -> tuple(meta, fasta, subtype) }
 
-  SUBCLADE_NOMENCLATURE_RULES()
-  ch_subclade_nomenclature_rules = SUBCLADE_NOMENCLATURE_RULES.out.rules_dir.first()
-  ch_subclade_nomenclature_script = Channel.value(file("$projectDir/bin/subclade_nomenclature.py", checkIfExists: true))
+    SUBCLADE_NOMENCLATURE_RULES()
+    ch_subclade_nomenclature_rules = SUBCLADE_NOMENCLATURE_RULES.out.rules_dir.first()
+    ch_subclade_nomenclature_script = Channel.value(file("$projectDir/bin/subclade_nomenclature.py", checkIfExists: true))
 
-  SUBCLADE_NOMENCLATURE(
-    COVERAGE.out.filtered_fasta,
-    ch_subclade_nomenclature_rules,
-    ch_subclade_nomenclature_script
-  )
+    SUBCLADE_NOMENCLATURE(
+      COVERAGE.out.filtered_fasta,
+      ch_subclade_nomenclature_rules,
+      ch_subclade_nomenclature_script
+    )
+  }
 
-  /* 11) Nextclade */
-  NEXTCLADE( ch_filtered_fasta_for_nextclade )
+  NEXTCLADE( ch_nextclade_input )
 
   /* 12) Mutation vs references */
   MUTATIONHUMAN( NEXTCLADE.out.aminoacid_sequence, Channel.value(ref_dir_all) )
@@ -291,44 +309,57 @@ workflow HUMANFASTA {
   /* 13) Table lookups */
   TABLELOOKUP( MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(inhib_mut_db) )
 
-  SURVEILLANCE_SUMMARY(
-    params.file,
-    FASTA_CONFIGURATIONFASTA.out.fasta_flumut.map { meta, fasta -> fasta }.collect(),
-    COVERAGE.out.coverage_report.collect(),
-    SUBTYPEFINDER.out.subtype_report.collect(),
-    SUBTYPEFINDER.out.subtype_hits
-      .map { meta, ha_hits, na_hits -> [ha_hits, na_hits] }
-      .flatten()
-      .collect(),
-    REASSORTMENT.out.genotype_report.collect(),
-    TABLELOOKUP.out.lookup_report.collect(),
-    Channel.value([file(params.inhibtion_mutation_db)]),
-    Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
-  )
+  if ( drugResistanceOnly ) {
+    DRUG_RESISTANCE_REPORT(
+      SUBTYPEFINDER.out.subtype_report.collect(),
+      TABLELOOKUP.out.lookup_report.collect(),
+      ch_id_map_file,
+      params.runid
+    )
+  } else {
+    SURVEILLANCE_SUMMARY(
+      params.file,
+      FASTA_CONFIGURATIONFASTA.out.fasta_flumut.map { meta, fasta -> fasta }.collect(),
+      COVERAGE.out.coverage_report.collect(),
+      SUBTYPEFINDER.out.subtype_report.collect(),
+      SUBTYPEFINDER.out.subtype_hits
+        .map { meta, ha_hits, na_hits -> [ha_hits, na_hits] }
+        .flatten()
+        .collect(),
+      REASSORTMENT.out.genotype_report.collect(),
+      TABLELOOKUP.out.lookup_report.collect(),
+      Channel.value([file(params.inhibtion_mutation_db)]),
+      Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
+    )
 
-  /* 14) Report (materialize leaf streams only) */
-  REPORTHUMANFASTA(
-    SUBTYPEFINDER.out.subtype_report.collect(),
-    COVERAGE.out.coverage_report.collect(),
-    MUTATIONHUMAN.out.human_mutation_report.collect(),
-    MUTATIONHUMAN.out.inhibtion_mutation_report.collect(),
-    TABLELOOKUP.out.lookup_report.collect(),
-    NEXTCLADE.out.nextclade_summary_rapport.collect(),
-    NEXTCLADE.out.nextclade_report.collect(),
-    MUTATIONHUMAN.out.vaccine_mutation_report.collect(),
-    ch_id_map_file,                                // id_map.tsv (Path)
-    params.runid,
-    params.release_version,
-    COVERAGE.out.filtered_fasta_report.collect(),
-    params.seq_instrument,
-    Channel.value(file(params.input ?: params.fasta)),
-    REASSORTMENT.out.genotype_report.collect(),
-    SUBCLADE_NOMENCLATURE.out.report.collect()
-  )
+    /* 14) Report (materialize leaf streams only) */
+    REPORTHUMANFASTA(
+      SUBTYPEFINDER.out.subtype_report.collect(),
+      COVERAGE.out.coverage_report.collect(),
+      MUTATIONHUMAN.out.human_mutation_report.collect(),
+      MUTATIONHUMAN.out.inhibtion_mutation_report.collect(),
+      TABLELOOKUP.out.lookup_report.collect(),
+      NEXTCLADE.out.nextclade_summary_rapport.collect(),
+      NEXTCLADE.out.nextclade_report.collect(),
+      MUTATIONHUMAN.out.vaccine_mutation_report.collect(),
+      ch_id_map_file,                                // id_map.tsv (Path)
+      params.runid,
+      params.release_version,
+      COVERAGE.out.filtered_fasta_report.collect(),
+      params.seq_instrument,
+      Channel.value(file(params.input ?: params.fasta)),
+      REASSORTMENT.out.genotype_report.collect(),
+      SUBCLADE_NOMENCLATURE.out.report.collect()
+    )
+  }
 
   /* Bring-up logs */
   ch_subtype_pairs.count().subscribe   { n -> log.info "🔎 HA/NA subtype inputs: ${n}" }
-  ch_genotyping.count().subscribe      { n -> log.info "🧬 Genotyping inputs: ${n}" }
+  if ( drugResistanceOnly ) {
+    log.info "💊 Running human FASTA drug-resistance analysis only"
+  } else {
+    ch_genotyping.count().subscribe    { n -> log.info "🧬 Genotyping inputs: ${n}" }
+  }
   ch_id_map_file.view                  { f -> "📄 Wrote ID map: ${f}" }
 }
 

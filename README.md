@@ -72,6 +72,27 @@ Navigate to the `nf-core-fluseq` folder and execute the following command with d
 nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
 ```
 
+#### Human Influenza FASTA drug-resistance analysis only
+
+Use the wrapper when only the drug-resistance result is needed:
+
+```bash
+bash bin/fasta_drug_resistance_wrapper.sh runid_name ../outdir_name input.fasta
+```
+
+The wrapper runs the required FASTA parsing, HA/NA subtyping and amino-acid
+translation steps, but skips genotyping, reassortment, coverage, clade analysis,
+surveillance summaries and the full report. Results are written below the
+requested output directory. The focused report is written to
+`report/<runid>_drug_resistance_report.csv`, and the individual lookup CSVs are
+available in `tablelookup/`.
+Set `FLUSEQ_PROFILE` to use a profile other than Docker, and append `-resume` to
+reuse completed work:
+
+```bash
+FLUSEQ_PROFILE=apptainer bash bin/fasta_drug_resistance_wrapper.sh runid_name ../outdir_name input.fasta -resume
+```
+
 #### Avian Influenza FASTQ analysis
 
 ```bash
