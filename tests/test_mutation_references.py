@@ -16,6 +16,7 @@ REPORT_SCRIPTS = [
     REPOSITORY_ROOT / "bin" / "reportfasta.py",
     REPOSITORY_ROOT / "bin" / "reportavian.py",
 ]
+QC_REPORT_SCRIPT = REPOSITORY_ROOT / "bin" / "report_QC_calculation.py"
 
 
 def read_csv(path):
@@ -120,7 +121,8 @@ def test_empty_mutation_reports_include_reference_column(tmp_path, mutation_type
 @pytest.mark.parametrize("report_script", REPORT_SCRIPTS, ids=lambda path: path.name)
 def test_report_mergers_preserve_reference_columns(tmp_path, report_script):
     (tmp_path / "human_report.csv").write_text(
-        "Sample,Mutation reference\nsample,A/Cambodia/e0826360/2020\n",
+        "Sample,Mutation reference,Characterisation_Result\n"
+        "sample,A/Cambodia/e0826360/2020,A/Victoria/4897/2022-like + R45K\n",
         encoding="utf-8",
     )
     (tmp_path / "vaccine_report.csv").write_text(
@@ -139,8 +141,10 @@ def test_report_mergers_preserve_reference_columns(tmp_path, report_script):
     fields, rows = read_csv(tmp_path / "merged_report.csv")
     assert "Mutation reference" in fields
     assert "Vaccine mutation reference" in fields
+    assert "Characterisation_Result" in fields
     assert rows[0]["Mutation reference"] == "A/Cambodia/e0826360/2020"
     assert rows[0]["Vaccine mutation reference"] == "A/Croatia/1XXXV/2023"
+    assert rows[0]["Characterisation_Result"] == "A/Victoria/4897/2022-like + R45K"
 
 
 @pytest.mark.parametrize("report_script", REPORT_SCRIPTS, ids=lambda path: path.name)
@@ -156,3 +160,24 @@ def test_empty_report_mergers_include_reference_columns(tmp_path, report_script)
     fields, _ = read_csv(tmp_path / "merged_report.csv")
     assert "Mutation reference" in fields
     assert "Vaccine mutation reference" in fields
+
+
+def test_final_qc_preserves_characterisation_columns(tmp_path):
+    input_path = tmp_path / "merged_report.csv"
+    output_path = tmp_path / "final_report.csv"
+    input_path.write_text(
+        "Sample,Subtype,Coverage-HA,Coverage-NA,Characterisation_Result\n"
+        "sample,H1N1,100,100,A/Victoria/4897/2022-like + R45K\n",
+        encoding="utf-8",
+    )
+
+    subprocess.run(
+        [sys.executable, str(QC_REPORT_SCRIPT), str(input_path), "-o", str(output_path)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    fields, rows = read_csv(output_path)
+    assert "Characterisation_Result" in fields
+    assert rows[0]["Characterisation_Result"] == "A/Victoria/4897/2022-like + R45K"

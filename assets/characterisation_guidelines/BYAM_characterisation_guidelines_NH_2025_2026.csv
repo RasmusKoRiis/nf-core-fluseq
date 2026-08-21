@@ -1,0 +1,3 @@
+reference_virus,reference_role,clade,subclade,signature_amino_acid_substitutions,ancestor,reporting_category
+B/Massachusetts/02/2012,representative,Y2,,"R48K; P108A; T181A",B/Florida/4/2006 signature baseline,no
+B/Phuket/3073/2013,vaccine,Y3,,"S150I; N165Y; G229D; usually N116K; N202S; K298E; E312K",B/Florida/4/2006 signature baseline,no

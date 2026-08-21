@@ -37,8 +37,9 @@ must not be interpreted as a new algorithm without a corresponding source row.
 | `aaDeletions <PROTEIN>`; `aaInsertions <PROTEIN>`; `frameShifts <PROTEIN>` | Reference-relative amino-acid indels and coding-frame disruptions | Nextclade alignment, translation, and mutation calling | Calls depend on consensus quality, reference coordinates, and alignment |
 | `<PROTEIN> Differences <REFERENCE>`; `NS1 Differences human`; `SigPep Differences human` | Amino-acid substitutions relative to a named reference family | Nextclade translations followed by `mutation_finder.py` | These are reference differences, not necessarily important or causal mutations |
 | `M2 inhibtion mutations`; `NA inhibtion mutations`; `PA inhibtion mutations`; `DR_Res_*`; `DR_*_Mut` | Lookup matches, drug review codes, and mutation detail | Local Excel lookup table, `table_lookup.py`, and `report.py` | Genotypic lookup is not a phenotypic susceptibility test; historical `inhibtion` spelling is retained |
-| `<SEGMENT>` reassortment fields; `Reassortment` | Best reference strain/identity per segment and overall reassortment flag | BLASTN and `detect_reassortment.py` | Strain-mismatch heuristic, not a phylogenetic reassortment analysis |
+| `<SEGMENT>` reassortment fields; `Reassortment`; `Conclusion`; `Origins`; `Subtypes`; `ReferenceStrains` | Best annotated reference/identity per segment and an overall screening interpretation | BLASTN, accession metadata, and `detect_reassortment.py` | Similarity-based screen, not a phylogenetic reassortment analysis |
 | `Subclade_Nomenclature_<ATTRIBUTE>` | Seasonal HA clade/subclade rule match, evidence, closest match, and source | Local rule caller and influenza-clade-nomenclature YAML definitions | Rules are downloaded from unpinned `main` branches |
+| `Characterisation_<ATTRIBUTE>` | Guideline-based reference-virus category, closest guideline reference, and additional amino-acid mutations | Seasonal subclade call and local NH 2025/2026 characterisation tables | Genetic classification only; incomplete subclade calls are provisional |
 | `NGS_QC_Sum`; `GISAID_Comment` | Compact review flags and submission suggestion | `report_QC_calculation.py` | Hard-coded review thresholds do not replace manual QC or submission validation |
 
 `<STAT>` expands to `initial`, `failQC`, `passQC`, `chimeric`, `nomatch`,
@@ -215,19 +216,29 @@ results. Reproducibility requires archiving the exact Excel lookup database.
 ### Reassortment screen
 
 Each segment consensus is searched with BLASTN against the configured local
-reassortment database. Subject headers are expected to contain
-`STRAIN|LINEAGE|SEGMENT|ACCESSION`. For every segment, the row with the highest
-percent identity is selected:
+reassortment database. The preferred subject-header forms are
+`ORIGIN|SUBTYPE|STRAIN|ACCESSION` and
+`ORIGIN|SUBTYPE|STRAIN|SEGMENT|ACCESSION`. Legacy headers are supported; the
+tracked `bin/reassortment_reference_metadata.csv` file fills origin and subtype
+from accession for the current database. For every segment, the row with the
+highest percent identity is selected, with bit score and alignment length used
+as tie-breakers:
 
-- `{segment}` contains `STRAIN(percent_identity)` when identity is at least 80%,
-  `TooLow(identity)` below 80%, or `Missing` when no hit is available.
-- `Reassortment` is `No` when all eight accepted hits name one strain, `Yes`
-  when they name multiple strains, `Unknown` if any segment is missing, and
-  `Unknown (Less Likely)` when any best hit is below 80%.
+- `{segment}` contains `ORIGIN|SUBTYPE|STRAIN(percent_identity%)` at or above
+  80%, `TooLow(identity%):ORIGIN|SUBTYPE|STRAIN` below 80%, or `Missing`.
+- `Reassortment` remains a compact compatibility field: `No` for one complete
+  reference profile, `Yes` for multiple complete profiles, and `Unknown` for
+  missing, low-identity, or unannotated calls.
+- `Conclusion` distinguishes a consistent human profile, possible
+  within-subtype reassortment, human subtype discordance, mixed origins,
+  non-human-only profiles, and inconclusive incomplete results.
+- `Origins`, `Subtypes`, and `ReferenceStrains` list the distinct accepted
+  values in compact semicolon-separated form.
 
 This is a database-similarity screen. It does not infer phylogenetic trees,
 ancestral segment exchange, or statistical support; results depend strongly on
-database composition, subject-header quality, and ties among best hits.
+database composition and annotation quality. Origin and subtype are reference
+metadata, not inferred from the sample sequence itself.
 
 ### Seasonal HA subclade nomenclature
 
@@ -257,6 +268,37 @@ These genetic labels facilitate surveillance and do not necessarily
 represent distinct phenotypes. Because the workflow downloads the current
 `main` branch, rule revisions can change results unless the downloaded rules
 are archived with the run.
+
+### Reference-virus characterisation
+
+`Characterisation_*` interprets the seasonal HA subclade result using the local
+NH 2025/2026 H1, H3, B/Victoria, and B/Yamagata characterisation tables. Only a
+guideline row with `reporting_category=yes` may become the primary
+`Characterisation_Reference_Virus`. A sample matching a non-reporting descendant
+inherits its nearest reporting ancestor and reports the mutations on the path
+from that ancestor as `Characterisation_Guideline_Extra_Mutations`.
+
+| Field | Meaning |
+|---|---|
+| `Characterisation_Profile` | Selected H1, H3, B/Victoria, or B/Yamagata guideline profile |
+| `Characterisation_Status` | Exact reporting category, derived category with extra mutations, incomplete-call review, unassigned, or no reporting categories in the guideline |
+| `Characterisation_Reference_Virus`; `Characterisation_Reference_Role` | Primary reportable reference-virus category and its guideline role |
+| `Characterisation_Reporting_Category_Subclade` | Subclade of the primary reporting category |
+| `Characterisation_Closest_Guideline_Reference`; `Characterisation_Closest_Guideline_Subclade` | Most specific matching guideline row, including non-reporting rows |
+| `Characterisation_Guideline_Extra_Mutations` | Guideline mutations between the primary category and closest descendant |
+| `Characterisation_Sample_Extra_Mutations` | Additional amino-acid changes from `Subclade_Nomenclature_Unique_Mutations`; nucleotide-only changes are excluded |
+| `Characterisation_All_Extra_Mutations` | De-duplicated combination of guideline and sample-specific additional mutations |
+| `Characterisation_Result` | Compact display text such as `A/Victoria/4897/2022-like + R45K` |
+| `Characterisation_Subclade_Match_Fraction`; `Characterisation_Missing_Subclade_Mutations` | Evidence copied from the seasonal subclade call |
+| `Characterisation_Guideline_Source` | Characterisation CSV filename used for the result |
+
+When defining mutations are missing or the subclade match fraction is below
+one, the result is prefixed with `Provisional:` and must be reviewed. The
+current B/Yamagata table contains no reporting-category rows, so the analysis
+does not invent a primary reference-virus category; it can report the closest
+non-reporting reference only when a Yamagata clade is available. These calls
+describe genetic similarity to surveillance categories. They do not establish
+antigenic phenotype, vaccine effectiveness, or clinical significance.
 
 ### Final NGS QC summary
 

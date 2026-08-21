@@ -19,7 +19,9 @@ __pycache__/
 .DS_Store
 
 # Large/reference assets managed outside Git
-assets/
+assets/*
+!assets/characterisation_guidelines/
+!assets/characterisation_guidelines/*.csv
 !assets/methods_description_template.yml
 !assets/multiqc_config.yml
 !assets/schema_input.json

@@ -84,6 +84,8 @@ process SUBCLADE_NOMENCLATURE {
     tuple val(meta), path(fasta), path(subtype), path(coverage_csv)
     path rules_dir
     path caller_script
+    path characterisation_script
+    path characterisation_guidelines
 
     output:
     tuple val(meta), path("${meta.id}_subclade_nomenclature.csv"), emit: calls
@@ -99,8 +101,14 @@ process SUBCLADE_NOMENCLATURE {
         --sample-id ${meta.id} \\
         --subtype-file ${subtype} \\
         --rules-dir ${rules_dir} \\
-        --output ${meta.id}_subclade_nomenclature.csv \\
+        --output ${meta.id}_subclade_nomenclature_raw.csv \\
         ${fasta}
+
+    python ${characterisation_script} \\
+        --input ${meta.id}_subclade_nomenclature_raw.csv \\
+        --subtype-file ${subtype} \\
+        --guidelines-dir ${characterisation_guidelines} \\
+        --output ${meta.id}_subclade_nomenclature.csv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

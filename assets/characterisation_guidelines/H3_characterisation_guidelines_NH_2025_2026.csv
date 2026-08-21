@@ -1,0 +1,15 @@
+reference_virus,reference_role,clade,subclade,signature_amino_acid_substitutions,ancestor,reporting_category
+A/Norway/29511/2021,representative,2,,"Y159N; T160I (-CHO); L164Q; N171K; S186D; D190N; P198S",former 3C.2a1b.2a.2,no
+A/Darwin/9/2021,vaccine,2a,G.1,"Clade 2 + H156S",2,no
+A/Thailand/8/2022,vaccine,2a.3a.1,J,"Clade 2a.3a + I140K; I223V",2a.3a,yes
+A/Sydney/856/2023,reference,2a.3a.1,J.1,"Clade 2a.3a.1 (J) + I25V; V347M",2a.3a.1 (J),no
+A/Canberra/331/2023,reference,2a.3a.1,J.1.1,"Clade 2a.3a.1 (J.1) + S145N",2a.3a.1 (J.1),no
+A/Croatia/10136RV/2023,vaccine,2a.3a.1,J.2,"Clade 2a.3a.1 (J) + K276E",2a.3a.1 (J),yes
+A/Switzerland/59652/2024,reference,2a.3a.1,J.2.1,"Clade 2a.3a.1 (J.2) + P239S",2a.3a.1 (J.2),yes
+A/Lisboa/216/2023,reference,2a.3a.1,J.2.2,"Clade 2a.3a.1 (J.2) + S124N",2a.3a.1 (J.2),yes
+A/Netherlands/10685/2024,reference,2a.3a.1,J.2.3,"Clade 2a.3a.1 (J.2) + N158K; K189R",2a.3a.1 (J.2),yes
+A/Singapore/GP20238/2024,vaccine,2a.3a.1,J.2.4,"Clade 2a.3a.1 (J.2) + T135K (-CHO); K189R",2a.3a.1 (J.2),yes
+A/Norway/8765/2025,reference,2a.3a.1,"K (former J.2.4.1)","Clade 2a.3a.1 (J.2.4) + K2N; S144N (+CHO); N158D; I160K; Q173R; T328A; S378N",2a.3a.1 (J.2.4),yes
+A/Victoria/211/2025,reference,2a.3a.1,J.2.5,"Clade 2a.3a.1 (J.2) + D104N; S145N; N158K",2a.3a.1 (J.2),yes
+none assigned,,2a.3a.1,J.3,"Clade 2a.3a.1 (J) + V505I",2a.3a.1 (J),no
+A/France/IDF-IPP29542/2023,reference,2a.3a.1,J.4,"Clade 2a.3a.1 (J) + Q173R; K276E",2a.3a.1 (J),no
