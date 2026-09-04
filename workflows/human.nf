@@ -89,7 +89,7 @@ workflow HUMAN {
     REFERENCE_PROVENANCE(Channel.value([
         file(params.ha_database, checkIfExists: true),
         file(params.na_database, checkIfExists: true),
-        file(params.inhibition_mutation_db, checkIfExists: true),
+        file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true),
         file(params.reassortment_database, checkIfExists: true),
         file(params.sequence_references, checkIfExists: true),
         file(params.nextclade_dataset, checkIfExists: true)
@@ -232,7 +232,7 @@ workflow HUMAN {
     //Calculate the coverage of the sequences and filter out low quality sequences
 
     /// Coverage threshold from the params/user
-    def seq_quality_threshold = params.seq_quality_threshold
+    def seq_quality_threshold = params.seq_quality_thershold ?: params.seq_quality_threshold
 
     COVERAGE (
          FASTA_CONFIGURATION.out.fasta, seq_quality_threshold
@@ -290,7 +290,7 @@ workflow HUMAN {
     //Check if mutations are annotated in mammalian and inhibition databases
 
     TABLELOOKUP  (
-        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibition_mutation_db, checkIfExists: true))
+        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true))
         
     )
 
@@ -305,7 +305,7 @@ workflow HUMAN {
             .collect(),
         REASSORTMENT.out.genotype_report.collect(),
         TABLELOOKUP.out.lookup_report.collect(),
-        Channel.value([file(params.inhibition_mutation_db, checkIfExists: true)]),
+        Channel.value([file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)]),
         Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 

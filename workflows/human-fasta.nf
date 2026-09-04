@@ -40,7 +40,7 @@ workflow HUMANFASTA {
   def ref_dir_all           = file(params.sequence_references, checkIfExists: true)
   def ha_db                 = file(params.ha_database, checkIfExists: true)
   def na_db                 = file(params.na_database, checkIfExists: true)
-  def inhib_mut_db          = file(params.inhibition_mutation_db, checkIfExists: true)
+  def inhib_mut_db          = file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)
   def ref_fasta             = drugResistanceOnly ? null : file("${params.sequence_references}/references_2324.fasta", checkIfExists: true)
   def genotype_db           = drugResistanceOnly ? null : file(params.genotype_database, checkIfExists: true)
   def reassortment_db       = drugResistanceOnly ? null : file(params.reassortment_database, checkIfExists: true)
@@ -149,7 +149,7 @@ workflow HUMANFASTA {
   } else {
     REASSORTMENT( FASTA_CONFIGURATIONFASTA.out.fasta_flumut, Channel.value(reassortment_db) )
 
-    COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_threshold )
+    COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_thershold ?: params.seq_quality_threshold )
 
     ch_nextclade_input = COVERAGE.out.filtered_fasta
       .map { meta, fasta, subtype, coverage_csv -> tuple(meta, fasta, subtype) }
@@ -199,7 +199,7 @@ workflow HUMANFASTA {
         .collect(),
       REASSORTMENT.out.genotype_report.collect(),
       TABLELOOKUP.out.lookup_report.collect(),
-      Channel.value([file(params.inhibition_mutation_db, checkIfExists: true)]),
+      Channel.value([file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)]),
       Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 

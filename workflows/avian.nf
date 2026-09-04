@@ -88,8 +88,8 @@ workflow AVIAN {
         file(params.na_database, checkIfExists: true),
         file(params.genotype_database, checkIfExists: true),
         file(params.reassortment_database, checkIfExists: true),
-        file(params.mammalian_mutation_db, checkIfExists: true),
-        file(params.inhibition_mutation_db, checkIfExists: true),
+        file(params.mamalian_mutation_db ?: params.mammalian_mutation_db, checkIfExists: true),
+        file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true),
         file(params.sequence_references, checkIfExists: true),
         file(params.nextclade_dataset, checkIfExists: true)
     ]))
@@ -211,7 +211,7 @@ workflow AVIAN {
     //
 
     /// Coverage threshold from the params/user
-    def seq_quality_threshold = params.seq_quality_threshold
+    def seq_quality_threshold = params.seq_quality_thershold ?: params.seq_quality_threshold
 
     
     COVERAGE (
@@ -241,7 +241,7 @@ workflow AVIAN {
     //
 
     TABLELOOKUP_MAMMALIAN  (
-        AMINOACIDTRANSLATION.out.mutation_lookup_csv, Channel.value(file(params.mammalian_mutation_db, checkIfExists: true))
+        AMINOACIDTRANSLATION.out.mutation_lookup_csv, Channel.value(file(params.mamalian_mutation_db ?: params.mammalian_mutation_db, checkIfExists: true))
     )
 
 
@@ -256,7 +256,7 @@ workflow AVIAN {
             .collect(),
         REASSORTMENT.out.genotype_report.collect(),
         TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
-        Channel.value([file(params.mammalian_mutation_db, checkIfExists: true)]),
+        Channel.value([file(params.mamalian_mutation_db ?: params.mammalian_mutation_db, checkIfExists: true)]),
         Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 

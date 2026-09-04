@@ -9,7 +9,7 @@ workflow INPUT_CHECK {
     reads = samplesheet
         .splitCsv(header: true, sep: ',', strip: true)
         .toList()
-        .flatMap { rows -> create_fastq_channels(rows, params.samples_dir) }
+        .flatMap { rows -> create_fastq_channels(rows, params.samplesDir ?: params.samples_dir) }
 
     emit:
     reads

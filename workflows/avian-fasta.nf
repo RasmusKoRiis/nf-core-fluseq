@@ -46,7 +46,7 @@ workflow AVIANFASTA {
   def na_db                 = file(params.na_database, checkIfExists: true)
   def genotype_db           = file(params.genotype_database, checkIfExists: true)
   def nextclade_dataset_dir = file(params.nextclade_dataset, checkIfExists: true)
-  def inhib_mut_db          = file(params.inhibition_mutation_db, checkIfExists: true)
+  def inhib_mut_db          = file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)
   def reassortment_db       = file(params.reassortment_database, checkIfExists: true)
 
   REFERENCE_PROVENANCE(Channel.value([
@@ -56,7 +56,7 @@ workflow AVIANFASTA {
     genotype_db,
     nextclade_dataset_dir,
     inhib_mut_db,
-    file(params.mammalian_mutation_db, checkIfExists: true),
+    file(params.mamalian_mutation_db ?: params.mammalian_mutation_db, checkIfExists: true),
     reassortment_db
   ]))
 
@@ -145,7 +145,7 @@ workflow AVIANFASTA {
   REASSORTMENT( FASTA_CONFIGURATIONFASTA.out.fasta_flumut, Channel.value(reassortment_db) )
 
   /* 10) Coverage */
-  COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_threshold )
+  COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_thershold ?: params.seq_quality_threshold )
 
   /* 11) Nextclade */
   NEXTCLADE(
@@ -193,8 +193,8 @@ workflow AVIANFASTA {
 
   def fullPath_nextclade_dataset           = file(params.nextclade_dataset, checkIfExists: true)
   def fullPath_references_2                = file(params.sequence_references, checkIfExists: true)
-  def fullPath_mammalian_mutation          = file(params.mammalian_mutation_db, checkIfExists: true)
-  def fullPath_inhibition_mutation          = file(params.inhibition_mutation_db, checkIfExists: true)
+  def fullPath_mammalian_mutation          = file(params.mamalian_mutation_db ?: params.mammalian_mutation_db, checkIfExists: true)
+  def fullPath_inhibition_mutation          = file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)
 
   AMINOACIDTRANSLATION (
       COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
@@ -242,8 +242,8 @@ workflow AVIANFASTA {
       .mix(FLUMUT_CONVERSION.out.flumut_report)
       .collect(),
     Channel.value([
-      file(params.inhibition_mutation_db, checkIfExists: true),
-      file(params.mammalian_mutation_db, checkIfExists: true)
+      file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true),
+      file(params.mamalian_mutation_db ?: params.mammalian_mutation_db, checkIfExists: true)
     ]),
     Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
   )

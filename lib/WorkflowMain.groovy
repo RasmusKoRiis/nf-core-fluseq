@@ -24,7 +24,6 @@ class WorkflowMain {
 
     private static void applyAlias(params, log, String canonical, String legacy) {
         if (params[legacy] != null && params[legacy].toString() != '') {
-            params[canonical] = params[legacy]
             log.warn "Parameter --${legacy} is deprecated; use --${canonical}. The legacy name remains supported for routine wrappers."
         }
     }
@@ -98,11 +97,26 @@ class WorkflowMain {
         }
 
         def missing = required.unique().findAll { key ->
-            params[key] == null || params[key].toString().trim() == ''
+            def value = resolvedParameter(params, key)
+            value == null || value.toString().trim() == ''
         }
         if (missing) {
             Nextflow.error("Missing required parameter(s) for --file ${params.file}: ${missing.collect { '--' + it }.join(', ')}")
         }
+    }
+
+    private static Object resolvedParameter(params, String canonical) {
+        def aliases = [
+            samples_dir: 'samplesDir',
+            seq_quality_threshold: 'seq_quality_thershold',
+            mammalian_mutation_db: 'mamalian_mutation_db',
+            inhibition_mutation_db: 'inhibtion_mutation_db'
+        ]
+        def legacy = aliases[canonical]
+        if (legacy && params[legacy] != null && params[legacy].toString().trim() != '') {
+            return params[legacy]
+        }
+        params[canonical]
     }
     //
     // Get attribute from genome config file e.g. fasta
