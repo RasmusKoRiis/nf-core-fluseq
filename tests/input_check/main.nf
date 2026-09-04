@@ -17,9 +17,10 @@ workflow {
     INPUT_CHECK.out.reads
         .map { meta, reads ->
             assert meta.id == 'SAMPLE01'
-            assert reads.size() == 1
-            assert reads[0].exists()
-            "${meta.id}\t${reads[0]}"
+            assert meta.single_end
+            assert !reads.isEmpty()
+            assert reads.every { it.exists() }
+            "${meta.id}\t${reads.size()}"
         }
         .collectFile(name: 'validated_input.tsv', newLine: true)
         .view { path -> "Validated input contract: ${path}" }

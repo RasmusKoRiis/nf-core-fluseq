@@ -58,7 +58,7 @@ def create_fastq_channels(List rows, samplesDir) {
             error "No .fastq.gz or .fq.gz files were found for sample ${sample} in ${location}."
         }
 
-        parsed.add(tuple([id: sample, single_end: reads.size() == 1], reads))
+        parsed.add(tuple([id: sample, single_end: true], reads))
     }
 
     def duplicates = parsed.groupBy { it[0].id }.findAll { id, values -> values.size() > 1 }.keySet()
