@@ -6,10 +6,13 @@ on:
   push:
     branches:
       - dev
+      - infrastructure
   pull_request:
+  workflow_dispatch:
 
 env:
   NXF_ANSI_LOG: false
+  NXF_SYNTAX_PARSER: v1
   NF_TEST_VERSION: "0.9.5"
   NF_TEST_SHA256: "b7679eb90cdc9642bfa89e9634db02ce6e699de53ad35ef0e2f4847634fc1641"
 
@@ -19,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out pipeline code
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Install Nextflow
-        uses: nf-core/setup-nextflow@b9f764e8ba5c76b712ace14ecbfcef0e40ae2dd8 # v1.5.2
+        uses: nf-core/setup-nextflow@893c28b667aedeba26e37f296d260ccc5bc4d914 # v3
         with:
           version: "24.10.2"
 

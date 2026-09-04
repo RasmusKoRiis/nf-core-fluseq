@@ -4,16 +4,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
+include { paramsSummaryMap } from 'plugin/nf-schema'
 
-def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
 def summary_params = paramsSummaryMap(workflow)
-
-// Print parameter summary log to screen
-log.info logo + paramsSummaryLog(workflow) + citation
-
-WorkflowFluseq.initialise(params, log)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,6 +60,7 @@ include { BASERATIO                   } from '../modules/local/baseratio/main'
 include { CHOPPER                     } from '../modules/local/chopper/main'
 include { REASSORTMENT                } from '../modules/local/reassortment/main'
 include { SURVEILLANCE_SUMMARY        } from '../modules/local/surveillance_summary/main'
+include { REFERENCE_PROVENANCE        } from '../modules/local/reference_provenance/main'
 
 
 
@@ -84,35 +78,25 @@ def multiqc_report = []
 
 
 
-// Function to parse the sample sheet
-def parseSampleSheet(sampleSheetPath) {
-        return Channel
-            .fromPath(sampleSheetPath)
-            .splitCsv(header: true, sep: ',', strip: true)
-            .map { row ->
-                def sampleId = row.SequenceID
-                def files = file("${params.samplesDir}/${row.Barcode}/*.fastq.gz")
-                // Creating a metadata map
-                def meta = [ id: sampleId, single_end: true ]
-                return tuple(meta, files)
-            }
-}
-
 workflow HUMAN {
 
     //
     // INPUT PARSE
     //
 
-    ch_sample_information = parseSampleSheet(params.input)
-    
     ch_versions = Channel.empty()
 
-    ch_sample_information
-        .map { meta, files ->
-            tuple(meta, files.toList())
-        }
-    .set { read_input }
+    REFERENCE_PROVENANCE(Channel.value([
+        file(params.ha_database, checkIfExists: true),
+        file(params.na_database, checkIfExists: true),
+        file(params.inhibition_mutation_db, checkIfExists: true),
+        file(params.reassortment_database, checkIfExists: true),
+        file(params.sequence_references, checkIfExists: true),
+        file(params.nextclade_dataset, checkIfExists: true)
+    ]))
+
+    INPUT_CHECK(Channel.fromPath(params.input, checkIfExists: true))
+    INPUT_CHECK.out.reads.set { read_input }
 
     //
     // MODULE: CAT_FASTQ
@@ -248,10 +232,10 @@ workflow HUMAN {
     //Calculate the coverage of the sequences and filter out low quality sequences
 
     /// Coverage threshold from the params/user
-    def seq_quality_thershold = params.seq_quality_thershold
+    def seq_quality_threshold = params.seq_quality_threshold
 
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
+         FASTA_CONFIGURATION.out.fasta, seq_quality_threshold
     )
 
     ch_versions = ch_versions.mix(COVERAGE.out.versions.first())
@@ -283,7 +267,8 @@ workflow HUMAN {
     //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
     NEXTCLADE (
-        filtered_fasta_for_nextclade
+        filtered_fasta_for_nextclade,
+        Channel.value(file(params.nextclade_dataset, checkIfExists: true))
     )
 
     ch_versions = ch_versions.mix(NEXTCLADE.out.versions.first())
@@ -295,7 +280,7 @@ workflow HUMAN {
     //def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
     MUTATIONHUMAN  (
-       NEXTCLADE.out.aminoacid_sequence, Channel.value(file(params.sequence_references))
+       NEXTCLADE.out.aminoacid_sequence, Channel.value(file(params.sequence_references, checkIfExists: true))
     )
 
     ch_versions = ch_versions.mix(MUTATIONHUMAN.out.versions.first())
@@ -305,7 +290,7 @@ workflow HUMAN {
     //Check if mutations are annotated in mammalian and inhibition databases
 
     TABLELOOKUP  (
-        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db))
+        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibition_mutation_db, checkIfExists: true))
         
     )
 
@@ -320,7 +305,7 @@ workflow HUMAN {
             .collect(),
         REASSORTMENT.out.genotype_report.collect(),
         TABLELOOKUP.out.lookup_report.collect(),
-        Channel.value([file(params.inhibtion_mutation_db)]),
+        Channel.value([file(params.inhibition_mutation_db, checkIfExists: true)]),
         Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 
@@ -393,26 +378,3 @@ workflow HUMAN {
     )
     multiqc_report = MULTIQC.out.report.toList()
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMPLETION EMAIL AND SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow.onComplete {
-    if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-    }
-    NfcoreTemplate.dump_parameters(workflow, params)
-    NfcoreTemplate.summary(workflow, params, log)
-    if (params.hook_url) {
-        NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
-    }
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

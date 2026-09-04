@@ -2,19 +2,17 @@
 process TECHNICAL {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
    
 
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     input:
     tuple val(meta), path(irma_stat)
 
 
     output:
-    tuple val(meta), path("*irmastat.csv"), emit: depth_files
-    path("*irmastat.csv"), emit: depth_files_report
+    tuple val(meta), path("${meta.id}_irmastat.csv"), emit: depth_files
+    path("${meta.id}_irmastat.csv"), emit: depth_files_report
     path "versions.yml", emit: versions
 
     when:
@@ -33,11 +31,12 @@ process TECHNICAL {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     #DEPTH CACULATION
     # Make output name
     output_name="${meta.id}_irmastat.csv"
     
-    python /project-bin/sequence_quality.py \
+    sequence_quality.py \
         $irma_stat \
         \$output_name \
         ${meta.id} 
@@ -46,7 +45,7 @@ process TECHNICAL {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        python: \$(python --version 2>&1 | awk '{print \$2}')
     END_VERSIONS
     """
 

@@ -143,8 +143,7 @@ def choose_profile(subtype: str, row: Dict[str, str]) -> Optional[Tuple[str, Dic
     }
     for profile_name, definition in PROFILE_DEFINITIONS.items():
         profile_tokens = {
-            normalize_token(token)
-            for token in tuple(definition["tokens"]) + tuple(definition["nomenclature_profiles"])
+            normalize_token(token) for token in tuple(definition["tokens"]) + tuple(definition["nomenclature_profiles"])
         }
         if any(any(token and token in haystack for token in profile_tokens) for haystack in haystacks):
             return profile_name, definition
@@ -157,9 +156,7 @@ def read_guidelines(path: str) -> List[Dict[str, str]]:
         columns = set(reader.fieldnames or [])
         missing_columns = GUIDELINE_COLUMNS.difference(columns)
         if missing_columns:
-            raise ValueError(
-                f"{path} is missing guideline column(s): {', '.join(sorted(missing_columns))}"
-            )
+            raise ValueError(f"{path} is missing guideline column(s): {', '.join(sorted(missing_columns))}")
         rows = []
         for index, raw_row in enumerate(reader):
             row = {key: str(value or "").strip() for key, value in raw_row.items()}
@@ -168,9 +165,7 @@ def read_guidelines(path: str) -> List[Dict[str, str]]:
         return rows
 
 
-def match_rank(
-    guideline: Dict[str, str], sample_subclade: str, sample_clade: str
-) -> Optional[Tuple[int, int, int]]:
+def match_rank(guideline: Dict[str, str], sample_subclade: str, sample_clade: str) -> Optional[Tuple[int, int, int]]:
     guideline_subclade = guideline.get("subclade", "")
     guideline_clade = guideline.get("clade", "")
     index = int(guideline.get("_index", 0))
@@ -278,8 +273,7 @@ def guideline_extra_mutations(
         return []
     base_label = row_label(base)
     base_keys = {
-        mutation_key(value)
-        for value in signature_mutations(base.get("signature_amino_acid_substitutions", ""))
+        mutation_key(value) for value in signature_mutations(base.get("signature_amino_acid_substitutions", ""))
     }
     path_rows = []
     for row in guidelines:
@@ -323,9 +317,7 @@ def empty_characterisation() -> Dict[str, str]:
     return {column: "NA" for column in OUTPUT_COLUMNS}
 
 
-def characterise_row(
-    row: Dict[str, str], subtype: str, guidelines_dir: str
-) -> Dict[str, str]:
+def characterise_row(row: Dict[str, str], subtype: str, guidelines_dir: str) -> Dict[str, str]:
     output = empty_characterisation()
     selected = choose_profile(subtype, row)
     if selected is None:
@@ -348,12 +340,12 @@ def characterise_row(
     output.update(
         {
             "Characterisation_Profile": profile_name,
-            "Characterisation_Subclade_Match_Fraction": row.get(
-                "Subclade_Nomenclature_Subclade_Match_Fraction", "NA"
-            ) or "NA",
+            "Characterisation_Subclade_Match_Fraction": row.get("Subclade_Nomenclature_Subclade_Match_Fraction", "NA")
+            or "NA",
             "Characterisation_Missing_Subclade_Mutations": row.get(
                 "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations", "NA"
-            ) or "NA",
+            )
+            or "NA",
             "Characterisation_Guideline_Source": os.path.basename(guideline_path),
             "Characterisation_Guideline_Extra_Mutations": "; ".join(guideline_extras) or "NA",
             "Characterisation_Sample_Extra_Mutations": "; ".join(sample_extras) or "NA",

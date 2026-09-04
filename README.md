@@ -1,159 +1,76 @@
-# nf-core/fluseq :sneezing_face: 
+# nf-core-fluseq
 
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
-[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
+A Nextflow DSL2 pipeline for analysing human and avian influenza A/B data from Nanopore FASTQ files or assembled FASTA sequences.
 
-## Introduction
+## Analysis modes
 
-This pipeline processes FASTQ files from Nanopore sequencing of Influenza A and B, generating consensus sequences and analyzing them for mutations, sequencing statistics, and drug resistance effects. The main steps include:
+| `--file` value | Input                            | Main purpose                                               |
+| -------------- | -------------------------------- | ---------------------------------------------------------- |
+| `human-fastq`  | Sample sheet and FASTQ directory | Consensus generation and human-influenza reporting         |
+| `human-fasta`  | Multi-FASTA                      | Human-influenza analysis from existing consensus sequences |
+| `avian-fastq`  | Sample sheet and FASTQ directory | Consensus generation, avian genotyping and reporting       |
+| `avian-fasta`  | Multi-FASTA                      | Avian analysis from existing consensus sequences           |
 
-- Alignment and consensus sequencing with IRMA.
-- Consensus sequence analysis with Nextclade.
-- Mutation calling for all segments.
-- Generation of a comprehensive report in CSV format.
-- Output of sequences in a multiple FASTA file.
+The pipeline requires Nextflow 24.10.2 or newer and is normally run with Docker. The FHI routine environment uses `-profile docker,server`. Nextflow 26.04 and newer must currently use `NXF_SYNTAX_PARSER=v1`; the routine wrappers set this compatibility mode automatically.
 
-The pipeline consist of four different worflows listed bellow:
+## Quick start
 
-1) Human Influenza FASTQ analysis (human)
-  Alignment of FASTQ and mutation analysis 
-2) Human Influenza FASTA analysis (human-fasta) (under development)
-   Mutation analysis 
-3) Avian Influenza FASTQ analysis (avian)
-  Alignment of FASTQ and mutation analysis 
-4) Avian Influenza FASTA analysis (avian-fasta)
-   Mutation analysis 
-
-## Compatibility
-
-- **Operating System**: Linux
-- **Dependencies**: Docker and Nextflow
-
-## Usage
-
-### Sample Sheet Preparation
-
-Prepare a sample sheet (CSV or TSV*) in the `assets` folder with the following format:
-* TSV file is not not compulsory
-
-```
-PCR-PlatePosition,SequenceID,Barcode,KonsCt
-A1*,sampleID,barcodeID,ct-value*
-```
-*not compulsory
-
-Each row lists a sample to be analyzed. Samples not listed in the sheet will be excluded from the analysis.
-
-### Directory Structure
-
-#### For FASTQ-analysis
-Ensure your directory structure is as follows:
-
-```
-./
-  |-data
-         |-barcode3
-               |-XXXX_pass_barcode03_XXXX.fastq.gz
-               |-YYYY_pass_barcode03_YYYY.fastq.gz
-  |-nf-core-fluseq
-               |-assets
-                     |-samplesheet.csv
-                     |-samplesheet.tsv
-               |-...
-```
-
-### Running the Pipeline
-
-Navigate to the `nf-core-fluseq` folder and execute the following command with default parameters:
-
-#### Human Influenza FASTQ analysis
+Inspect the complete parameter help:
 
 ```bash
-nextflow run main.nf -profile docker --runid runid_name --outdir ../outdir_name
+nextflow run RasmusKoRiis/nf-core-fluseq --helpFull
 ```
 
-#### Human Influenza FASTA drug-resistance analysis only
-
-Use the wrapper when only the drug-resistance result is needed:
+For infrastructure-branch evaluation, select the branch explicitly:
 
 ```bash
-bash bin/fasta_drug_resistance_wrapper.sh runid_name results work input.fasta
+nextflow run RasmusKoRiis/nf-core-fluseq \
+  -r infrastructure \
+  -profile docker,server \
+  -params-file run-parameters.yml
 ```
 
-The wrapper can also be downloaded as a standalone file into an empty run
-directory. It will download the pipeline repository automatically when it is
-not already running from a checkout:
+Use a tagged release instead of a moving branch for production once the infrastructure work is merged and released.
 
-```bash
-curl -fsSLO https://raw.githubusercontent.com/RasmusKoRiis/nf-core-fluseq/master/bin/fasta_drug_resistance_wrapper.sh
-bash fasta_drug_resistance_wrapper.sh runid_name results work input.fasta
+Example human FASTQ parameters:
+
+```yaml
+file: human-fastq
+input: /data/run/samplesheet.csv
+samples_dir: /data/run/fastq_pass
+outdir: /results/INF001
+runid: INF001
+ha_database: /references/human_HA.fasta
+na_database: /references/human_NA.fasta
+inhibition_mutation_db: /references/Inhibtion_Mutations_of_Intrest_2324.xlsx
+reassortment_database: /references/reassortment_database.fasta
+sequence_references: /references/sequence_references
+nextclade_dataset: /references/nextclade_datasets
 ```
 
-This keeps the persistent Nextflow cache in `work/`, the pipeline checkout in
-`nf-core-fluseq/`, and the requested outputs in `results/`, all below the
-directory from which the wrapper was started. Both the results and work
-directories may instead be absolute paths. Set `FLUSEQ_REPO_DIR` if the
-pipeline checkout location needs to be changed.
+## Routine-wrapper compatibility
 
-The wrapper runs the required FASTA parsing, HA/NA subtyping and amino-acid
-translation steps, but skips genotyping, reassortment, coverage, clade analysis,
-surveillance summaries and the full report. Results are written below the
-requested output directory. The focused report is written to
-`report/<runid>_drug_resistance_report.csv`, and the individual lookup CSVs are
-available in `tablelookup/`.
-Set `FLUSEQ_PROFILE` to use a profile other than Docker, and append `-resume` to
-reuse completed work:
+The operational wrappers in `/home/rasmuskopperud.riis/Coding/flu-wrappers` remain supported. Their historical parameter names are translated to the canonical names with a deprecation warning, and all four report processes still publish CSV files to `<outdir>/reporthuman/`.
 
-```bash
-FLUSEQ_PROFILE=apptainer bash bin/fasta_drug_resistance_wrapper.sh runid_name results work input.fasta -resume
-```
+| Historical parameter      | Canonical parameter        |
+| ------------------------- | -------------------------- |
+| `--samplesDir`            | `--samples_dir`            |
+| `--seq_quality_thershold` | `--seq_quality_threshold`  |
+| `--mamalian_mutation_db`  | `--mammalian_mutation_db`  |
+| `--inhibtion_mutation_db` | `--inhibition_mutation_db` |
 
-#### Avian Influenza FASTQ analysis
+See [usage](docs/usage.md), [reference-data requirements](docs/reference_data.md), [routine-wrapper contract](docs/routine_wrappers.md), and [outputs](docs/output.md).
 
-```bash
-nextflow run main.nf -profile docker --file avian-fastq  --genotype_database database* --runid runid_name --outdir ../outdir_name
-```
-* The database given as the genotyping database must be in the format given bellow:
- ``` 
->DatabaseNumber_|Subtype|ID|Segment|SegmentNumber|GISAIDID
-aa..
->DatabaseNumber_|Subtype|ID|Segment|SegmentNumber|GISAIDID
-a..
-```
+## Reproducibility and tests
 
-Example of header:
-```
->21_|H5N8|chicken/norway|HA|4|EPI_ESL_7473825
-```
+- Runtime containers are versioned or digest-pinned.
+- Nextclade uses the supplied local datasets rather than downloading the latest dataset during each sample task.
+- Every run publishes `pipeline_info/reference_manifest.tsv` with SHA-256 hashes of staged reference files.
+- CI parses the complete workflow and validates routine and canonical FASTQ sheets on Nextflow 24.10.2 and current stable.
+- Python unit tests and nf-test coverage for all four surveillance-summary modes are included.
 
-The database number is used in the genotyping02.py script to identify genotypes. Either the offical database has to be obtained or this script has to be adjusted to a be compatible to a in-house genotyping database.
-
-#### Avian Influenza FASTA analysis
-
-```bash
-nextflow run main.nf -profile docker --file avian-fasta  --genotype_database database --runid runid_name --outdir ../outdir_name
-```
-
-### Important Parameters
-
-- `--input` (default: `assets/samplesheet.csv`): Path to the samplesheet.
-- `--seq_quality_threshold` (default: 20): Coverage threshold for analysis of consensus sequences.
-- `--samplesDir` (default: `../data`): Directory containing the FASTQ files in the structure given above.
-
-All parameters are detailed in the `nextflow.config` file.
-
-## Pipeline Output
-
-The output includes:
-
-- Consensus sequences.
-- Mutation calls.
-- Sequencing statistics (coverage, quality parameters).
-- Drug resistance effects.
-- A report in CSV format.
-- A multiple FASTA file of sequences that passed quality filters.
-
+The full biological workflow still requires controlled influenza databases and representative run data; those are intentionally not embedded in this source repository.
 
 ## Credits
 
-fluseq was originally written by Rasmus Kopperud Riis.
+nf-core-fluseq was written by Rasmus Kopperud Riis.

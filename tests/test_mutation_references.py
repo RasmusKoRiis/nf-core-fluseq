@@ -83,9 +83,7 @@ def test_mutation_report_uses_actual_reference_header(
     assert column in report_fields
     assert report_rows[0][column] == expected
 
-    full_report_fields, full_report_rows = read_csv(
-        output_file.with_name("mutations_full_mutation_list_report.csv")
-    )
+    full_report_fields, full_report_rows = read_csv(output_file.with_name("mutations_full_mutation_list_report.csv"))
     assert column in full_report_fields
     assert full_report_rows[0][column] == expected
 
@@ -111,9 +109,7 @@ def test_empty_mutation_reports_include_reference_column(tmp_path, mutation_type
     assert column in report_fields
     assert report_rows == []
 
-    full_report_fields, full_report_rows = read_csv(
-        output_file.with_name("mutations_full_mutation_list_report.csv")
-    )
+    full_report_fields, full_report_rows = read_csv(output_file.with_name("mutations_full_mutation_list_report.csv"))
     assert column in full_report_fields
     assert full_report_rows == []
 

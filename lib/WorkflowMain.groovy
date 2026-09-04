@@ -6,6 +6,29 @@ import nextflow.Nextflow
 
 class WorkflowMain {
 
+    private static final List<String> MODES = [
+        'human-fastq',
+        'human-fasta',
+        'avian-fastq',
+        'avian-fasta'
+    ]
+
+    // Preserve the command-line contract used by the operational wrappers while
+    // exposing correctly spelled parameter names to new callers.
+    public static void applyCompatibilityAliases(params, log) {
+        applyAlias(params, log, 'samples_dir', 'samplesDir')
+        applyAlias(params, log, 'seq_quality_threshold', 'seq_quality_thershold')
+        applyAlias(params, log, 'mammalian_mutation_db', 'mamalian_mutation_db')
+        applyAlias(params, log, 'inhibition_mutation_db', 'inhibtion_mutation_db')
+    }
+
+    private static void applyAlias(params, log, String canonical, String legacy) {
+        if (params[legacy] != null && params[legacy].toString() != '') {
+            params[canonical] = params[legacy]
+            log.warn "Parameter --${legacy} is deprecated; use --${canonical}. The legacy name remains supported for routine wrappers."
+        }
+    }
+
     //
     // Citation string for pipeline
     //
@@ -44,9 +67,41 @@ class WorkflowMain {
         // Check AWS batch settings
         NfcoreTemplate.awsBatch(workflow, params)
 
-        // Check input has been provided
-        if (!params.input) {
-            Nextflow.error("Please provide an input samplesheet to the pipeline e.g. '--input samplesheet.csv'")
+        if (!MODES.contains(params.file?.toString())) {
+            Nextflow.error("Invalid --file mode '${params.file}'. Choose one of: ${MODES.join(', ')}")
+        }
+
+        def required = ['ha_database', 'na_database', 'sequence_references', 'nextclade_dataset']
+
+        if (params.file.endsWith('-fastq')) {
+            required.addAll(['input', 'samples_dir'])
+        } else {
+            required.add('fasta')
+        }
+
+        if (params.file.startsWith('avian')) {
+            required.addAll([
+                'genotype_database',
+                'reassortment_database',
+                'mammalian_mutation_db',
+                'inhibition_mutation_db'
+            ])
+        } else {
+            required.add('inhibition_mutation_db')
+            def resistanceOnly = params.file == 'human-fasta' && params.drug_resistance_only.toString().toBoolean()
+            if (!resistanceOnly) {
+                required.add('reassortment_database')
+            }
+            if (params.file == 'human-fasta' && !resistanceOnly) {
+                required.add('genotype_database')
+            }
+        }
+
+        def missing = required.unique().findAll { key ->
+            params[key] == null || params[key].toString().trim() == ''
+        }
+        if (missing) {
+            Nextflow.error("Missing required parameter(s) for --file ${params.file}: ${missing.collect { '--' + it }.join(', ')}")
         }
     }
     //

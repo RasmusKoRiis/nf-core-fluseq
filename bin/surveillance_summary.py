@@ -198,7 +198,9 @@ def parse_subtype_confidence(paths: Iterable[str]):
             subject = str(hit["subject"])
             if subject not in unique or float(hit["bitscore"]) > float(unique[subject]["bitscore"]):
                 unique[subject] = hit
-        ranked = sorted(unique.values(), key=lambda item: (float(item["bitscore"]), float(item["identity"])), reverse=True)
+        ranked = sorted(
+            unique.values(), key=lambda item: (float(item["bitscore"]), float(item["identity"])), reverse=True
+        )
         top = ranked[0]
         second = ranked[1] if len(ranked) > 1 else None
         separation = 1.0
@@ -263,7 +265,9 @@ def resistance_findings(paths: Iterable[str]):
         samples.add(sample)
         for column, value in row.items():
             lowered = column.lower()
-            if column.lower() == "sample" or not any(term in lowered for term in ("mutation", "flumut", "inhib", "resistance")):
+            if column.lower() == "sample" or not any(
+                term in lowered for term in ("mutation", "flumut", "inhib", "resistance")
+            ):
                 continue
             if value.strip().lower() in EMPTY_VALUES:
                 continue
@@ -288,7 +292,10 @@ def parse_reassortment(paths: Iterable[str]):
         if not sample:
             continue
         status = row.get("Reassortment") or row.get("reassortment") or "Unknown"
-        segment_calls = {segment: row.get(segment) or row.get("MP" if segment == "M" else segment) or "Missing" for segment in SEGMENTS}
+        segment_calls = {
+            segment: row.get(segment) or row.get("MP" if segment == "M" else segment) or "Missing"
+            for segment in SEGMENTS
+        }
         lineages = {
             re.sub(r"\([^)]*\)$", "", value)
             for value in segment_calls.values()
@@ -300,7 +307,9 @@ def parse_reassortment(paths: Iterable[str]):
 
 def write_tsv(path: Path, fieldnames: list[str], rows: Iterable[dict[str, object]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t", extrasaction="ignore", lineterminator="\n")
+        writer = csv.DictWriter(
+            handle, fieldnames=fieldnames, delimiter="\t", extrasaction="ignore", lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -358,7 +367,11 @@ def main() -> None:
                 }
             )
         mixed_flags[sample] = {
-            "status": "flagged" if mixed_evidence else ("not_detected" if any(key[0] == sample for key in sequences) else "unknown"),
+            "status": (
+                "flagged"
+                if mixed_evidence
+                else ("not_detected" if any(key[0] == sample for key in sequences) else "unknown")
+            ),
             "evidence": sorted(set(mixed_evidence)),
         }
 
@@ -381,7 +394,9 @@ def main() -> None:
 
     reassortment_rows = []
     for sample in samples:
-        result = reassortment.get(sample, {"status": "Unknown", "lineages": [], "segments": {segment: "Missing" for segment in SEGMENTS}})
+        result = reassortment.get(
+            sample, {"status": "Unknown", "lineages": [], "segments": {segment: "Missing" for segment in SEGMENTS}}
+        )
         reassortment_rows.append(
             {
                 "sample": sample,
@@ -455,7 +470,9 @@ def main() -> None:
                 "segment_qc": qc_by_sample[sample],
                 "mixed_infection": mixed_flags[sample],
                 "reassortment": reassortment.get(sample, {"status": "Unknown", "lineages": []}),
-                "resistance_finding_count": sum(row["sample"] == sample and row["status"] == "detected" for row in resistance_rows),
+                "resistance_finding_count": sum(
+                    row["sample"] == sample and row["status"] == "detected" for row in resistance_rows
+                ),
             }
         )
 
@@ -485,4 +502,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

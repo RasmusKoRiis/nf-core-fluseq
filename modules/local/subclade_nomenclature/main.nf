@@ -2,7 +2,7 @@ process SUBCLADE_NOMENCLATURE_RULES {
     tag 'github'
     label 'process_single'
 
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     output:
     path("subclade_nomenclature"), emit: rules_dir
@@ -21,9 +21,9 @@ import tarfile
 import urllib.request
 
 downloads = {
-    "H3N2_HA": "https://github.com/influenza-clade-nomenclature/seasonal_A-H3N2_HA/archive/refs/heads/main.tar.gz",
-    "H1N1pdm_HA": "https://github.com/influenza-clade-nomenclature/seasonal_A-H1N1pdm_HA/archive/refs/heads/main.tar.gz",
-    "B-Vic_HA": "https://github.com/influenza-clade-nomenclature/seasonal_B-Vic_HA/archive/refs/heads/main.tar.gz",
+    "H3N2_HA": "https://github.com/influenza-clade-nomenclature/seasonal_A-H3N2_HA/archive/740628ac709ac63cdee2a9c5450ae1172d6b5304.tar.gz",
+    "H1N1pdm_HA": "https://github.com/influenza-clade-nomenclature/seasonal_A-H1N1pdm_HA/archive/ac496f507222e5f0c527a10277fd976191cc291c.tar.gz",
+    "B-Vic_HA": "https://github.com/influenza-clade-nomenclature/seasonal_B-Vic_HA/archive/34c60b4f93067e72ad3e2b6b2f42e052cd162a8e.tar.gz",
 }
 references = {
     "H3N2_HA": "CY163680.1",
@@ -70,6 +70,9 @@ PY
 cat > versions.yml <<END_VERSIONS
 "SUBCLADE_NOMENCLATURE_RULES":
     python: $(python --version 2>&1)
+    h3n2_rules: 740628ac709ac63cdee2a9c5450ae1172d6b5304
+    h1n1pdm_rules: ac496f507222e5f0c527a10277fd976191cc291c
+    b_vic_rules: 34c60b4f93067e72ad3e2b6b2f42e052cd162a8e
 END_VERSIONS
     '''
 }
@@ -77,9 +80,8 @@ END_VERSIONS
 process SUBCLADE_NOMENCLATURE {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
 
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
     input:
     tuple val(meta), path(fasta), path(subtype), path(coverage_csv)
     path rules_dir

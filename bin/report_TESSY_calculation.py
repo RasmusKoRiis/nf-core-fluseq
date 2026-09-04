@@ -15,43 +15,48 @@ import pandas as pd
 # Column mappings
 # -----------------------------------------
 COVERAGE_COL = {
-    'HA': 'Coverage-HA',
-    'NA': 'Coverage-NA',
-    'MP': 'Coverage-M',
-    'NP': 'Coverage-NP',
-    'NS': 'Coverage-NS',
-    'PA': 'Coverage-PA',
-    'PB1': 'Coverage-PB1',
-    'PB2': 'Coverage-PB2',
+    "HA": "Coverage-HA",
+    "NA": "Coverage-NA",
+    "MP": "Coverage-M",
+    "NP": "Coverage-NP",
+    "NS": "Coverage-NS",
+    "PA": "Coverage-PA",
+    "PB1": "Coverage-PB1",
+    "PB2": "Coverage-PB2",
 }
 
 COVERAGE_ALIASES = {
-    'MP': ['Coverage-MP', 'Coverage-M'],
+    "MP": ["Coverage-MP", "Coverage-M"],
 }
 
 FRAMESHIFT_COLS = {
-    'HA': ['frameShifts HA1', 'frameShifts HA2'],
-    'NA': ['frameShifts NA'],
-    'MP': ['frameShifts M1', 'frameShifts M2', 'frameShifts MP1', 'frameShifts MP2'],
-    'NP': ['frameShifts NP'],
-    'NS': ['frameShifts NS'],
-    'PA': ['frameShifts PA'],
-    'PB1': ['frameShifts PB1'],
-    'PB2': ['frameShifts PB2'],
+    "HA": ["frameShifts HA1", "frameShifts HA2"],
+    "NA": ["frameShifts NA"],
+    "MP": ["frameShifts M1", "frameShifts M2", "frameShifts MP1", "frameShifts MP2"],
+    "NP": ["frameShifts NP"],
+    "NS": ["frameShifts NS"],
+    "PA": ["frameShifts PA"],
+    "PB1": ["frameShifts PB1"],
+    "PB2": ["frameShifts PB2"],
 }
 
 MIXED_COLS = {
-    'HA': ['Nextclade Mixed Sites HA1', 'Nextclade Mixed Sites HA2'],
-    'NA': ['Nextclade Mixed Sites NA'],
-    'MP': ['Nextclade Mixed Sites M1', 'Nextclade Mixed Sites M2', 'Nextclade Mixed Sites MP1', 'Nextclade Mixed Sites MP2'],
-    'NP': ['Nextclade Mixed Sites NP'],
-    'NS': ['Nextclade Mixed Sites NS'],
-    'PA': ['Nextclade Mixed Sites PA'],
-    'PB1': ['Nextclade Mixed Sites PB1'],
-    'PB2': ['Nextclade Mixed Sites PB2'],
+    "HA": ["Nextclade Mixed Sites HA1", "Nextclade Mixed Sites HA2"],
+    "NA": ["Nextclade Mixed Sites NA"],
+    "MP": [
+        "Nextclade Mixed Sites M1",
+        "Nextclade Mixed Sites M2",
+        "Nextclade Mixed Sites MP1",
+        "Nextclade Mixed Sites MP2",
+    ],
+    "NP": ["Nextclade Mixed Sites NP"],
+    "NS": ["Nextclade Mixed Sites NS"],
+    "PA": ["Nextclade Mixed Sites PA"],
+    "PB1": ["Nextclade Mixed Sites PB1"],
+    "PB2": ["Nextclade Mixed Sites PB2"],
 }
 
-SEGMENT_ORDER = ['HA', 'NA', 'MP', 'NP', 'NS', 'PA', 'PB1', 'PB2']
+SEGMENT_ORDER = ["HA", "NA", "MP", "NP", "NS", "PA", "PB1", "PB2"]
 
 
 # -----------------------------------------
@@ -68,10 +73,12 @@ SUBTYPE_RESULT_MAP = {
     "YAM": "B/Yamagata",
 }
 
+
 def is_missing_value(value) -> bool:
     if value is None or pd.isna(value):
         return True
     return str(value).strip().upper() in MISSING_TOKENS
+
 
 def get_coverage_value(row: pd.Series, seg: str):
     for col in COVERAGE_ALIASES.get(seg, [COVERAGE_COL[seg]]):
@@ -79,6 +86,7 @@ def get_coverage_value(row: pd.Series, seg: str):
         if not is_missing_value(value):
             return value
     return row.get(COVERAGE_COL[seg])
+
 
 def has_low_or_missing_coverage(row: pd.Series, seg: str) -> bool:
     cov_raw = get_coverage_value(row, seg)
@@ -90,6 +98,7 @@ def has_low_or_missing_coverage(row: pd.Series, seg: str) -> bool:
         return True
 
     return float(cov_val) < 80
+
 
 def qc_summary(row: pd.Series) -> str:
     """Return QC summary string for one row."""
@@ -124,6 +133,7 @@ def qc_summary(row: pd.Series) -> str:
 
     return "|".join(segments_out)
 
+
 def has_minimum_result_coverage(row: pd.Series) -> bool:
     for seg in ("HA", "NA"):
         cov_raw = get_coverage_value(row, seg)
@@ -133,6 +143,7 @@ def has_minimum_result_coverage(row: pd.Series) -> bool:
         if pd.isna(cov_val) or float(cov_val) < 30:
             return False
     return True
+
 
 def strict_sekvens_resultat(row: pd.Series) -> str:
     subtype = str(row.get("Subtype", "")).strip()
@@ -148,32 +159,28 @@ def strict_sekvens_resultat(row: pd.Series) -> str:
 def process_file(in_csv: Path, out_csv: Path) -> None:
     # Read and normalize blanks to <NA>
     df = pd.read_csv(in_csv, low_memory=False)
-    obj_cols = df.select_dtypes(include='object').columns
+    obj_cols = df.select_dtypes(include="object").columns
     if len(obj_cols):
         # strip spaces and normalize common empty-like tokens to NA
-        df[obj_cols] = df[obj_cols].apply(lambda s: s.str.replace(r'[\u00A0\u200B\uFEFF]', ' ', regex=True).str.strip())
-        df[obj_cols] = df[obj_cols].replace(
-            to_replace=r'(?i)^(?:na|nan|none|null|n/?a|-)?$',
-            value=pd.NA,
-            regex=True
-        )
-        df = df.replace(r'^\s*$', pd.NA, regex=True)
+        df[obj_cols] = df[obj_cols].apply(lambda s: s.str.replace(r"[\u00A0\u200B\uFEFF]", " ", regex=True).str.strip())
+        df[obj_cols] = df[obj_cols].replace(to_replace=r"(?i)^(?:na|nan|none|null|n/?a|-)?$", value=pd.NA, regex=True)
+        df = df.replace(r"^\s*$", pd.NA, regex=True)
 
     # Build QC summary
-    df['NGS_QC_Sum'] = df.apply(qc_summary, axis=1)
+    df["NGS_QC_Sum"] = df.apply(qc_summary, axis=1)
 
     # If no issues, make it an empty string instead of "NA"
-    df['NGS_QC_Sum'] = df['NGS_QC_Sum'].replace(r'^\s*$', '', regex=True)
+    df["NGS_QC_Sum"] = df["NGS_QC_Sum"].replace(r"^\s*$", "", regex=True)
 
     # GISAID comment: "Review" if any issues, else empty string
-    df['GISAID_Comment'] = df['NGS_QC_Sum'].apply(lambda x: 'Review' if str(x).strip() else '')
+    df["GISAID_Comment"] = df["NGS_QC_Sum"].apply(lambda x: "Review" if str(x).strip() else "")
 
     # Only call a sequence result when HA and NA coverage are both at least 30%.
-    if 'Subtype' in df.columns:
-        df['Sekvens_Resultat'] = df.apply(strict_sekvens_resultat, axis=1)
+    if "Subtype" in df.columns:
+        df["Sekvens_Resultat"] = df.apply(strict_sekvens_resultat, axis=1)
 
     # Write with NA shown explicitly
-    df.to_csv(out_csv, index=False, na_rep='NA')
+    df.to_csv(out_csv, index=False, na_rep="NA")
     print(f"Wrote processed file to {out_csv}")  # noqa: T201
 
 
@@ -181,9 +188,7 @@ def process_file(in_csv: Path, out_csv: Path) -> None:
 # CLI
 # -----------------------------------------
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Add NGS_QC_Sum and GISAID_Comment columns to influenza QC CSV files"
-    )
+    parser = argparse.ArgumentParser(description="Add NGS_QC_Sum and GISAID_Comment columns to influenza QC CSV files")
     parser.add_argument("input", type=Path, help="Input CSV file")
     parser.add_argument(
         "-o",

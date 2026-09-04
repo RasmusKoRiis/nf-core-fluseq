@@ -2,7 +2,6 @@
 process IRMA {
     tag "$meta.id"
     label 'process_medium'
-    errorStrategy 'ignore'
    
 
 
@@ -12,7 +11,6 @@ process IRMA {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
-    //container 'docker.io/cdcgov/irma:latest'
     // v1.3.4+ fixes FASTQ deduplication/inflation for tab-delimited ONT headers.
     container 'docker.io/cdcgov/irma:v1.3.5'
     // The hardened image defaults to UID 65532, which cannot write host-owned work directories.
@@ -36,6 +34,7 @@ process IRMA {
     tuple val(meta), path("$meta.id/amended_consensus/*.fa") , emit: amended_consensus
     tuple val(meta), path("$meta.id/secondary") , emit: secondary
     tuple val(meta), path("$meta.id/tables/*txt") , emit: alleles
+    path "versions.yml", emit: versions
   
   
 
@@ -44,7 +43,13 @@ process IRMA {
 
     script:
     """
+    set -euo pipefail
     IRMA FLU-minion $fastq ${meta.id}
+
+    cat > versions.yml <<-END_VERSIONS
+    "${task.process}":
+        irma: \$(IRMA --version 2>&1 | head -n 1 || true)
+    END_VERSIONS
 
     """
 }

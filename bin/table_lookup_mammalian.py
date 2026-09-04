@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import sys
 
@@ -33,7 +35,7 @@ mutations_df = pd.read_csv(mutations_file)
 # Check if the value in the mutations column is NaN
 if pd.notna(mutations_df.iloc[0, 1]):
     # Ensure that mutations are consistently stripped of spaces and converted to uppercase
-    sample_mutations = [mut.strip().upper() for mut in mutations_df.iloc[0, 1].split(';') if pd.notna(mut)]
+    sample_mutations = [mut.strip().upper() for mut in mutations_df.iloc[0, 1].split(";") if pd.notna(mut)]
 else:
     sample_mutations = []
 
@@ -50,7 +52,7 @@ sample_suffixes = set(sample_suffix_map.keys())
 df = pd.read_excel(xlsx_file)
 
 # Filter DataFrame based on segment
-filtered_df = df[(df['segment'] == segment_look)]
+filtered_df = df[(df["segment"] == segment_look)]
 
 # Initialize a dictionary to hold results
 results_dict = {}
@@ -60,14 +62,10 @@ no_matching_mutations_samples = []
 
 # Loop through each row in the filtered DataFrame
 for _, row in filtered_df.iterrows():
-    mutations = row['mutation']
+    mutations = row["mutation"]
     # Ensure that mutations are consistently formatted (uppercase and stripped)
     if pd.notna(mutations):
-        row_suffixes = set(
-            suffix
-            for mut in str(mutations).split(';')
-            if (suffix := mutation_suffix(mut))
-        )
+        row_suffixes = set(suffix for mut in str(mutations).split(";") if (suffix := mutation_suffix(mut)))
     else:
         row_suffixes = set()
 
@@ -95,14 +93,13 @@ if no_matching_mutations_samples:
     print(f"No inhibition mutations found for M2 segment in samples: {no_matching_mutations_samples}")
 
 # Prepare results for the output DataFrame
-results = [{'Sample': k, f"{segment} {mutation_type} mutations": ';'.join(v)} for k, v in results_dict.items()]
+results = [{"Sample": k, f"{segment} {mutation_type} mutations": ";".join(v)} for k, v in results_dict.items()]
 
 # Handle cases where no results are generated for the mutations
 if not results:
-    df_output = pd.DataFrame([{
-        f"{segment} {mutation_type} mutations": 'No matching mutations found',
-        'Sample': mutations_df.iloc[0, 0]
-    }])
+    df_output = pd.DataFrame(
+        [{f"{segment} {mutation_type} mutations": "No matching mutations found", "Sample": mutations_df.iloc[0, 0]}]
+    )
 else:
     df_output = pd.DataFrame(results)
 

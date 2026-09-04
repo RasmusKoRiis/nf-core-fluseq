@@ -209,10 +209,7 @@ def load_reference_metadata(path: str) -> Dict[str, Dict[str, str]]:
     required = {"accession", "origin", "subtype", "strain"}
     missing_columns = required.difference(table.columns)
     if missing_columns:
-        raise ValueError(
-            "Reference metadata is missing column(s): "
-            + ", ".join(sorted(missing_columns))
-        )
+        raise ValueError("Reference metadata is missing column(s): " + ", ".join(sorted(missing_columns)))
     if table["accession"].duplicated().any():
         duplicates = sorted(table.loc[table["accession"].duplicated(), "accession"].unique())
         raise ValueError("Duplicate reference metadata accession(s): " + ", ".join(duplicates))
@@ -230,9 +227,7 @@ def load_reference_metadata(path: str) -> Dict[str, Dict[str, str]]:
     return lookup
 
 
-def apply_reference_metadata(
-    parsed: Dict[str, str], lookup: Dict[str, Dict[str, str]]
-) -> Dict[str, str]:
+def apply_reference_metadata(parsed: Dict[str, str], lookup: Dict[str, Dict[str, str]]) -> Dict[str, str]:
     """Fill unavailable legacy-header fields from accession metadata."""
     reference = lookup.get(parsed["accession"])
     if not reference:
@@ -259,11 +254,7 @@ def build_conclusion(accepted: List[Dict[str, str]], missing: List[str], low: Li
     origins = {hit["origin"] for hit in accepted if hit["origin"] != UNKNOWN}
     subtypes = {hit["subtype"] for hit in accepted if hit["subtype"] != UNKNOWN}
     strains = {hit["strain"] for hit in accepted if hit["strain"] != UNKNOWN}
-    metadata_missing = [
-        hit["segment"]
-        for hit in accepted
-        if UNKNOWN in (hit["origin"], hit["subtype"], hit["strain"])
-    ]
+    metadata_missing = [hit["segment"] for hit in accepted if UNKNOWN in (hit["origin"], hit["subtype"], hit["strain"])]
     non_human = sorted(origin for origin in origins if origin != "HUMAN")
 
     if missing or low or metadata_missing:
@@ -392,14 +383,8 @@ def main() -> None:
             }
         )
 
-    metadata_complete = all(
-        UNKNOWN not in (hit["origin"], hit["subtype"], hit["strain"])
-        for hit in accepted
-    )
-    reference_profiles = {
-        (hit["origin"], hit["subtype"], hit["strain"])
-        for hit in accepted
-    }
+    metadata_complete = all(UNKNOWN not in (hit["origin"], hit["subtype"], hit["strain"]) for hit in accepted)
+    reference_profiles = {(hit["origin"], hit["subtype"], hit["strain"]) for hit in accepted}
     if missing or low or not metadata_complete:
         row["Reassortment"] = "Unknown"
     else:

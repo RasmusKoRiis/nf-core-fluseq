@@ -10,6 +10,7 @@ REFERENCE_COLUMNS = ["Mutation reference", "Vaccine mutation reference"]
 
 KEY_CANDIDATES = ["Sample", "Sample Name", "SampleID", "SequenceID", "sample_id", "id", "ID", "Name"]
 
+
 def infer_sample_from_filename(path: str) -> str:
     base = os.path.basename(path)
     stem = os.path.splitext(base)[0]
@@ -18,6 +19,7 @@ def infer_sample_from_filename(path: str) -> str:
             return stem.split(delim, 1)[0]
     return stem
 
+
 def normalize_df(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     # drop unnamed index columns and trim headers
@@ -25,6 +27,7 @@ def normalize_df(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = [c.strip() for c in df.columns]
     # all strings, strip whitespace
     return df.apply(lambda s: s.astype(str).str.strip())
+
 
 frames = []
 for f in csv_files:
@@ -58,6 +61,7 @@ merged = pd.concat(frames, ignore_index=True, sort=False)
 # NIPH tweak: replace "!" with "-" in Sample
 merged["Sample"] = merged["Sample"].astype(str).str.replace("!", "-", regex=False)
 
+
 # -------- de-dup: prefer real values over NA/blank --------
 def first_best(series: pd.Series):
     for x in series:
@@ -70,6 +74,7 @@ def first_best(series: pd.Series):
             return s
     return ""
 
+
 agg = {col: first_best for col in merged.columns if col != "Sample"}
 merged = merged.groupby("Sample", as_index=False).agg(agg)
 
@@ -81,17 +86,18 @@ COL_NORMALIZATION = {
 for bad, good in COL_NORMALIZATION.items():
     if bad in merged.columns and good in merged.columns:
         merged[good] = merged[good].where(
-            merged[good].astype(str).str.strip().str.upper().isin({"", "NA", "NAN", "NONE"}).eq(False),
-            merged[bad]
+            merged[good].astype(str).str.strip().str.upper().isin({"", "NA", "NAN", "NONE"}).eq(False), merged[bad]
         )
         merged = merged.drop(columns=[bad])
     elif bad in merged.columns:
         merged = merged.rename(columns={bad: good})
 
+
 # -------- ensure required cols & compute DR_* + Sekvens_Resultat --------
 def ensure_column(df: pd.DataFrame, col: str, fill="NA"):
     if col not in df.columns:
         df[col] = fill
+
 
 # Columns referenced by DR and QC logic
 required = [
@@ -105,14 +111,12 @@ required = [
 for c in required:
     ensure_column(merged, c, fill="NA")
 
+
 # Vectorized resistance classification
 def classify_res(df: pd.DataFrame, src_col: str, ok_code: str) -> pd.Series:
     s = df[src_col].fillna("NA").astype(str)
-    return np.where(
-        s.eq("NA"),
-        "NA",
-        np.where(s.str.contains("No matching mutations", na=False), ok_code, "Review")
-    )
+    return np.where(s.eq("NA"), "NA", np.where(s.str.contains("No matching mutations", na=False), ok_code, "Review"))
+
 
 # Normalize mutation columns
 for src in ["M2 inhibtion mutations", "NA inhibtion mutations", "PA inhibtion mutations"]:
@@ -121,36 +125,32 @@ for src in ["M2 inhibtion mutations", "NA inhibtion mutations", "PA inhibtion mu
 # DR_Res_* outputs
 merged["DR_Res_Adamantine"] = classify_res(merged, "M2 inhibtion mutations", "AANI")
 merged["DR_Res_Oseltamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Zanamivir"]   = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Peramivir"]   = classify_res(merged, "NA inhibtion mutations", "AANI")
+merged["DR_Res_Zanamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
+merged["DR_Res_Peramivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
 merged["DR_Res_Laninamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Baloxavir"]   = classify_res(merged, "PA inhibtion mutations", "AANS")
+merged["DR_Res_Baloxavir"] = classify_res(merged, "PA inhibtion mutations", "AANS")
 
 # DR mutation detail columns
 merged["DR_M2_Mut"] = np.where(
     merged["M2 inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(merged["DR_Res_Adamantine"].eq("Review"),
-             merged["M2 inhibtion mutations"],
-             "No Mutations")
+    np.where(merged["DR_Res_Adamantine"].eq("Review"), merged["M2 inhibtion mutations"], "No Mutations"),
 )
 any_review_na = (
-    merged["DR_Res_Oseltamivir"].eq("Review") |
-    merged["DR_Res_Zanamivir"].eq("Review")   |
-    merged["DR_Res_Peramivir"].eq("Review")   |
-    merged["DR_Res_Laninamivir"].eq("Review")
+    merged["DR_Res_Oseltamivir"].eq("Review")
+    | merged["DR_Res_Zanamivir"].eq("Review")
+    | merged["DR_Res_Peramivir"].eq("Review")
+    | merged["DR_Res_Laninamivir"].eq("Review")
 )
 merged["DR_NA_Mut"] = np.where(
     merged["NA inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(any_review_na, merged["NA inhibtion mutations"], "No Mutations")
+    np.where(any_review_na, merged["NA inhibtion mutations"], "No Mutations"),
 )
 merged["DR_PA_Mut"] = np.where(
     merged["PA inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(merged["DR_Res_Baloxavir"].eq("Review"),
-             merged["PA inhibtion mutations"],
-             "No Mutations")
+    np.where(merged["DR_Res_Baloxavir"].eq("Review"), merged["PA inhibtion mutations"], "No Mutations"),
 )
 
 # Sekvens_Resultat from Subtype

@@ -2,10 +2,9 @@
 process SEGMENTIFENTIFIER  {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
    
     conda "bioconda::blast=2.15.0"
-    container 'docker.io/ncbi/blast:latest'
+    container 'docker.io/ncbi/blast@sha256:81f118d2e4f7e11494d27fdbb99c9430423105afff50c4ae158db41d58a3fc57'
 
     input:
     tuple val(meta), path(fasta)
@@ -32,6 +31,7 @@ process SEGMENTIFENTIFIER  {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     for fasta_file in ${fasta}; do
 
     basename=\$(basename \$fasta_file .fasta)

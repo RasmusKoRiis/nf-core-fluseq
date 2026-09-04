@@ -4,16 +4,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
+include { paramsSummaryMap } from 'plugin/nf-schema'
 
-def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
 def summary_params = paramsSummaryMap(workflow)
-
-// Print parameter summary log to screen
-log.info logo + paramsSummaryLog(workflow) + citation
-
-WorkflowFluseq.initialise(params, log)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -64,6 +57,7 @@ include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion
 include { GENIN2                      } from '../modules/local/genin2/main'
 include { REASSORTMENT                } from '../modules/local/reassortment/main'
 include { SURVEILLANCE_SUMMARY        } from '../modules/local/surveillance_summary/main'
+include { REFERENCE_PROVENANCE        } from '../modules/local/reference_provenance/main'
 
 
 
@@ -81,54 +75,27 @@ include { SURVEILLANCE_SUMMARY        } from '../modules/local/surveillance_summ
 def multiqc_report = []
 
 
-// Function to parse the sample sheet
-
-
-// Function to parse the sample sheet
-def parseSampleSheet(sampleSheetPath) {
-        return Channel
-            .fromPath(sampleSheetPath)
-            .splitCsv(header: true, sep: ',', strip: true)
-            .map { row ->
-                def sampleId = row.SequenceID
-                def files = file("${params.samplesDir}/${row.Barcode}/*.fastq.gz")
-                // Creating a metadata map
-                def meta = [ id: sampleId, single_end: true ]
-                return tuple(meta, files)
-            }
-}
-
-
 workflow AVIAN {
 
     //
     // INPUT PARSE
     //
 
-    ch_sample_information = parseSampleSheet(params.input)
-    
     ch_versions = Channel.empty()
 
-    ch_sample_information
-        .map { meta, files ->
-            tuple(meta, files.toList())
-        }
-    .set { read_input }
+    REFERENCE_PROVENANCE(Channel.value([
+        file(params.ha_database, checkIfExists: true),
+        file(params.na_database, checkIfExists: true),
+        file(params.genotype_database, checkIfExists: true),
+        file(params.reassortment_database, checkIfExists: true),
+        file(params.mammalian_mutation_db, checkIfExists: true),
+        file(params.inhibition_mutation_db, checkIfExists: true),
+        file(params.sequence_references, checkIfExists: true),
+        file(params.nextclade_dataset, checkIfExists: true)
+    ]))
 
-    
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
-
-    //INPUT_CHECK (
-    //    file(params.input)
-    //)
-    //ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-
-
-    // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
-    // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
-    // ! There is currently no tooling to help you write a sample sheet schema
+    INPUT_CHECK(Channel.fromPath(params.input, checkIfExists: true))
+    INPUT_CHECK.out.reads.set { read_input }
 
     //
     // MODULE: CAT_FASTQ
@@ -177,13 +144,10 @@ workflow AVIAN {
     //
     // MODULE: SUBTYPE FINDER
     //
-    def currentDir = System.getProperty('user.dir')
-    def fullPathHA = "${currentDir}/${params.ha_database}"
-    def fullPathNA = "${currentDir}/${params.na_database}"
-
-
-        SUBTYPEFINDER (
-        IRMA_ha_na_fasta, Channel.value(file(params.ha_database)),Channel.value(file(params.na_database))
+    SUBTYPEFINDER (
+        IRMA_ha_na_fasta,
+        Channel.value(file(params.ha_database, checkIfExists: true)),
+        Channel.value(file(params.na_database, checkIfExists: true))
     )
 
 
@@ -204,10 +168,8 @@ workflow AVIAN {
     // MODULE: GENOTYPING
     //
 
-    ch_genotype_database = params.genotype_database
-
     GENOTYPING (
-        IRMA_amended_consensus_files, Channel.value(file(params.genotype_database))
+        IRMA_amended_consensus_files, Channel.value(file(params.genotype_database, checkIfExists: true))
     )
 
 
@@ -222,7 +184,7 @@ workflow AVIAN {
 
     REASSORTMENT(
         FASTA_CONFIGURATION.out.fasta_flumut,
-        Channel.value(file(params.reassortment_database))
+        Channel.value(file(params.reassortment_database, checkIfExists: true))
     )
 
 
@@ -249,11 +211,11 @@ workflow AVIAN {
     //
 
     /// Coverage threshold from the params/user
-    def seq_quality_thershold = params.seq_quality_thershold
+    def seq_quality_threshold = params.seq_quality_threshold
 
     
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
+         FASTA_CONFIGURATION.out.fasta, seq_quality_threshold
     )
 
 
@@ -261,36 +223,25 @@ workflow AVIAN {
     // MODULE: AMINO ACID TRANSLATION
     //
 
-    def fullPath_nextclade_dataset = "${currentDir}/${params.nextclade_dataset}"
-
     AMINOACIDTRANSLATION (
-        COVERAGE.out.filtered_fasta, Channel.value(file(params.nextclade_dataset))
+        COVERAGE.out.filtered_fasta, Channel.value(file(params.nextclade_dataset, checkIfExists: true))
     )
-
-    Channel.value(file(params.nextclade_dataset))
    
 
     //
     // MODULE: MUTATION
     //
 
-    def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
-    
     MUTATION  (
-        AMINOACIDTRANSLATION.out.aminoacid_sequence, Channel.value(file(params.sequence_references))
+        AMINOACIDTRANSLATION.out.aminoacid_sequence, Channel.value(file(params.sequence_references, checkIfExists: true))
     )
 
     //
     // MODULE: TABLELOOKUP
     //
 
-    def fullPath_tables = "${currentDir}/${params.mutation_tables}"
-    def fullPath_mammalian_mutation = "${currentDir}/${params.mamalian_mutation_db}"
-    def fullPath_inhibtion_mutation = "${currentDir}/${params.inhibtion_mutation_db }"
-
-
     TABLELOOKUP_MAMMALIAN  (
-        AMINOACIDTRANSLATION.out.mutation_lookup_csv, Channel.value(file(params.mamalian_mutation_db))
+        AMINOACIDTRANSLATION.out.mutation_lookup_csv, Channel.value(file(params.mammalian_mutation_db, checkIfExists: true))
     )
 
 
@@ -305,7 +256,7 @@ workflow AVIAN {
             .collect(),
         REASSORTMENT.out.genotype_report.collect(),
         TABLELOOKUP_MAMMALIAN.out.lookup_report.collect(),
-        Channel.value([file(params.mamalian_mutation_db)]),
+        Channel.value([file(params.mammalian_mutation_db, checkIfExists: true)]),
         Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 
@@ -361,26 +312,3 @@ workflow AVIAN {
     )
     multiqc_report = MULTIQC.out.report.toList()
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMPLETION EMAIL AND SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow.onComplete {
-    if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-    }
-    NfcoreTemplate.dump_parameters(workflow, params)
-    NfcoreTemplate.summary(workflow, params, log)
-    if (params.hook_url) {
-        NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
-    }
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

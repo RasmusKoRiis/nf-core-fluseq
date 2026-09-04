@@ -1,11 +1,9 @@
 process AMINOACIDTRANSLATION {
     tag "${meta.id}"
     label 'process_single'
-    errorStrategy 'ignore'
 
  
-    container 'docker.io/rasmuskriis/nextclade-python'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/nextclade-python@sha256:86ee1b9a00da7af2c113aaf937da3554cc72c1f954d79970027941eb2cf7ce52'
 
 
     input:
@@ -25,6 +23,7 @@ process AMINOACIDTRANSLATION {
 
     script:
     """
+    set -euo pipefail
     for fasta_file in ${fasta}; do
 
     filename=\$(basename "\$fasta_file")
@@ -56,7 +55,7 @@ process AMINOACIDTRANSLATION {
 
         #NEXTCLADE CONVERSION
         echo ${fasta}
-        python /project-bin/csv_conversion_nextclade.py  \
+        csv_conversion_nextclade.py \
                 ${meta.id}_\${segment_name}_nextclade.csv \
                 ${meta.id} 
    

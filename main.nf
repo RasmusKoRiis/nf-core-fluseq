@@ -3,9 +3,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     nf-core/fluseq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/fluseq
-    Website: https://nf-co.re/fluseq
-    Slack  : https://nfcore.slack.com/channels/fluseq
+    Github : https://github.com/RasmusKoRiis/nf-core-fluseq
 ----------------------------------------------------------------------------------------
 */
 
@@ -21,16 +19,9 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { validateParameters; paramsHelp } from 'plugin/nf-validation'
+include { validateParameters; paramsSummaryMap } from 'plugin/nf-schema'
 
-// Print help message if needed
-if (params.help) {
-    def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-    def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
-    def String command = "nextflow run ${workflow.manifest.name} --input samplesheet.csv --genome GRCh37 -profile docker"
-    log.info logo + paramsHelp(command) + citation + NfcoreTemplate.dashedLine(params.monochrome_logs)
-    System.exit(0)
-}
+WorkflowMain.applyCompatibilityAliases(params, log)
 
 // Validate input parameters
 if (params.validate_params) {
@@ -38,6 +29,9 @@ if (params.validate_params) {
 }
 
 WorkflowMain.initialise(workflow, params, log)
+
+def summary_params = paramsSummaryMap(workflow)
+def multiqc_report = []
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,12 +60,7 @@ workflow FLUSEQ {
     //
     } else if (params.file == 'avian-fasta') {
         AVIANFASTA ()
-    }
-
-    //
-    // WORKFLOW: HUMAN FASTQ
-    //
-    if (params.file == 'human-fastq') {
+    } else if (params.file == 'human-fastq') {
         HUMAN ()
 
     //
@@ -95,6 +84,17 @@ workflow FLUSEQ {
 //
 workflow {
     FLUSEQ ()
+}
+
+workflow.onComplete {
+    if (params.email || params.email_on_fail) {
+        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
+    }
+    NfcoreTemplate.dump_parameters(workflow, params)
+    NfcoreTemplate.summary(workflow, params, log)
+    if (params.hook_url) {
+        NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
+    }
 }
 
 /*

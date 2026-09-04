@@ -8,16 +8,6 @@ import groovy.text.SimpleTemplateEngine
 class WorkflowFluseq {
 
     //
-    // Check and validate parameters
-    //
-    public static void initialise(params, log) {
-
-        if (!params.reference) {
-            Nextflow.error "Reference fasta file not specified with e.g. '--reference reference.fa' or via a detectable config file."
-        }
-    }
-
-    //
     // Get workflow summary for MultiQC
     //
     public static String paramsSummaryMultiqc(workflow, summary) {

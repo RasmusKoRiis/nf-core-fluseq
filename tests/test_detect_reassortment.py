@@ -53,10 +53,7 @@ def run_screen(tmp_path, hits, use_metadata=True):
 
 
 def enriched_hits(origin="HUMAN", subtype="H1N1", strain="A/Test/1/2026"):
-    return {
-        segment: (f"{origin}|{subtype}|{strain}|EPI_TEST", 99.0)
-        for segment in SEGMENTS
-    }
+    return {segment: (f"{origin}|{subtype}|{strain}|EPI_TEST", 99.0) for segment in SEGMENTS}
 
 
 @pytest.mark.parametrize(
@@ -73,10 +70,7 @@ def enriched_hits(origin="HUMAN", subtype="H1N1", strain="A/Test/1/2026"):
     ],
 )
 def test_legacy_headers_are_enriched_from_accession_metadata(tmp_path, subject, expected):
-    hits = {
-        segment: (subject.format(segment=segment), 99.0)
-        for segment in SEGMENTS
-    }
+    hits = {segment: (subject.format(segment=segment), 99.0) for segment in SEGMENTS}
     row = run_screen(tmp_path, hits)
 
     assert row["PB2"] == expected

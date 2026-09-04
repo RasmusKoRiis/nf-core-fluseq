@@ -2,7 +2,10 @@ email_template.html
 adaptivecard.json
 slackreport.json
 .nextflow*
+.nf-test/
+.pytest_cache/
 work/
+tests/input_check/work/
 data/
 results/
 .DS_Store

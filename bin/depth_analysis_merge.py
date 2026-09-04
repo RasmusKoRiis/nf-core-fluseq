@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import glob
 import sys
 
 # MERGE ALL DATA
 # Get a list of all CSV files in the current directory
-csv_files = glob.glob('*.csv')
+csv_files = glob.glob("*.csv")
 
 # Initialize an empty DataFrame to store the merged data
 merged_data = pd.DataFrame()
@@ -28,7 +30,7 @@ for file in csv_files:
 
 # Write the merged data to a new CSV file if there is any data
 if not merged_data.empty:
-    merged_data.to_csv('depth_report.csv', index=False)
+    merged_data.to_csv("depth_report.csv", index=False)
     print("Merged CSV file created: depth_report.csv")
 else:
     print("No data found to merge.")

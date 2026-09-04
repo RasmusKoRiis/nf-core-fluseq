@@ -21,6 +21,7 @@ process FASTA_CONFIGURATIONFASTA {
     tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
     tuple val(meta), path("${meta.id}_genin.fasta"), emit: fasta_genin
     tuple val(meta), path("${meta.id}_genotyping.fasta"), emit: fasta_genotyping
+    path "versions.yml", emit: versions
 
   /*
     Strategy:
@@ -195,5 +196,10 @@ process FASTA_CONFIGURATIONFASTA {
     echo "No valid segments found for ${META_ID} among staged files." >&2
     exit 1
   fi
+
+  cat > versions.yml <<-END_VERSIONS
+  "${task.process}":
+      alpine: 3.20.3
+  END_VERSIONS
   '''
 }

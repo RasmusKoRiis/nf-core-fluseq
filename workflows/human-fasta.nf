@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 /*
 ===============================================================================
 UID-FIRST FASTA STRATEGY (FULL PIPELINE → REPORTHUMANFASTA)
@@ -10,33 +8,9 @@ UID-FIRST FASTA STRATEGY (FULL PIPELINE → REPORTHUMANFASTA)
 ===============================================================================
 */
 
-params.fasta                      = params.fasta ?: ''
-params.sequence_references        = params.sequence_references ?: './refs'
-params.ha_database                = params.ha_database ?: ''
-params.na_database                = params.na_database ?: ''
-params.genotype_database          = params.genotype_database ?: ''
-params.nextclade_dataset          = params.nextclade_dataset ?: ''
-params.inhibtion_mutation_db      = params.inhibtion_mutation_db ?: ''
-params.reassortment_database      = params.reassortment_database ?: ''
-params.seq_quality_thershold      = params.seq_quality_thershold ?: 0.0
-params.runid                      = params.runid ?: 'unknown'
-params.seq_instrument             = 'unknown'
-params.release_version            = params.release_version ?: 'unknown'
-params.input                      = params.input ?: ''
-params.drug_resistance_only       = params.drug_resistance_only == null ? false : params.drug_resistance_only
-
 /* ──────────────────────────────────────────────────────────────────────────
    MODULES (paths follow your original layout)
    ────────────────────────────────────────────────────────────────────────── */
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
-
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
-include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
-
-include { IRMA                 } from '../modules/local/irma/main'
-include { AMINOACIDTRANSLATION } from '../modules/local/aminoacidtranslation/main'
 include { SUBTYPEFINDER        } from '../modules/local/blastn/main'
 include { SEGMENTIFENTIFIER    } from '../modules/local/blastnfasta/main'
 include { GENOTYPING           } from '../modules/local/genotyping/main'
@@ -50,124 +24,8 @@ include { NEXTCLADE            } from '../modules/local/nextclade/main'
 include { SUBCLADE_NOMENCLATURE; SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature/main'
 include { REASSORTMENT         } from '../modules/local/reassortment/main'
 include { SURVEILLANCE_SUMMARY } from '../modules/local/surveillance_summary/main'
-
-/* ──────────────────────────────────────────────────────────────────────────
-   PROCESSES
-   ────────────────────────────────────────────────────────────────────────── */
-
-/* Single-record FASTA writer */
-process EMIT_FASTA_RECORD {
-  tag     { sample_id }
-  cpus    1
-  memory  '512 MB'
-  scratch true
-
-  input:
-  tuple val(sample_id), val(header_id), val(file_stem), val(seq), val(orig_name)
-
-  output:
-  tuple val(sample_id), val(orig_name), path("${file_stem}.fasta")
-
-  script:
-  """
-  cat > ${file_stem}.fasta <<'EOF'
-  >${header_id}
-  ${seq}
-  EOF
-  """
-}
-
-/* UID ↔ OriginalName mapping TSV */
-process WRITE_ID_MAP {
-  tag 'id_map'
-  cpus 1
-  memory '256 MB'
-
-  input:
-  val pairs  // List<[uid, orig]>
-
-  output:
-  path('id_map.tsv'), emit: id_map
-
-  script:
-  def lines = pairs.collect { row ->
-    def uid  = (row[0] ?: '').toString().trim()
-    def orig = (row[1] ?: '').toString().trim()
-    "${uid}\t${orig}"
-  }.join('\n')
-  """
-  printf 'SampleID\\tOriginalName\\n' > id_map.tsv
-  cat >> id_map.tsv <<'EOF'
-  ${lines}
-  EOF
-  """
-}
-
-/* Reheader HA/NA to UID */
-process REHEADER_TO_UID {
-  tag { meta.id }
-  cpus 1
-  memory '256 MB'
-
-  input:
-  tuple val(meta), path(ha), path(na)
-
-  output:
-  tuple val(meta), path("HA_${meta.id}.fa"), path("NA_${meta.id}.fa")
-
-  script:
-  """
-  awk 'BEGIN{h=">${meta.id}"} /^>/{print h; next} {print}' ${ha} > HA_${meta.id}.fa
-  awk 'BEGIN{h=">${meta.id}"} /^>/{print h; next} {print}' ${na} > NA_${meta.id}.fa
-  """
-}
-
-/* ──────────────────────────────────────────────────────────────────────────
-   GROOVY HELPERS
-   ────────────────────────────────────────────────────────────────────────── */
-def coreFromHeader = { String hdr ->
-  // tolerate "01-HA|A/Poland/28/2024" or "A/Poland/28/2024|meta"
-  def parts = hdr.split(/\|/, 2)
-  def L = parts[0]; def R = parts.size() > 1 ? parts[1] : ''
-  def cnt = { String x -> (x.findAll('/')?.size() ?: 0) }
-  def best = (cnt(L) >= cnt(R) ? L : R).trim()
-  if (best ==~ /^\d{2}-[A-Za-z0-9]+$/ && parts.size() > 1) return R.trim()
-  best
-}
-
-def normCore  = { String s -> s?.toUpperCase()?.replaceAll(/[^A-Z0-9]/, '') ?: '' }
-
-def shortHash = { String s ->
-  java.security.MessageDigest.getInstance('SHA-1')
-    .digest((s ?: '').bytes).encodeHex().toString().substring(0,8).toUpperCase()
-}
-
-def uidFromCore = { String core ->
-  def base = normCore(core)
-  ((base ?: 'S') + shortHash(base))
-}
-
-def flattenAny = { xs ->
-  def out = []
-  xs.each { x -> out.addAll( x instanceof List || x instanceof Object[] ? x : [x] ) }
-  out
-}
-
-/* Path-safe filename */
-def fnameOf = { obj ->
-  if (obj instanceof java.nio.file.Path) return obj.getFileName().toString()
-  if (obj instanceof File)               return obj.getName()
-  return obj?.toString()
-}
-
-/* Extract a core-like key from filename tokens, e.g. "02-NA_A_City_123_2024.fa" -> "A/City/123/2024" */
-def coreKeyFromFilename = { String name ->
-  def base = name.replaceFirst(/\.[^.]+$/, '')
-  def toks = base.split(/[^A-Za-z0-9]+/)
-  int i    = toks.findIndexOf { it.equalsIgnoreCase('A') || it.equalsIgnoreCase('B') }
-  def tail = (i >= 0 ? toks[i..-1] : toks)
-  tail.join('/')
-}
+include { REFERENCE_PROVENANCE } from '../modules/local/reference_provenance/main'
+include { EMIT_FASTA_RECORD; WRITE_ID_MAP; REHEADER_TO_UID } from '../modules/local/fasta_records/main'
 
 /* ──────────────────────────────────────────────────────────────────────────
    MAIN WORKFLOW
@@ -179,13 +37,19 @@ workflow HUMANFASTA {
   def drugResistanceOnly = params.drug_resistance_only.toString().toBoolean()
 
   // Refs/DBs
-  def ref_dir_all           = file(params.sequence_references)
-  def ha_db                 = file(params.ha_database)
-  def na_db                 = file(params.na_database)
-  def inhib_mut_db          = file(params.inhibtion_mutation_db)
-  def ref_fasta             = drugResistanceOnly ? null : file("${params.sequence_references}/references_2324.fasta")
-  def genotype_db           = drugResistanceOnly ? null : file(params.genotype_database)
-  def reassortment_db       = drugResistanceOnly ? null : file(params.reassortment_database)
+  def ref_dir_all           = file(params.sequence_references, checkIfExists: true)
+  def ha_db                 = file(params.ha_database, checkIfExists: true)
+  def na_db                 = file(params.na_database, checkIfExists: true)
+  def inhib_mut_db          = file(params.inhibition_mutation_db, checkIfExists: true)
+  def ref_fasta             = drugResistanceOnly ? null : file("${params.sequence_references}/references_2324.fasta", checkIfExists: true)
+  def genotype_db           = drugResistanceOnly ? null : file(params.genotype_database, checkIfExists: true)
+  def reassortment_db       = drugResistanceOnly ? null : file(params.reassortment_database, checkIfExists: true)
+
+  def provenance_refs = [ref_dir_all, ha_db, na_db, inhib_mut_db, file(params.nextclade_dataset, checkIfExists: true)]
+  if (!drugResistanceOnly) {
+    provenance_refs.addAll([genotype_db, reassortment_db])
+  }
+  REFERENCE_PROVENANCE(Channel.value(provenance_refs))
 
   /* 1) Split multi-FASTA → per-record UID FASTAs */
   Channel
@@ -193,8 +57,8 @@ workflow HUMANFASTA {
     .splitFasta(record: [ id: true, seqString: true ])
     .map { rec ->
       def hdrFull  = rec.id as String
-      def core     = coreFromHeader(hdrFull)
-      def uid      = uidFromCore(core)
+      def core     = FastaUtils.coreFromHeader(hdrFull)
+      def uid      = FastaUtils.uidFromCore(core)
       def fileStem = hdrFull.replaceAll(/[^A-Za-z0-9._-]+/, '_')
       tuple(uid, uid, fileStem, rec.seqString, core)
     }
@@ -224,7 +88,7 @@ workflow HUMANFASTA {
 
   /* 5) Build segment groups from our own files (avoid GroupTupleOp traps) */
   ch_sample_info
-    .map { meta, files -> tuple(meta, files.findAll { f -> fnameOf(f) ==~ /(?i).*\.fa(sta)?$/ }) }
+    .map { meta, files -> tuple(meta, files.findAll { f -> FastaUtils.filename(f) ==~ /(?i).*\.fa(sta)?$/ }) }
     .filter { meta, files -> files && files.size() > 0 }
     .set { ch_segments_grouped }
 
@@ -233,7 +97,7 @@ workflow HUMANFASTA {
     .map { meta, files ->
       def pick = { String seg ->
         files.find { f ->
-          def fname = fnameOf(f)
+          def fname = FastaUtils.filename(f)
           def toks  = fname.replaceFirst(/\.[^.]+$/, '').split(/[^A-Za-z0-9]+/)*.toUpperCase()
           toks.contains(seg.toUpperCase())
         }
@@ -252,7 +116,7 @@ workflow HUMANFASTA {
   if ( !drugResistanceOnly ) {
     ch_genotyping = ch_segments_grouped
       .map { meta, files ->
-        def fas = files.findAll { f -> fnameOf(f) ==~ /(?i).*\.fa(sta)?$/ }
+        def fas = files.findAll { f -> FastaUtils.filename(f) ==~ /(?i).*\.fa(sta)?$/ }
         fas ? tuple(meta, fas) : null
       }
       .filter { it != null }
@@ -275,8 +139,8 @@ workflow HUMANFASTA {
     // produce the M2 translation, while HA/NA were already used for subtyping.
     ch_nextclade_input = FASTA_CONFIGURATIONFASTA.out.fasta
       .map { meta, fasta, subtype ->
-        def resistanceFasta = flattenAny([fasta]).findAll { f ->
-          def name = fnameOf(f)?.toUpperCase() ?: ''
+        def resistanceFasta = FastaUtils.flatten([fasta]).findAll { f ->
+          def name = FastaUtils.filename(f)?.toUpperCase() ?: ''
           name.contains('-NA-') || name.contains('-PA-') || name.contains('-MP-')
         }
         resistanceFasta ? tuple(meta, resistanceFasta, subtype) : null
@@ -285,7 +149,7 @@ workflow HUMANFASTA {
   } else {
     REASSORTMENT( FASTA_CONFIGURATIONFASTA.out.fasta_flumut, Channel.value(reassortment_db) )
 
-    COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_thershold )
+    COVERAGE( FASTA_CONFIGURATIONFASTA.out.fasta, params.seq_quality_threshold )
 
     ch_nextclade_input = COVERAGE.out.filtered_fasta
       .map { meta, fasta, subtype, coverage_csv -> tuple(meta, fasta, subtype) }
@@ -305,7 +169,10 @@ workflow HUMANFASTA {
     )
   }
 
-  NEXTCLADE( ch_nextclade_input )
+  NEXTCLADE(
+    ch_nextclade_input,
+    Channel.value(file(params.nextclade_dataset, checkIfExists: true))
+  )
 
   /* 12) Mutation vs references */
   MUTATIONHUMAN( NEXTCLADE.out.aminoacid_sequence, Channel.value(ref_dir_all) )
@@ -332,7 +199,7 @@ workflow HUMANFASTA {
         .collect(),
       REASSORTMENT.out.genotype_report.collect(),
       TABLELOOKUP.out.lookup_report.collect(),
-      Channel.value([file(params.inhibtion_mutation_db)]),
+      Channel.value([file(params.inhibition_mutation_db, checkIfExists: true)]),
       Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 
@@ -357,17 +224,7 @@ workflow HUMANFASTA {
     )
   }
 
-  /* Bring-up logs */
-  ch_subtype_pairs.count().subscribe   { n -> log.info "🔎 HA/NA subtype inputs: ${n}" }
   if ( drugResistanceOnly ) {
-    log.info "💊 Running human FASTA drug-resistance analysis only"
-  } else {
-    ch_genotyping.count().subscribe    { n -> log.info "🧬 Genotyping inputs: ${n}" }
+    log.info 'Running the human FASTA drug-resistance path.'
   }
-  ch_id_map_file.view                  { f -> "📄 Wrote ID map: ${f}" }
-}
-
-/* Entrypoint */
-workflow {
-  HUMANFASTA()
 }

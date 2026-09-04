@@ -2,13 +2,11 @@
 process TABLELOOKUP {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
     
     
 
     //conda "bioconda::blast=2.15.0"
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     input:
     tuple val(meta), path(inhibition_mutation), path(subtype)
@@ -25,8 +23,6 @@ process TABLELOOKUP {
     when:
     task.ext.when == null || task.ext.when
 
-    //errorStrategy 'ignore'
-
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
@@ -40,6 +36,7 @@ process TABLELOOKUP {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     subtype_name=\$(cat ${subtype} )
   
     for mutation_file in ${inhibition_mutation}; do
@@ -52,7 +49,7 @@ process TABLELOOKUP {
         # Make output name
         output_name=${meta.id}_\${segment}"_inhibtion.csv"
 
-        python /project-bin/table_lookup.py \
+        table_lookup.py \
         \$mutation_file\
         \$output_name\
         ${inhibtion_mutation_table} \
@@ -65,7 +62,7 @@ process TABLELOOKUP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        python: \$(python --version 2>&1 | awk '{print \$2}')
     END_VERSIONS
     """
 }

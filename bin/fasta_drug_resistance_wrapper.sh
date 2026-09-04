@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+export NXF_SYNTAX_PARSER="${NXF_SYNTAX_PARSER:-v1}"
+
 if [[ "$#" -lt 4 ]]; then
     echo "Usage: $0 <runid_name> <results_dir> <work_dir> <fasta_file> [additional Nextflow arguments]" >&2
     echo "Example: $0 run42 results work samples.fasta -resume" >&2
@@ -69,6 +71,17 @@ else
 fi
 
 profile=${FLUSEQ_PROFILE:-docker}
+sequence_references=${FLUSEQ_SEQUENCE_REFERENCES:-}
+nextclade_dataset=${FLUSEQ_NEXTCLADE_DATASET:-}
+
+if [[ ! -d "$sequence_references" ]]; then
+    echo "Set FLUSEQ_SEQUENCE_REFERENCES to the controlled sequence-reference directory." >&2
+    exit 1
+fi
+if [[ ! -d "$nextclade_dataset" ]]; then
+    echo "Set FLUSEQ_NEXTCLADE_DATASET to the controlled local Nextclade dataset directory." >&2
+    exit 1
+fi
 
 echo "Persistent work directory: $work_dir"
 echo "Results directory: $results_dir"
@@ -79,6 +92,8 @@ exec nextflow run "$project_dir/main.nf" \
     --file human-fasta \
     --drug_resistance_only \
     --fasta "$fasta_file" \
+    --sequence_references "$sequence_references" \
+    --nextclade_dataset "$nextclade_dataset" \
     --runid "$runid" \
     --outdir "$results_dir" \
     "$@"

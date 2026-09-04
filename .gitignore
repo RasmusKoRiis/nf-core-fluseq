@@ -10,6 +10,8 @@ null/
 
 # Local data and test runs
 data/
+!tests/data/
+!tests/data/**
 testing/
 testing*
 

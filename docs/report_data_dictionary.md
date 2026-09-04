@@ -11,11 +11,11 @@ The dictionary uses two reusable tokens. They are deliberately defined once so
 new segment columns can be added by extending a domain list rather than copying
 a row:
 
-| Token | Allowed values | Examples |
-|---|---|---|
-| `<SEGMENT>` | `HA`, `NA`, `M`/`MP`, `NP`, `NS`, `PA`, `PB1`, `PB2` | `Coverage-<SEGMENT>`, `DEPTH_<SEGMENT>`, reassortment `<SEGMENT>` |
-| `<PROTEIN>` | `HA1`, `HA2`, `M1`, `M2`, `NA`, `NP`, `NS`, `PA`, `PB1`, `PB2` | `aaDeletions <PROTEIN>`, `Nextclade QC <PROTEIN>` |
-| `<REFERENCE>` | `human`, `human_vaccine`, `inhibition_human` | `<PROTEIN> Differences <REFERENCE>` |
+| Token         | Allowed values                                                 | Examples                                                          |
+| ------------- | -------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `<SEGMENT>`   | `HA`, `NA`, `M`/`MP`, `NP`, `NS`, `PA`, `PB1`, `PB2`           | `Coverage-<SEGMENT>`, `DEPTH_<SEGMENT>`, reassortment `<SEGMENT>` |
+| `<PROTEIN>`   | `HA1`, `HA2`, `M1`, `M2`, `NA`, `NP`, `NS`, `PA`, `PB1`, `PB2` | `aaDeletions <PROTEIN>`, `Nextclade QC <PROTEIN>`                 |
+| `<REFERENCE>` | `human`, `human_vaccine`, `inhibition_human`                   | `<PROTEIN> Differences <REFERENCE>`                               |
 
 `M` and `MP` are aliases for the matrix (MP) genome segment; the spelling in a
 specific output is retained for compatibility. `NS1` and `SigPep` are special
@@ -26,21 +26,21 @@ must not be interpreted as a new algorithm without a corresponding source row.
 
 ## Compact column inventory
 
-| Pattern or field | Meaning | Produced from | Main limitation |
-|---|---|---|---|
-| `Sample`; `RunID`; `Instrument ID`; `Date`; `Release Version` | Sample and run provenance | Samplesheet, workflow parameters, and report execution date | Run metadata does not fully identify reference/database revisions |
-| `Subtype`; `Sekvens_Resultat` | Raw subtype call and display-ready result | BLASTN classification of HA and NA; final coverage gate | A best database hit is not a phylogenetic or phenotypic classification |
-| `Coverage-<SEGMENT>` | Percent of selected denominator containing a non-`N` consensus character | IRMA amended consensus and `coverage_finder.py` | Segment detection is applied to sequence text rather than its header; denominator normally falls back to observed sequence length |
-| `IRMA_<STAT>`; `DEPTH_<SEGMENT>` | IRMA read-flow counts, alternate-match noise ratio, and stage-4 segment read counts | IRMA `READ_COUNTS.txt` and `sequence_quality.py` | `DEPTH_<SEGMENT>` is not mean per-base depth; absent IRMA records become zero |
-| `clade`; `clade NA`; `legacy-clade`; `subclade`; `glycosylation`; `HA_glycosylation_{1,2,3}` | Nextclade clade and motif annotations | Nextclade dataset-specific analysis | Meaning changes with dataset and revision |
-| `Nextclade QC <PROTEIN>`; `Nextclade Mixed Sites <PROTEIN>` | Segment/protein QC status and mixed-site count | Nextclade `qc.overallStatus` and `qc.mixedSites.totalMixedSites` | HA and M values are copied into both protein columns, so downstream mixed-site sums double them |
-| `aaDeletions <PROTEIN>`; `aaInsertions <PROTEIN>`; `frameShifts <PROTEIN>` | Reference-relative amino-acid indels and coding-frame disruptions | Nextclade alignment, translation, and mutation calling | Calls depend on consensus quality, reference coordinates, and alignment |
-| `<PROTEIN> Differences <REFERENCE>`; `NS1 Differences human`; `SigPep Differences human` | Amino-acid substitutions relative to a named reference family | Nextclade translations followed by `mutation_finder.py` | These are reference differences, not necessarily important or causal mutations |
-| `M2 inhibtion mutations`; `NA inhibtion mutations`; `PA inhibtion mutations`; `DR_Res_*`; `DR_*_Mut` | Lookup matches, drug review codes, and mutation detail | Local Excel lookup table, `table_lookup.py`, and `report.py` | Genotypic lookup is not a phenotypic susceptibility test; historical `inhibtion` spelling is retained |
-| `<SEGMENT>` reassortment fields; `Reassortment`; `Conclusion`; `Origins`; `Subtypes`; `ReferenceStrains` | Best annotated reference/identity per segment and an overall screening interpretation | BLASTN, accession metadata, and `detect_reassortment.py` | Similarity-based screen, not a phylogenetic reassortment analysis |
-| `Subclade_Nomenclature_<ATTRIBUTE>` | Seasonal HA clade/subclade rule match, evidence, closest match, and source | Local rule caller and influenza-clade-nomenclature YAML definitions | Rules are downloaded from unpinned `main` branches |
-| `Characterisation_<ATTRIBUTE>` | Guideline-based reference-virus category, closest guideline reference, and additional amino-acid mutations | Seasonal subclade call and local NH 2025/2026 characterisation tables | Genetic classification only; incomplete subclade calls are provisional |
-| `NGS_QC_Sum`; `GISAID_Comment` | Compact review flags and submission suggestion | `report_QC_calculation.py` | Hard-coded review thresholds do not replace manual QC or submission validation |
+| Pattern or field                                                                                         | Meaning                                                                                                    | Produced from                                                         | Main limitation                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `Sample`; `RunID`; `Instrument ID`; `Date`; `Release Version`                                            | Sample and run provenance                                                                                  | Samplesheet, workflow parameters, and report execution date           | Run metadata does not fully identify reference/database revisions                                                                 |
+| `Subtype`; `Sekvens_Resultat`                                                                            | Raw subtype call and display-ready result                                                                  | BLASTN classification of HA and NA; final coverage gate               | A best database hit is not a phylogenetic or phenotypic classification                                                            |
+| `Coverage-<SEGMENT>`                                                                                     | Percent of selected denominator containing a non-`N` consensus character                                   | IRMA amended consensus and `coverage_finder.py`                       | Segment detection is applied to sequence text rather than its header; denominator normally falls back to observed sequence length |
+| `IRMA_<STAT>`; `DEPTH_<SEGMENT>`                                                                         | IRMA read-flow counts, alternate-match noise ratio, and stage-4 segment read counts                        | IRMA `READ_COUNTS.txt` and `sequence_quality.py`                      | `DEPTH_<SEGMENT>` is not mean per-base depth; absent IRMA records become zero                                                     |
+| `clade`; `clade NA`; `legacy-clade`; `subclade`; `glycosylation`; `HA_glycosylation_{1,2,3}`             | Nextclade clade and motif annotations                                                                      | Nextclade dataset-specific analysis                                   | Meaning changes with dataset and revision                                                                                         |
+| `Nextclade QC <PROTEIN>`; `Nextclade Mixed Sites <PROTEIN>`                                              | Segment/protein QC status and mixed-site count                                                             | Nextclade `qc.overallStatus` and `qc.mixedSites.totalMixedSites`      | HA and M values are copied into both protein columns, so downstream mixed-site sums double them                                   |
+| `aaDeletions <PROTEIN>`; `aaInsertions <PROTEIN>`; `frameShifts <PROTEIN>`                               | Reference-relative amino-acid indels and coding-frame disruptions                                          | Nextclade alignment, translation, and mutation calling                | Calls depend on consensus quality, reference coordinates, and alignment                                                           |
+| `<PROTEIN> Differences <REFERENCE>`; `NS1 Differences human`; `SigPep Differences human`                 | Amino-acid substitutions relative to a named reference family                                              | Nextclade translations followed by `mutation_finder.py`               | These are reference differences, not necessarily important or causal mutations                                                    |
+| `M2 inhibtion mutations`; `NA inhibtion mutations`; `PA inhibtion mutations`; `DR_Res_*`; `DR_*_Mut`     | Lookup matches, drug review codes, and mutation detail                                                     | Local Excel lookup table, `table_lookup.py`, and `report.py`          | Genotypic lookup is not a phenotypic susceptibility test; historical `inhibtion` spelling is retained                             |
+| `<SEGMENT>` reassortment fields; `Reassortment`; `Conclusion`; `Origins`; `Subtypes`; `ReferenceStrains` | Best annotated reference/identity per segment and an overall screening interpretation                      | BLASTN, accession metadata, and `detect_reassortment.py`              | Similarity-based screen, not a phylogenetic reassortment analysis                                                                 |
+| `Subclade_Nomenclature_<ATTRIBUTE>`                                                                      | Seasonal HA clade/subclade rule match, evidence, closest match, and source                                 | Local rule caller and influenza-clade-nomenclature YAML definitions   | Rules are downloaded from unpinned `main` branches                                                                                |
+| `Characterisation_<ATTRIBUTE>`                                                                           | Guideline-based reference-virus category, closest guideline reference, and additional amino-acid mutations | Seasonal subclade call and local NH 2025/2026 characterisation tables | Genetic classification only; incomplete subclade calls are provisional                                                            |
+| `NGS_QC_Sum`; `GISAID_Comment`                                                                           | Compact review flags and submission suggestion                                                             | `report_QC_calculation.py`                                            | Hard-coded review thresholds do not replace manual QC or submission validation                                                    |
 
 `<STAT>` expands to `initial`, `failQC`, `passQC`, `chimeric`, `nomatch`,
 `match`, `altmatch`, or `noise`. `<ATTRIBUTE>` expands to the suffixes listed
@@ -118,13 +118,13 @@ IRMA v1.3.5 (`IRMA FLU-minion`) assembles the filtered FASTQ reads into amended
 consensus sequences. `sequence_quality.py` extracts the `Reads` value from
 specific records in IRMA `READ_COUNTS.txt`:
 
-| Pattern | Exact meaning in this report |
-|---|---|
-| `IRMA_initial` | Reads at record `1-initial` |
-| `IRMA_failQC`; `IRMA_passQC` | Reads at `2-failQC` and `2-passQC` |
+| Pattern                                                        | Exact meaning in this report             |
+| -------------------------------------------------------------- | ---------------------------------------- |
+| `IRMA_initial`                                                 | Reads at record `1-initial`              |
+| `IRMA_failQC`; `IRMA_passQC`                                   | Reads at `2-failQC` and `2-passQC`       |
 | `IRMA_chimeric`; `IRMA_nomatch`; `IRMA_match`; `IRMA_altmatch` | Reads at the corresponding `3-*` records |
-| `DEPTH_{segment}` | `Reads` from each `4-*_<segment>` record |
-| `IRMA_noise` | `IRMA_altmatch / IRMA_match` |
+| `DEPTH_{segment}`                                              | `Reads` from each `4-*_<segment>` record |
+| `IRMA_noise`                                                   | `IRMA_altmatch / IRMA_match`             |
 
 If an expected record is absent, most IRMA counters are set to zero. A zero can
 therefore mean either a true zero or a missing record. Division by zero can
@@ -141,13 +141,13 @@ mutations, assigns clades where supported, and applies the dataset's QC rules.
 
 The report transformer reads these native Nextclade fields:
 
-| Report family | Native Nextclade field |
-|---|---|
-| clade fields | `clade`, `legacy-clade`, and `subclade` |
-| QC | `qc.overallStatus` |
-| mixed sites | `qc.mixedSites.totalMixedSites` |
+| Report family      | Native Nextclade field                           |
+| ------------------ | ------------------------------------------------ |
+| clade fields       | `clade`, `legacy-clade`, and `subclade`          |
+| QC                 | `qc.overallStatus`                               |
+| mixed sites        | `qc.mixedSites.totalMixedSites`                  |
 | structural changes | `aaDeletions`, `aaInsertions`, and `frameShifts` |
-| glycosylation | dataset-provided `glycosylation` annotation |
+| glycosylation      | dataset-provided `glycosylation` annotation      |
 
 HA and M annotations are split into protein-specific columns (`HA1`/`HA2` and
 `M1`/`M2`). The converter copies the same segment-level QC status, mixed-site
@@ -197,11 +197,11 @@ ignored. Matches become `{M2,NA,PA} inhibtion mutations`; otherwise the value is
 
 `report.py` then applies a string-based summary:
 
-| Source | Drug fields | No database match | At least one match |
-|---|---|---|---|
-| M2 | `DR_Res_Adamantine` | `AANI` | `Review` |
-| NA | `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, `DR_Res_Laninamivir` | `AANI` | `Review` |
-| PA | `DR_Res_Baloxavir` | `AANS` | `Review` |
+| Source | Drug fields                                                                        | No database match | At least one match |
+| ------ | ---------------------------------------------------------------------------------- | ----------------- | ------------------ |
+| M2     | `DR_Res_Adamantine`                                                                | `AANI`            | `Review`           |
+| NA     | `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, `DR_Res_Laninamivir` | `AANI`            | `Review`           |
+| PA     | `DR_Res_Baloxavir`                                                                 | `AANS`            | `Review`           |
 
 If the lookup source is absent, the classification is `NA`. `DR_M2_Mut`,
 `DR_NA_Mut`, and `DR_PA_Mut` contain the matched mutation text when review is
@@ -251,13 +251,13 @@ reference (match +2, mismatch −1, gap −5), translates profile features, and
 compares observed nucleotide and amino-acid states with hierarchical defining
 mutation rules.
 
-| Suffix after `Subclade_Nomenclature_` | Meaning |
-|---|---|
-| `Profile`; `Source` | Selected virus profile and rule repository |
-| `Clade`; `Clade_Long`; `Subclade`; `Lineage_Path` | Assigned labels and parent path |
-| `Key_Mutations`; `Lineage_Additive_Mutations`; `Lineage_Key_Mutations`; `Clade_Key_Mutations` | Observed rule-defining mutations at different hierarchy levels |
-| `Closest_Subclade`; `Closest_Subclade_Missing_Mutations`; `Unique_Mutations` | Best incomplete match, missing defining states, and observed non-lineage changes |
-| `Subclade_Match_Fraction`; `Clade_Match_Fraction` | Matched rules divided by evaluated rules, rounded to three decimals |
+| Suffix after `Subclade_Nomenclature_`                                                         | Meaning                                                                          |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `Profile`; `Source`                                                                           | Selected virus profile and rule repository                                       |
+| `Clade`; `Clade_Long`; `Subclade`; `Lineage_Path`                                             | Assigned labels and parent path                                                  |
+| `Key_Mutations`; `Lineage_Additive_Mutations`; `Lineage_Key_Mutations`; `Clade_Key_Mutations` | Observed rule-defining mutations at different hierarchy levels                   |
+| `Closest_Subclade`; `Closest_Subclade_Missing_Mutations`; `Unique_Mutations`                  | Best incomplete match, missing defining states, and observed non-lineage changes |
+| `Subclade_Match_Fraction`; `Clade_Match_Fraction`                                             | Matched rules divided by evaluated rules, rounded to three decimals              |
 
 Candidates are ranked by matched-rule count, match fraction, hierarchy depth,
 rule-set size, and name. Although the internal caller marks a non-exact result
@@ -278,19 +278,19 @@ guideline row with `reporting_category=yes` may become the primary
 inherits its nearest reporting ancestor and reports the mutations on the path
 from that ancestor as `Characterisation_Guideline_Extra_Mutations`.
 
-| Field | Meaning |
-|---|---|
-| `Characterisation_Profile` | Selected H1, H3, B/Victoria, or B/Yamagata guideline profile |
-| `Characterisation_Status` | Exact reporting category, derived category with extra mutations, incomplete-call review, unassigned, or no reporting categories in the guideline |
-| `Characterisation_Reference_Virus`; `Characterisation_Reference_Role` | Primary reportable reference-virus category and its guideline role |
-| `Characterisation_Reporting_Category_Subclade` | Subclade of the primary reporting category |
-| `Characterisation_Closest_Guideline_Reference`; `Characterisation_Closest_Guideline_Subclade` | Most specific matching guideline row, including non-reporting rows |
-| `Characterisation_Guideline_Extra_Mutations` | Guideline mutations between the primary category and closest descendant |
-| `Characterisation_Sample_Extra_Mutations` | Additional amino-acid changes from `Subclade_Nomenclature_Unique_Mutations`; nucleotide-only changes are excluded |
-| `Characterisation_All_Extra_Mutations` | De-duplicated combination of guideline and sample-specific additional mutations |
-| `Characterisation_Result` | Compact display text such as `A/Victoria/4897/2022-like + R45K` |
-| `Characterisation_Subclade_Match_Fraction`; `Characterisation_Missing_Subclade_Mutations` | Evidence copied from the seasonal subclade call |
-| `Characterisation_Guideline_Source` | Characterisation CSV filename used for the result |
+| Field                                                                                         | Meaning                                                                                                                                          |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Characterisation_Profile`                                                                    | Selected H1, H3, B/Victoria, or B/Yamagata guideline profile                                                                                     |
+| `Characterisation_Status`                                                                     | Exact reporting category, derived category with extra mutations, incomplete-call review, unassigned, or no reporting categories in the guideline |
+| `Characterisation_Reference_Virus`; `Characterisation_Reference_Role`                         | Primary reportable reference-virus category and its guideline role                                                                               |
+| `Characterisation_Reporting_Category_Subclade`                                                | Subclade of the primary reporting category                                                                                                       |
+| `Characterisation_Closest_Guideline_Reference`; `Characterisation_Closest_Guideline_Subclade` | Most specific matching guideline row, including non-reporting rows                                                                               |
+| `Characterisation_Guideline_Extra_Mutations`                                                  | Guideline mutations between the primary category and closest descendant                                                                          |
+| `Characterisation_Sample_Extra_Mutations`                                                     | Additional amino-acid changes from `Subclade_Nomenclature_Unique_Mutations`; nucleotide-only changes are excluded                                |
+| `Characterisation_All_Extra_Mutations`                                                        | De-duplicated combination of guideline and sample-specific additional mutations                                                                  |
+| `Characterisation_Result`                                                                     | Compact display text such as `A/Victoria/4897/2022-like + R45K`                                                                                  |
+| `Characterisation_Subclade_Match_Fraction`; `Characterisation_Missing_Subclade_Mutations`     | Evidence copied from the seasonal subclade call                                                                                                  |
+| `Characterisation_Guideline_Source`                                                           | Characterisation CSV filename used for the result                                                                                                |
 
 When defining mutations are missing or the subclade match fraction is below
 one, the result is prefixed with `Provisional:` and must be reviewed. The

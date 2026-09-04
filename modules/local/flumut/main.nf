@@ -2,7 +2,6 @@
 process FLUMUT {
     tag "$meta.id"
     label 'process_medium'
-    errorStrategy 'ignore'
    
 
 
@@ -27,6 +26,7 @@ process FLUMUT {
     tuple val(meta), path("${meta.id}_markers_output.tsv") , emit: markers
     tuple val(meta), path("${meta.id}_mutations_output.tsv"), emit: mutations
     tuple val(meta), path("${meta.id}_literature_output.tsv") , emit: literature
+    path "versions.yml", emit: versions
 
 
     when:
@@ -34,7 +34,12 @@ process FLUMUT {
 
     script:
     """
-    flumut --update
+    set -euo pipefail
     flumut -m ${meta.id}_markers_output.tsv -M ${meta.id}_mutations_output.tsv -l ${meta.id}_literature_output.tsv $fasta
+
+    cat > versions.yml <<-END_VERSIONS
+    "${task.process}":
+        flumut: 0.6.3
+    END_VERSIONS
     """
 }

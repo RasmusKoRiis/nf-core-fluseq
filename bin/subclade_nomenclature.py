@@ -27,22 +27,70 @@ PROFILES = {
 }
 
 CODON_TABLE = {
-    "TTT": "F", "TTC": "F", "TTA": "L", "TTG": "L",
-    "TCT": "S", "TCC": "S", "TCA": "S", "TCG": "S",
-    "TAT": "Y", "TAC": "Y", "TAA": "*", "TAG": "*",
-    "TGT": "C", "TGC": "C", "TGA": "*", "TGG": "W",
-    "CTT": "L", "CTC": "L", "CTA": "L", "CTG": "L",
-    "CCT": "P", "CCC": "P", "CCA": "P", "CCG": "P",
-    "CAT": "H", "CAC": "H", "CAA": "Q", "CAG": "Q",
-    "CGT": "R", "CGC": "R", "CGA": "R", "CGG": "R",
-    "ATT": "I", "ATC": "I", "ATA": "I", "ATG": "M",
-    "ACT": "T", "ACC": "T", "ACA": "T", "ACG": "T",
-    "AAT": "N", "AAC": "N", "AAA": "K", "AAG": "K",
-    "AGT": "S", "AGC": "S", "AGA": "R", "AGG": "R",
-    "GTT": "V", "GTC": "V", "GTA": "V", "GTG": "V",
-    "GCT": "A", "GCC": "A", "GCA": "A", "GCG": "A",
-    "GAT": "D", "GAC": "D", "GAA": "E", "GAG": "E",
-    "GGT": "G", "GGC": "G", "GGA": "G", "GGG": "G",
+    "TTT": "F",
+    "TTC": "F",
+    "TTA": "L",
+    "TTG": "L",
+    "TCT": "S",
+    "TCC": "S",
+    "TCA": "S",
+    "TCG": "S",
+    "TAT": "Y",
+    "TAC": "Y",
+    "TAA": "*",
+    "TAG": "*",
+    "TGT": "C",
+    "TGC": "C",
+    "TGA": "*",
+    "TGG": "W",
+    "CTT": "L",
+    "CTC": "L",
+    "CTA": "L",
+    "CTG": "L",
+    "CCT": "P",
+    "CCC": "P",
+    "CCA": "P",
+    "CCG": "P",
+    "CAT": "H",
+    "CAC": "H",
+    "CAA": "Q",
+    "CAG": "Q",
+    "CGT": "R",
+    "CGC": "R",
+    "CGA": "R",
+    "CGG": "R",
+    "ATT": "I",
+    "ATC": "I",
+    "ATA": "I",
+    "ATG": "M",
+    "ACT": "T",
+    "ACC": "T",
+    "ACA": "T",
+    "ACG": "T",
+    "AAT": "N",
+    "AAC": "N",
+    "AAA": "K",
+    "AAG": "K",
+    "AGT": "S",
+    "AGC": "S",
+    "AGA": "R",
+    "AGG": "R",
+    "GTT": "V",
+    "GTC": "V",
+    "GTA": "V",
+    "GTG": "V",
+    "GCT": "A",
+    "GCC": "A",
+    "GCA": "A",
+    "GCG": "A",
+    "GAT": "D",
+    "GAC": "D",
+    "GAA": "E",
+    "GAG": "E",
+    "GGT": "G",
+    "GGC": "G",
+    "GGA": "G",
+    "GGG": "G",
 }
 
 OUTPUT_COLUMNS = [
@@ -436,11 +484,14 @@ def lineage_additive_mutations(name, definitions, parents):
     for key in order:
         grouped[owners[key]].append(final_rules[key])
 
-    return " | ".join(
-        f"{lineage_name}:{format_rule_list(grouped[lineage_name])}"
-        for lineage_name in names
-        if grouped[lineage_name]
-    ) or "NA"
+    return (
+        " | ".join(
+            f"{lineage_name}:{format_rule_list(grouped[lineage_name])}"
+            for lineage_name in names
+            if grouped[lineage_name]
+        )
+        or "NA"
+    )
 
 
 def read_clade_yaml_rules(path, subclade_definitions, subclade_parents):
@@ -484,10 +535,12 @@ def read_clade_yaml_rules(path, subclade_definitions, subclade_parents):
             return memo[name]
         alias_of = raw_aliases.get(name, "")
         if alias_of in subclade_definitions:
-            rules = merge_rules([
-                lineage_rule_set(alias_of, subclade_definitions, subclade_parents),
-                raw_rules.get(name, []),
-            ])
+            rules = merge_rules(
+                [
+                    lineage_rule_set(alias_of, subclade_definitions, subclade_parents),
+                    raw_rules.get(name, []),
+                ]
+            )
         else:
             rule_sets = []
             parent = raw_parents.get(name, "")
@@ -558,10 +611,7 @@ def parent_depth(name, parents):
 
 
 def call_hierarchical(seq, definitions, parents, features, ref_to_query=None):
-    evaluations = {
-        name: evaluate_rule_set(seq, rules, features, ref_to_query)
-        for name, rules in definitions.items()
-    }
+    evaluations = {name: evaluate_rule_set(seq, rules, features, ref_to_query) for name, rules in definitions.items()}
     lineage_evaluations = {
         name: evaluate_rule_set(seq, lineage_rule_set(name, definitions, parents), features, ref_to_query)
         for name in definitions
@@ -581,7 +631,11 @@ def call_hierarchical(seq, definitions, parents, features, ref_to_query=None):
         )[0]
         evaluations[name]["candidate"] = name
         evaluations[name]["lineage_evaluation"] = lineage_evaluations[name]
-        return (name if lineage_evaluations[name]["exact"] else "Unassigned"), evaluations[name], lineage_evaluations[name]["exact"]
+        return (
+            (name if lineage_evaluations[name]["exact"] else "Unassigned"),
+            evaluations[name],
+            lineage_evaluations[name]["exact"],
+        )
 
     return "Unassigned", {"fraction": 0.0, "matched_mutations": [], "candidate": ""}, False
 
@@ -661,23 +715,25 @@ def call_sample(sample_id, subtype, fasta_paths, rules_dir):
         if mutation_key(rule) not in lineage_keys
     )
 
-    row.update({
-        "Subclade_Nomenclature_Profile": profile_name,
-        "Subclade_Nomenclature_Clade": clade,
-        "Subclade_Nomenclature_Clade_Long": clade_long,
-        "Subclade_Nomenclature_Subclade": lineage_target or "Unassigned",
-        "Subclade_Nomenclature_Lineage_Path": lineage_path or "NA",
-        "Subclade_Nomenclature_Key_Mutations": subclade_mutations or "NA",
-        "Subclade_Nomenclature_Lineage_Additive_Mutations": lineage_additions or "NA",
-        "Subclade_Nomenclature_Lineage_Key_Mutations": lineage_mutations or "NA",
-        "Subclade_Nomenclature_Clade_Key_Mutations": clade_mutations or "NA",
-        "Subclade_Nomenclature_Closest_Subclade": candidate_subclade or "NA",
-        "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations": missing or "NA",
-        "Subclade_Nomenclature_Unique_Mutations": unique_mutations or "NA",
-        "Subclade_Nomenclature_Subclade_Match_Fraction": f"{sub_eval_for_report.get('fraction', 0.0):.3f}",
-        "Subclade_Nomenclature_Clade_Match_Fraction": f"{clade_eval.get('fraction', 0.0):.3f}",
-        "Subclade_Nomenclature_Source": profile["source"],
-    })
+    row.update(
+        {
+            "Subclade_Nomenclature_Profile": profile_name,
+            "Subclade_Nomenclature_Clade": clade,
+            "Subclade_Nomenclature_Clade_Long": clade_long,
+            "Subclade_Nomenclature_Subclade": lineage_target or "Unassigned",
+            "Subclade_Nomenclature_Lineage_Path": lineage_path or "NA",
+            "Subclade_Nomenclature_Key_Mutations": subclade_mutations or "NA",
+            "Subclade_Nomenclature_Lineage_Additive_Mutations": lineage_additions or "NA",
+            "Subclade_Nomenclature_Lineage_Key_Mutations": lineage_mutations or "NA",
+            "Subclade_Nomenclature_Clade_Key_Mutations": clade_mutations or "NA",
+            "Subclade_Nomenclature_Closest_Subclade": candidate_subclade or "NA",
+            "Subclade_Nomenclature_Closest_Subclade_Missing_Mutations": missing or "NA",
+            "Subclade_Nomenclature_Unique_Mutations": unique_mutations or "NA",
+            "Subclade_Nomenclature_Subclade_Match_Fraction": f"{sub_eval_for_report.get('fraction', 0.0):.3f}",
+            "Subclade_Nomenclature_Clade_Match_Fraction": f"{clade_eval.get('fraction', 0.0):.3f}",
+            "Subclade_Nomenclature_Source": profile["source"],
+        }
+    )
     return row
 
 
