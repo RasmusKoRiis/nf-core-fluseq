@@ -64,6 +64,8 @@ For routine operation, prefer a YAML parameters file and keep it with the run re
 
 ## Profiles and work files
 
+All modules inherit `errorStrategy = 'ignore'`: failed tasks are logged and skipped while the remaining tasks continue, without automatic retries. Outputs that depend on a failed task may be missing for that sample. Check the execution trace and log for failures before accepting results. Input validation and workflow-level errors still stop the run.
+
 - `docker` enables Docker and pulls missing pinned images.
 - `server` sets the routine work directory to `/mnt/tempdata/work_fluseq`, preserves the work directory for resume/debugging, and caps tasks at 16 CPUs, 256 GB RAM, and 20 hours.
 - Override the server work location with `--server_work_dir` when necessary.
