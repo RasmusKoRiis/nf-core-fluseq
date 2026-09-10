@@ -25,13 +25,17 @@ process NEXTCLADE {
     """
     set -euo pipefail
     processed=0
+    # COVERAGE removes the subtype from filenames but preserves the FASTA header.
+    subtype_name=\$(tr -d '\\r\\n' < "${subtype}")
     for fasta_file in ${fasta}; do
-        filename=\$(basename "\$fasta_file")
-        filename_no_ext=\${filename%.*}
-        segment_subtype=\${filename_no_ext#*-}
-        segment=\${segment_subtype%-*}
+        header=\$(head -n 1 "\$fasta_file" | tr -d '\\r')
+        segment_subtype=\${header#*|}
+        segment=\${segment_subtype%-"\$subtype_name"}
         segment_name=\${segment##*-}
-        subtype_name=\${segment_subtype##*-}
+        if [[ "\$header" != '>'*'|'* || "\$segment" == "\$segment_subtype" ]]; then
+            echo "Invalid Nextclade FASTA header for ${meta.id} in \$fasta_file: \$header (expected subtype \$subtype_name)" >&2
+            exit 1
+        fi
 
         case "\$subtype_name" in
             H1*) dataset_subtype='H1N1' ;;
