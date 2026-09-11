@@ -49,7 +49,7 @@ import csv
 import sys
 
 with open(sys.argv[1], newline="") as source, open(sys.argv[2], "w", newline="") as target:
-    csv.writer(target, delimiter="\t", lineterminator="\n").writerows(csv.reader(source))
+    csv.writer(target, delimiter="\\t", lineterminator="\\n").writerows(csv.reader(source))
 PY
 
     report.py samplesheet.tsv
