@@ -64,6 +64,16 @@ process MUTATIONHUMAN  {
         # Extract 'XX' as the segment assuming it's after the last '_' in segment_subtype
         segment=\$(echo "\${segment_subtype}" | awk -F_ '{print \$NF}')
 
+        # Nextclade translation labels follow dataset feature names, whereas the
+        # mutation reference tree uses protein names.
+        case "\$segment" in
+            HA)       segment=HA1 ;;
+            M)        segment=M1 ;;
+            NA1|NA2)  segment=NA ;;
+            NS)       segment=NS1 ;;
+            SIG)      segment=SigPep ;;
+        esac
+
         # Make output name
         output_name_human=${meta.id}_\${segment}"_human_mutation.csv"
         output_name_mamailian=${meta.id}_\${segment}"_mamailian_mutation.csv"
