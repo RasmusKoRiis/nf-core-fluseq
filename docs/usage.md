@@ -58,13 +58,41 @@ nextflow run RasmusKoRiis/nf-core-fluseq \
   --inhibition_mutation_db /references/Inhibtion_Mutations_of_Intrest_2324.xlsx
 ```
 
-Avian FASTA additionally supplies `--fasta`, `--genotype_database`, and `--mammalian_mutation_db`, and changes `--file` to `avian-fasta`.
+Human FASTA:
+
+```bash
+nextflow run RasmusKoRiis/nf-core-fluseq -r <release-or-branch> -profile docker \
+  --file human-fasta --fasta consensus.fasta --outdir results \
+  --ha_database /references/human_HA.fasta \
+  --na_database /references/human_NA.fasta \
+  --sequence_references /references/sequence_references \
+  --nextclade_dataset /references/nextclade_datasets \
+  --reassortment_database /references/reassortment_database.fasta \
+  --genotype_database /references/H5_genotype_database.fasta \
+  --inhibition_mutation_db /references/Inhibtion_Mutations_of_Intrest_2324.xlsx
+```
+
+Avian FASTQ uses the FASTQ inputs plus the avian annotation database:
+
+```bash
+nextflow run RasmusKoRiis/nf-core-fluseq -r <release-or-branch> -profile docker \
+  --file avian-fastq --input samplesheet.csv --samples_dir fastq_pass --outdir results \
+  --ha_database /references/human_HA.fasta --na_database /references/human_NA.fasta \
+  --genotype_database /references/H5_genotype_database.fasta \
+  --mammalian_mutation_db /references/Mammalian_Mutations_of_Intrest_2324.xlsx \
+  --inhibition_mutation_db /references/Inhibtion_Mutations_of_Intrest_2324.xlsx \
+  --reassortment_database /references/reassortment_database.fasta \
+  --sequence_references /references/sequence_references \
+  --nextclade_dataset /references/nextclade_datasets
+```
+
+Avian FASTA changes the input to `--file avian-fasta --fasta consensus.fasta` and uses the same controlled avian reference parameters.
 
 For routine operation, prefer a YAML parameters file and keep it with the run record. Pipeline parameters belong in `-params-file`; executor, storage, and resource settings belong in a Nextflow config supplied with `-c`.
 
 ## Profiles and work files
 
-All modules inherit `errorStrategy = 'ignore'`: failed tasks are logged and skipped while the remaining tasks continue, without automatic retries. Outputs that depend on a failed task may be missing for that sample. Check the execution trace and log for failures before accepting results. Input validation and workflow-level errors still stop the run.
+Infrastructure-style terminations are retried once. Deterministic tool or data failures allow already-submitted tasks to finish, then make the workflow return a failed status. A run containing a failed HUMANMUTATION, REPORTHUMAN, or other required task must therefore be investigated and cannot appear as a successful pipeline completion.
 
 - `docker` enables Docker and pulls missing pinned images.
 - `server` sets the routine work directory to `/mnt/tempdata/work_fluseq`, preserves the work directory for resume/debugging, and caps tasks at 16 CPUs, 256 GB RAM, and 20 hours.
@@ -73,7 +101,13 @@ All modules inherit `errorStrategy = 'ignore'`: failed tasks are logged and skip
 
 Nextflow 26.04 enables its new strict syntax parser by default. This pipeline still uses dynamic DSL2/Groovy constructs, so set `NXF_SYNTAX_PARSER=v1` with Nextflow 26.04 or newer. The routine wrappers and CI set it automatically. Migrating the scientific workflows to the strict parser should be handled as a separately validated change because it touches channel-construction logic throughout the pipeline.
 
-No fake `test` profile is shipped. Infrastructure smoke tests live under `tests/input_check`, and module tests under `tests/modules`. End-to-end biological acceptance must use the controlled routine references and representative influenza data.
+Infrastructure smoke tests live under `tests/input_check`, and component tests under `tests/modules`. End-to-end biological acceptance uses controlled routine references and representative private influenza data. See [testing.md](testing.md).
+
+## Troubleshooting failed tasks
+
+Start with the work-directory path printed in the Nextflow error. Inspect `.command.err` for the tool or Python exception and `.command.sh` for the exact generated command. Use the execution trace under `pipeline_info/` to identify every failed task. After correcting code, input, or reference data, rerun the same command with `-resume` so successful tasks are reused.
+
+An input error before tasks start usually means the sample sheet does not match one of the documented layouts, a barcode directory contains no `.fastq.gz` or `.fq.gz` files, or a selected mode lacks a controlled reference parameter. The error message identifies the sample or parameter involved.
 
 ## Legacy wrapper names
 

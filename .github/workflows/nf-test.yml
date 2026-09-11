@@ -8,6 +8,11 @@ on:
       - dev
       - infrastructure
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  release:
+    types: [published]
   workflow_dispatch:
 
 env:
@@ -17,9 +22,15 @@ env:
   NF_TEST_SHA256: "b7679eb90cdc9642bfa89e9634db02ce6e699de53ad35ef0e2f4847634fc1641"
 
 jobs:
-  surveillance-summary:
-    name: Validate surveillance summary tests
+  nf-test:
+    name: nf-test / Nextflow ${{ matrix.NXF_VER }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        NXF_VER:
+          - "24.10.2"
+          - "latest-stable"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -27,7 +38,7 @@ jobs:
       - name: Install Nextflow
         uses: nf-core/setup-nextflow@893c28b667aedeba26e37f296d260ccc5bc4d914 # v3
         with:
-          version: "24.10.2"
+          version: "${{ matrix.NXF_VER }}"
 
       - name: Install nf-test
         run: |
@@ -39,5 +50,8 @@ jobs:
           chmod +x "${HOME}/.local/share/nf-test/nf-test"
           echo "${HOME}/.local/share/nf-test" >> "${GITHUB_PATH}"
 
-      - name: Run nf-test surveillance suite
-        run: nf-test test tests/modules/local/surveillance_summary.nf.test
+      - name: Run nf-test component suites
+        run: >-
+          nf-test test
+          tests/modules/local/surveillance_summary.nf.test
+          modules/local/cat_fastq/tests/main.nf.test

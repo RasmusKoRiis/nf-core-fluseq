@@ -34,12 +34,12 @@ def test_nextclade_uses_subtype_file_after_coverage(tmp_path, sample, subtype, s
     bin_dir.mkdir()
     scripts = {
         "coverage_finder.py": (
-            '#!/bin/bash\nset -euo pipefail\n'
+            "#!/bin/bash\nset -euo pipefail\n"
             'printf "Sample,Coverage\\n%s,100\\n" "$3" > "$2"\n'
             'printf "100\\n" > "${3}_${4}_coverage.txt"\n'
         ),
         "nextclade": (
-            '#!/bin/bash\nset -euo pipefail\n'
+            "#!/bin/bash\nset -euo pipefail\n"
             'if [[ "$1" == --version ]]; then echo "nextclade 3.0.0"; exit 0; fi\n'
             '[[ "$1" == run && "$2" == --input-dataset && "$4" == --output-all ]]\n'
             f'[[ "$3" == "datasets/{dataset}" ]]\n'
@@ -49,7 +49,7 @@ def test_nextclade_uses_subtype_file_after_coverage(tmp_path, sample, subtype, s
             'printf ">sample\\nACDE\\n" > "$5/nextclade.cds_translation.HA1.fasta"\n'
         ),
         "nextclade_converter.py": (
-            '#!/bin/bash\nset -euo pipefail\n'
+            "#!/bin/bash\nset -euo pipefail\n"
             f'[[ "$2" == "{sample}" && "$3" == "{segment}" && "$4" == NC ]]\n'
             '[[ -s "$1" ]]\n'
         ),

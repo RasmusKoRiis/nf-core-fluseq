@@ -1,6 +1,13 @@
 # nf-core-fluseq
 
+[![Infrastructure CI](https://github.com/RasmusKoRiis/nf-core-fluseq/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusKoRiis/nf-core-fluseq/actions/workflows/ci.yml)
+[![nf-test](https://github.com/RasmusKoRiis/nf-core-fluseq/actions/workflows/nf-test.yml/badge.svg)](https://github.com/RasmusKoRiis/nf-core-fluseq/actions/workflows/nf-test.yml)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A524.10.2-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
+[![nf-core tools audit](https://img.shields.io/badge/nf--core_tools-4.1.0-24B064)](https://github.com/nf-core/tools/releases/tag/4.1.0)
+
 A Nextflow DSL2 pipeline for analysing human and avian influenza A/B data from Nanopore FASTQ files or assembled FASTA sequences.
+
+This is a personally maintained pipeline that follows relevant nf-core practices. It is not an official community-owned nf-core pipeline and is not hosted in the `nf-core` GitHub organization. The scope and intentional lint exceptions are documented in [use of nf-core practices](docs/nfcore_practices.md).
 
 ## Analysis modes
 
@@ -59,7 +66,7 @@ The operational wrappers in `/home/rasmuskopperud.riis/Coding/flu-wrappers` rema
 | `--mamalian_mutation_db`  | `--mammalian_mutation_db`  |
 | `--inhibtion_mutation_db` | `--inhibition_mutation_db` |
 
-See [usage](docs/usage.md), [reference-data requirements](docs/reference_data.md), [routine-wrapper contract](docs/routine_wrappers.md), and [outputs](docs/output.md).
+See [usage](docs/usage.md), [reference-data requirements](docs/reference_data.md), [routine-wrapper contract](docs/routine_wrappers.md), [outputs](docs/output.md), and [testing and private acceptance](docs/testing.md).
 
 ## Reproducibility and tests
 
@@ -68,6 +75,7 @@ See [usage](docs/usage.md), [reference-data requirements](docs/reference_data.md
 - Every run publishes `pipeline_info/reference_manifest.tsv` with SHA-256 hashes of staged reference files.
 - CI parses the complete workflow and validates routine and canonical FASTQ sheets on Nextflow 24.10.2 and current stable.
 - Python unit tests and nf-test coverage for all four surveillance-summary modes are included.
+- A guarded local acceptance script can use private operational data without placing it or its results in the repository.
 
 The full biological workflow still requires controlled influenza databases and representative run data; those are intentionally not embedded in this source repository.
 

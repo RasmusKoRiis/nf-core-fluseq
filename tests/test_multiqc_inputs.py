@@ -13,7 +13,9 @@ NEXTFLOW = shutil.which("nextflow")
 
 
 @pytest.mark.skipif(NEXTFLOW is None, reason="Nextflow is not installed")
-@pytest.mark.parametrize("available_versions", [(), ("SUBTYPEFINDER",), ("NEXTCLADE", "SUBTYPEFINDER", "MUTATIONHUMAN")])
+@pytest.mark.parametrize(
+    "available_versions", [(), ("SUBTYPEFINDER",), ("NEXTCLADE", "SUBTYPEFINDER", "MUTATIONHUMAN")]
+)
 def test_multiqc_with_missing_upstream_versions(tmp_path, available_versions):
     source = (ROOT / "workflows/human.nf").read_text()
     # Execute the actual input assembly so this test detects regressions in the workflow.

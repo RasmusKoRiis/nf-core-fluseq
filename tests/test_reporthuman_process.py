@@ -31,13 +31,11 @@ def test_reporthuman_embedded_python_preserves_escaped_delimiters(tmp_path):
         (tmp_path / name).write_text("Sample\nSAMPLE01\n", encoding="utf-8")
     (tmp_path / "filtered.fasta").write_text(">SAMPLE01\nACGT\n", encoding="utf-8")
     (tmp_path / "samplesheet.csv").write_text(
-        'PCR-PlatePosition,SequenceID,Barcode,KonsCt\n'
-        'A1,SAMPLE01,barcode01,"24,56"\n',
+        "PCR-PlatePosition,SequenceID,Barcode,KonsCt\n" 'A1,SAMPLE01,barcode01,"24,56"\n',
         encoding="utf-8",
     )
     (tmp_path / "nextflow.config").write_text(
-        "process.executor = 'local'\n"
-        "process.errorStrategy = 'terminate'\n",
+        "process.executor = 'local'\n" "process.errorStrategy = 'terminate'\n",
         encoding="utf-8",
     )
 
@@ -49,18 +47,14 @@ def test_reporthuman_embedded_python_preserves_escaped_delimiters(tmp_path):
         "set -euo pipefail\n"
         "expected=$'A1\\tSAMPLE01\\tbarcode01\\t24,56'\n"
         "actual=$(sed -n '2p' \"$1\")\n"
-        "[[ \"$actual\" == \"$expected\" ]]\n"
+        '[[ "$actual" == "$expected" ]]\n'
         "printf 'Sample,Subtype,Coverage-HA,Coverage-NA\\nSAMPLE01,H3N2,99,99\\n' > merged_report.csv\n",
         encoding="utf-8",
     )
     report.chmod(0o755)
     qc = bin_dir / "report_QC_calculation.py"
     qc.write_text(
-        "#!/bin/bash\n"
-        "set -euo pipefail\n"
-        "input=$1\n"
-        "[[ \"$2\" == '-o' ]]\n"
-        "cp \"$input\" \"$3\"\n",
+        "#!/bin/bash\n" "set -euo pipefail\n" "input=$1\n" "[[ \"$2\" == '-o' ]]\n" 'cp "$input" "$3"\n',
         encoding="utf-8",
     )
     qc.chmod(0o755)

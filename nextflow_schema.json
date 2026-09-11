@@ -1,188 +1,340 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/RasmusKoRiis/nf-core-fluseq/master/nextflow_schema.json",
-    "title": "nf-core-fluseq parameters",
-    "description": "Reproducible analysis of human and avian influenza FASTQ or FASTA input.",
+    "title": "RasmusKoRiis/nf-core-fluseq pipeline parameters",
+    "description": "Workflow for analysis of influenza A and B",
     "type": "object",
     "$defs": {
-        "path_file": {
-            "type": "string",
-            "format": "file-path",
-            "exists": true
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Select an analysis mode, provide its input, and choose where results are written.",
+            "required": ["file", "outdir"],
+            "properties": {
+                "file": {
+                    "type": "string",
+                    "enum": ["human-fastq", "human-fasta", "avian-fastq", "avian-fasta"],
+                    "default": "human-fastq",
+                    "description": "Pipeline analysis mode. Workflow-level validation enforces the inputs required by the selected mode.",
+                    "fa_icon": "fas fa-sitemap"
+                },
+                "input": {
+                    "type": "string",
+                    "format": "file-path",
+                    "mimetype": "text/csv",
+                    "exists": true,
+                    "pattern": "^\\S+\\.(csv|tsv)$",
+                    "schema": "assets/schema_input.json",
+                    "description": "FASTQ sample sheet in routine SequenceID/Barcode or explicit sample/fastq_1/fastq_2 format.",
+                    "help_text": "Required for human-fastq and avian-fastq. See docs/usage.md for accepted columns.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "fasta": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\.(fa|fna|fas|fasta)(\\.gz)?$",
+                    "description": "Multi-FASTA input containing assembled influenza consensus sequences.",
+                    "help_text": "Required for human-fasta and avian-fasta.",
+                    "fa_icon": "far fa-file-code"
+                },
+                "samples_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Root directory containing barcode FASTQ directories or sample-sheet-relative FASTQ paths.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "samplesDir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Deprecated compatibility alias for samples_dir.",
+                    "hidden": true
+                },
+                "outdir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "default": "results",
+                    "description": "Directory where published results and execution metadata are written.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "runid": {
+                    "type": "string",
+                    "default": "Unknown",
+                    "description": "Stable identifier used in final report filenames and report metadata."
+                },
+                "season": {
+                    "type": "string",
+                    "description": "Optional surveillance season label recorded with the analysis."
+                },
+                "seq_instrument": {
+                    "type": "string",
+                    "default": "Nanopore-GN_GBX03008",
+                    "description": "Sequencing instrument identifier written to the final report."
+                },
+                "release_version": {
+                    "type": "string",
+                    "default": "master",
+                    "description": "Operational reference or method release label written to the final report."
+                },
+                "data_origin": {
+                    "type": "string",
+                    "default": "BioNumerics",
+                    "description": "Origin label used by supported operational data flows."
+                }
+            }
         },
-        "path_directory": {
-            "type": "string",
-            "format": "directory-path",
-            "exists": true
+        "reference_options": {
+            "title": "Controlled reference inputs",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Versioned influenza databases and local Nextclade datasets required by the selected analysis mode.",
+            "properties": {
+                "ha_database": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Pinned HA nucleotide database used for subtype classification."
+                },
+                "na_database": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Pinned NA nucleotide database used for subtype classification."
+                },
+                "genotype_database": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Pinned influenza genotype database used by avian and full human FASTA analysis."
+                },
+                "reassortment_database": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Pinned segment database used for the reassortment similarity screen."
+                },
+                "mammalian_mutation_db": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Pinned mammalian mutation annotation workbook."
+                },
+                "inhibition_mutation_db": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Pinned antiviral-inhibition mutation annotation workbook."
+                },
+                "sequence_references": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Versioned amino-acid reference hierarchy used for mutation calling."
+                },
+                "nextclade_dataset": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Versioned local Nextclade dataset root containing subtype_segment directories."
+                },
+                "mutation_tables": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Optional additional mutation-table directory."
+                },
+                "mamalian_mutation_db": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Deprecated compatibility alias for mammalian_mutation_db.",
+                    "hidden": true
+                },
+                "inhibtion_mutation_db": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Deprecated compatibility alias for inhibition_mutation_db.",
+                    "hidden": true
+                },
+                "reference": {
+                    "type": "string",
+                    "description": "Deprecated unused compatibility parameter.",
+                    "hidden": true
+                }
+            }
+        },
+        "analysis_options": {
+            "title": "Analysis options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Thresholds and optional reduced analysis paths.",
+            "properties": {
+                "drug_resistance_only": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run the reduced human FASTA drug-resistance path."
+                },
+                "seq_quality_threshold": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "default": 80,
+                    "description": "Minimum non-N consensus coverage percentage used to retain a segment."
+                },
+                "seq_quality_thershold": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Deprecated compatibility alias for seq_quality_threshold.",
+                    "hidden": true
+                }
+            }
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "fa_icon": "fas fa-file-import",
+            "description": "Execution, notification, and MultiQC settings.",
+            "properties": {
+                "publish_dir_mode": {
+                    "type": "string",
+                    "enum": ["copy", "copyNoFollow", "link", "rellink", "symlink"],
+                    "default": "copy",
+                    "description": "Method used to publish stable results from task work directories.",
+                    "hidden": true
+                },
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email address for completion summaries."
+                },
+                "email_on_fail": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email address notified only when the workflow fails."
+                },
+                "plaintext_email": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Send notification email as plain text.",
+                    "hidden": true
+                },
+                "monochrome_logs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Disable colored terminal output.",
+                    "hidden": true
+                },
+                "hook_url": {
+                    "type": "string",
+                    "description": "Optional workflow-completion webhook URL.",
+                    "hidden": true
+                },
+                "multiqc_config": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Optional additional MultiQC configuration."
+                },
+                "multiqc_title": {
+                    "type": "string",
+                    "description": "Title displayed in the MultiQC report."
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Optional logo displayed in the MultiQC report."
+                },
+                "multiqc_methods_description": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Optional MultiQC methods-description template."
+                },
+                "max_multiqc_email_size": {
+                    "type": "string",
+                    "default": "25.MB",
+                    "description": "Maximum MultiQC report size attached to notification email.",
+                    "hidden": true
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Validate parameters against this schema before starting.",
+                    "hidden": true
+                },
+                "help": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Display basic parameter help and exit.",
+                    "hidden": true
+                },
+                "helpFull": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Display complete parameter help and exit.",
+                    "hidden": true
+                },
+                "showHidden": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include hidden parameters in generated help.",
+                    "hidden": true
+                },
+                "version": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Display pipeline version and exit.",
+                    "hidden": true
+                },
+                "config_profile_name": {
+                    "type": "string",
+                    "description": "Active institutional profile name.",
+                    "hidden": true
+                },
+                "config_profile_description": {
+                    "type": "string",
+                    "description": "Active institutional profile description.",
+                    "hidden": true
+                },
+                "config_profile_contact": {
+                    "type": "string",
+                    "description": "Active institutional profile contact.",
+                    "hidden": true
+                },
+                "config_profile_url": {
+                    "type": "string",
+                    "description": "Active institutional profile URL.",
+                    "hidden": true
+                },
+                "custom_config_version": {
+                    "type": "string",
+                    "description": "Compatibility setting for external institutional configs.",
+                    "hidden": true
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "description": "Compatibility setting for external institutional configs.",
+                    "hidden": true
+                },
+                "server_work_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Override work directory for the server profile.",
+                    "hidden": true
+                }
+            }
         }
     },
-    "properties": {
-        "file": {
-            "type": "string",
-            "enum": ["human-fastq", "human-fasta", "avian-fastq", "avian-fasta"],
-            "default": "human-fastq",
-            "description": "Pipeline mode. Exactly one mode is run."
-        },
-        "input": {
-            "$ref": "#/$defs/path_file",
-            "pattern": "^\\S+\\.(csv|tsv)$",
-            "description": "FASTQ sample sheet. Routine SequenceID/Barcode and canonical sample/fastq_1/fastq_2 sheets are accepted."
-        },
-        "fasta": {
-            "$ref": "#/$defs/path_file",
-            "pattern": "^\\S+\\.(fa|fna|fas|fasta)(\\.gz)?$",
-            "description": "Multi-FASTA input for a FASTA mode."
-        },
-        "samples_dir": {
-            "$ref": "#/$defs/path_directory",
-            "description": "Root directory containing barcode FASTQ directories or relative paths from the sample sheet."
-        },
-        "samplesDir": {
-            "$ref": "#/$defs/path_directory",
-            "description": "Deprecated alias for samples_dir.",
-            "hidden": true
-        },
-        "outdir": {
-            "type": "string",
-            "format": "directory-path",
-            "default": "results",
-            "description": "Output directory."
-        },
-        "runid": { "type": "string", "default": "Unknown" },
-        "season": { "type": "string" },
-        "seq_instrument": { "type": "string", "default": "Nanopore-GN_GBX03008" },
-        "release_version": { "type": "string", "default": "master" },
-        "data_origin": { "type": "string", "default": "BioNumerics" },
-        "drug_resistance_only": {
-            "type": "boolean",
-            "default": false,
-            "description": "Run the reduced human FASTA drug-resistance path."
-        },
-        "seq_quality_threshold": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100,
-            "default": 80
-        },
-        "seq_quality_thershold": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100,
-            "description": "Deprecated alias for seq_quality_threshold.",
-            "hidden": true
-        },
-        "ha_database": { "$ref": "#/$defs/path_file", "description": "Pinned HA subtype database." },
-        "na_database": { "$ref": "#/$defs/path_file", "description": "Pinned NA subtype database." },
-        "genotype_database": { "$ref": "#/$defs/path_file", "description": "Pinned avian genotype database." },
-        "reassortment_database": { "$ref": "#/$defs/path_file", "description": "Pinned reassortment database." },
-        "mammalian_mutation_db": { "$ref": "#/$defs/path_file", "description": "Pinned mammalian mutation workbook." },
-        "inhibition_mutation_db": {
-            "$ref": "#/$defs/path_file",
-            "description": "Pinned antiviral-inhibition mutation workbook."
-        },
-        "mamalian_mutation_db": {
-            "$ref": "#/$defs/path_file",
-            "description": "Deprecated alias for mammalian_mutation_db.",
-            "hidden": true
-        },
-        "inhibtion_mutation_db": {
-            "$ref": "#/$defs/path_file",
-            "description": "Deprecated alias for inhibition_mutation_db.",
-            "hidden": true
-        },
-        "sequence_references": {
-            "$ref": "#/$defs/path_directory",
-            "description": "Versioned sequence-reference directory."
-        },
-        "nextclade_dataset": {
-            "$ref": "#/$defs/path_directory",
-            "description": "Versioned local Nextclade dataset directory."
-        },
-        "mutation_tables": { "$ref": "#/$defs/path_directory", "description": "Optional mutation-table directory." },
-        "reference": { "type": "string", "description": "Deprecated unused parameter.", "hidden": true },
-        "publish_dir_mode": {
-            "type": "string",
-            "enum": ["copy", "copyNoFollow", "link", "rellink", "symlink"],
-            "default": "copy",
-            "hidden": true
-        },
-        "email": { "type": "string", "format": "email" },
-        "email_on_fail": { "type": "string", "format": "email" },
-        "plaintext_email": { "type": "boolean", "default": false, "hidden": true },
-        "monochrome_logs": { "type": "boolean", "default": false, "hidden": true },
-        "hook_url": { "type": "string", "hidden": true },
-        "multiqc_config": { "$ref": "#/$defs/path_file" },
-        "multiqc_title": { "type": "string" },
-        "multiqc_logo": { "$ref": "#/$defs/path_file" },
-        "multiqc_methods_description": { "$ref": "#/$defs/path_file" },
-        "max_multiqc_email_size": { "type": "string", "default": "25.MB", "hidden": true },
-        "max_cpus": { "type": "integer", "minimum": 1, "default": 16, "hidden": true },
-        "max_memory": { "type": "string", "default": "128.GB", "hidden": true },
-        "max_time": { "type": "string", "default": "240.h", "hidden": true },
-        "validate_params": { "type": "boolean", "default": true, "hidden": true },
-        "help": { "type": "boolean", "default": false, "hidden": true },
-        "helpFull": { "type": "boolean", "default": false, "hidden": true },
-        "showHidden": { "type": "boolean", "default": false, "hidden": true },
-        "version": { "type": "boolean", "default": false, "hidden": true },
-        "config_profile_name": { "type": "string", "hidden": true },
-        "config_profile_description": { "type": "string", "hidden": true },
-        "config_profile_contact": { "type": "string", "hidden": true },
-        "config_profile_url": { "type": "string", "hidden": true },
-        "custom_config_version": { "type": "string", "hidden": true },
-        "custom_config_base": { "type": "string", "hidden": true },
-        "server_work_dir": { "type": "string", "format": "directory-path", "hidden": true }
-    },
-    "required": ["file", "outdir"],
     "allOf": [
-        {
-            "if": {
-                "properties": { "file": { "enum": ["human-fastq", "avian-fastq"] } },
-                "required": ["file"]
-            },
-            "then": {
-                "required": ["input"],
-                "anyOf": [{ "required": ["samples_dir"] }, { "required": ["samplesDir"] }]
-            }
-        },
-        {
-            "if": {
-                "properties": { "file": { "enum": ["human-fasta", "avian-fasta"] } },
-                "required": ["file"]
-            },
-            "then": { "required": ["fasta"] }
-        },
-        {
-            "if": {
-                "properties": { "file": { "enum": ["avian-fastq", "avian-fasta"] } },
-                "required": ["file"]
-            },
-            "then": {
-                "required": [
-                    "ha_database",
-                    "na_database",
-                    "genotype_database",
-                    "reassortment_database",
-                    "mammalian_mutation_db",
-                    "inhibition_mutation_db",
-                    "sequence_references",
-                    "nextclade_dataset"
-                ]
-            }
-        },
-        {
-            "if": {
-                "properties": { "file": { "enum": ["human-fastq", "human-fasta"] } },
-                "required": ["file"]
-            },
-            "then": {
-                "required": [
-                    "ha_database",
-                    "na_database",
-                    "inhibition_mutation_db",
-                    "sequence_references",
-                    "nextclade_dataset"
-                ]
-            }
-        }
+        { "$ref": "#/$defs/input_output_options" },
+        { "$ref": "#/$defs/reference_options" },
+        { "$ref": "#/$defs/analysis_options" },
+        { "$ref": "#/$defs/generic_options" }
     ]
 }

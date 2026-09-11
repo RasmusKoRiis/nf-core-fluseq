@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Infrastructure - 2026-09-03
+## Infrastructure - 2026-09-11
 
 ### `Added`
 
@@ -23,19 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Legacy routine parameter aliases, server work-directory configuration, executable pipeline utilities, and failing version probes.
 - Duplicate lifecycle handlers, stale template tests/workflows, and runtime Nextclade latest-dataset downloads.
+- Hidden input-check exceptions, Nextclade feature-to-reference mapping, HUMANMUTATION staging, and REPORTHUMAN CSV conversion.
+- Global ignored process failures; required process errors now produce a failed workflow status after submitted tasks finish.
 
 ### `Deprecated`
 
 - `--samplesDir`, `--seq_quality_thershold`, `--mamalian_mutation_db`, and `--inhibtion_mutation_db`; these remain supported for routine wrappers.
-
-## v1.0dev - [date]
-
-Initial release of nf-core/fluseq, created with the [nf-core](https://nf-co.re/) template.
-
-### `Added`
-
-### `Fixed`
-
-### `Dependencies`
-
-### `Deprecated`

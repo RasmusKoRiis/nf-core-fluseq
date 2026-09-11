@@ -5,7 +5,7 @@ nextflow.enable.dsl = 2
 params.input = null
 params.samples_dir = null
 
-include { INPUT_CHECK } from '../../subworkflows/local/input_check'
+include { INPUT_CHECK } from '../../subworkflows/local/input_check/main'
 
 workflow {
     if (!params.input) {

@@ -28,7 +28,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { INPUT_CHECK } from '../subworkflows/local/input_check/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,7 +42,7 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
-include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
+include { CAT_FASTQ                   } from '../modules/local/cat_fastq/main'
 include { IRMA                        } from '../modules/local/irma/main'
 include { AMINOACIDTRANSLATION        } from '../modules/local/aminoacidtranslation/main'
 include { NEXTCLADE                   } from '../modules/local/nextclade/main'

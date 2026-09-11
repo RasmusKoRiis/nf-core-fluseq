@@ -23,8 +23,7 @@ def test_nextclade_h3_feature_names_map_to_mutation_reference_names(tmp_path):
     (tmp_path / "subtype.txt").write_text("H3N2\n", encoding="utf-8")
     (tmp_path / "references").mkdir()
     (tmp_path / "nextflow.config").write_text(
-        "process.executor = 'local'\n"
-        "process.errorStrategy = 'terminate'\n",
+        "process.executor = 'local'\n" "process.errorStrategy = 'terminate'\n",
         encoding="utf-8",
     )
 
@@ -38,15 +37,14 @@ def test_nextclade_h3_feature_names_map_to_mutation_reference_names(tmp_path):
         "output=$5\n"
         "mutation_type=$6\n"
         "printf 'Sample,%s Differences %s\\nsample,No mutations found\\n' "
-        "\"$segment\" \"$mutation_type\" > \"$output\"\n"
-        "cp \"$output\" \"${output%.csv}_report.csv\"\n",
+        '"$segment" "$mutation_type" > "$output"\n'
+        'cp "$output" "${output%.csv}_report.csv"\n',
         encoding="utf-8",
     )
     fake_mutation_finder.chmod(0o755)
 
     fasta_inputs = ", ".join(
-        f"file('sample_nextclade.cds_translation.A_H3_{feature}.fasta')"
-        for feature in feature_names
+        f"file('sample_nextclade.cds_translation.A_H3_{feature}.fasta')" for feature in feature_names
     )
     expected_human = {
         "sample_HA1_human_mutation.csv",

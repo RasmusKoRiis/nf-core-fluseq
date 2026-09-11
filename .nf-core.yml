@@ -1,1 +1,19 @@
 repository_type: pipeline
+nf_core_version: 4.1.0
+template: null
+
+# This pipeline is maintained in a personal repository and is not presented as
+# an official community-owned nf-core pipeline. Organization-only checks are
+# disabled; technical pipeline and component checks remain enabled.
+lint:
+  actions_awsfulltest: false
+  actions_awstest: false
+  files_exist: false
+  files_unchanged: false
+  multiqc_config: false
+  nextflow_config: false
+  pipeline_name_conventions: false
+  readme:
+    - nfcore_template_badge
+  rocrate_readme_sync: false
+  template_strings: false
