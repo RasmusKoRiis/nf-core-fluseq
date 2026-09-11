@@ -9,7 +9,20 @@ workflow INPUT_CHECK {
     reads = samplesheet
         .splitCsv(header: true, sep: ',', strip: true)
         .toList()
-        .flatMap { rows -> create_fastq_channels(rows, params.samplesDir ?: params.samples_dir) }
+        .flatMap { rows ->
+            def samplesDir = params.containsKey('samplesDir') && params.samplesDir
+                ? params.samplesDir
+                : params.samples_dir
+            try {
+                create_fastq_channels(rows, samplesDir)
+            } catch (java.lang.reflect.InvocationTargetException exception) {
+                // Nextflow invokes functions declared in included scripts through
+                // reflection. Without unwrapping, validation failures are reported
+                // only as "InvocationTargetException" and hide the useful message.
+                def cause = exception.cause ?: exception
+                error cause.message ?: cause.toString()
+            }
+        }
 
     emit:
     reads
