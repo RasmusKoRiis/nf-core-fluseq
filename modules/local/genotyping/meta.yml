@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: genotyping
+description: Compare influenza segments with a genotype reference database and summarize assignments.
+keywords:
+  - influenza
+  - genotyping
+  - sequence analysis
+tools:
+  - BLAST+:
+      description: Nucleotide similarity searches against reference sequences.
+      homepage: https://www.ncbi.nlm.nih.gov/books/NBK279690/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - sequences:
+        type: file
+        description: Influenza segment consensus FASTA files.
+  - genotype_database:
+      type: file
+      description: Genotype nucleotide reference FASTA for BLAST.
+output:
+  genotype_table:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - genotype_table:
+          type: file
+          description: BLAST genotype hit tables.
+          pattern: "*.tsv"
+  genotype:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - genotype:
+          type: file
+          description: Genotype or lineage assignment summary.
+          pattern: ${meta.id}_geno.csv
+  genotype_report:
+    - genotype_report:
+        type: file
+        description: Genotype or lineage assignment CSV for reporting.
+        pattern: ${meta.id}_geno.csv
+  sequences:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - sequences:
+          type: file
+          description: Segment FASTA sequences.
+          pattern: "*fa"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

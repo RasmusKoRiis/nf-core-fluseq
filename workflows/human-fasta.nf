@@ -21,11 +21,14 @@ include { TABLELOOKUP          } from '../modules/local/tablelookup/main'
 include { DRUG_RESISTANCE_REPORT } from '../modules/local/drug_resistance_report/main'
 include { REPORTHUMANFASTA     } from '../modules/local/reporthumanfasta/main'
 include { NEXTCLADE            } from '../modules/local/nextclade/main'
-include { SUBCLADE_NOMENCLATURE; SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature/main'
+include { SUBCLADE_NOMENCLATURE } from '../modules/local/subclade_nomenclature/main'
+include { SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature_rules/main'
 include { REASSORTMENT         } from '../modules/local/reassortment/main'
 include { SURVEILLANCE_SUMMARY } from '../modules/local/surveillance_summary/main'
 include { REFERENCE_PROVENANCE } from '../modules/local/reference_provenance/main'
-include { EMIT_FASTA_RECORD; WRITE_ID_MAP; REHEADER_TO_UID } from '../modules/local/fasta_records/main'
+include { EMIT_FASTA_RECORD } from '../modules/local/emit_fasta_record/main'
+include { WRITE_ID_MAP } from '../modules/local/write_id_map/main'
+include { REHEADER_TO_UID } from '../modules/local/reheader_to_uid/main'
 
 /* ──────────────────────────────────────────────────────────────────────────
    MAIN WORKFLOW

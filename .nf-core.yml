@@ -4,16 +4,45 @@ template: null
 
 # This pipeline is maintained in a personal repository and is not presented as
 # an official community-owned nf-core pipeline. Organization-only checks are
-# disabled; technical pipeline and component checks remain enabled.
+# excepted explicitly below. Technical migration findings remain visible.
 lint:
   actions_awsfulltest: false
   actions_awstest: false
-  files_exist: false
-  files_unchanged: false
-  multiqc_config: false
-  nextflow_config: false
+  files_exist:
+    - .github/workflows/branch.yml
+    - .github/actions/get-shards/action.yml
+    - .github/actions/nf-test/action.yml
+    - .github/workflows/pr-comment.yml
+    - assets/nf-core-nf-core-fluseq_logo_light.png
+    - docs/images/nf-core-nf-core-fluseq_logo_light.png
+    - docs/images/nf-core-nf-core-fluseq_logo_dark.png
+  # Deliberately maintained project templates; other template drift is checked.
+  files_unchanged:
+    - .prettierrc.yml
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/ISSUE_TEMPLATE/feature_request.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - .github/workflows/linting.yml
+    - assets/email_template.html
+    - assets/email_template.txt
+    - assets/sendmail_template.txt
+    - docs/README.md
+    - .gitignore
+    - .prettierignore
+  multiqc_config:
+    - report_comment
+  nextflow_config:
+    - manifest.name
+    - manifest.homePage
+    - custom_config
   pipeline_name_conventions: false
   readme:
     - nfcore_template_badge
   rocrate_readme_sync: false
-  template_strings: false
+  # Python tests generate literal Nextflow include statements with braces.
+  template_strings:
+    - tests/test_multiqc_inputs.py
+    - tests/test_mutationhuman_inputs.py
+    - tests/test_nextclade_inputs.py
+    - tests/test_reporthuman_process.py

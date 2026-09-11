@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: reference_provenance
+description: Record SHA-256 checksums of staged reference files in a provenance manifest.
+keywords:
+  - influenza
+  - reference_provenance
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - references:
+      type: file
+      description: Reference files and directories whose contents will be checksummed.
+output:
+  manifest:
+    - manifest:
+        type: file
+        description: Reference file paths, sizes, and SHA-256 checksums.
+        pattern: reference_manifest.tsv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

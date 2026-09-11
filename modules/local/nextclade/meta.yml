@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: nextclade
+description: Run subtype-specific Nextclade analysis and produce clade, translation, and mutation summaries.
+  H5 non-HA segments are handled separately.
+keywords:
+  - influenza
+  - nextclade
+  - sequence analysis
+tools:
+  - Nextclade:
+      description: Sequence alignment, clade assignment, and mutation calling.
+      homepage: https://docs.nextstrain.org/projects/nextclade/en/stable/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - datasets:
+      type: directory
+      description: Directory containing subtype-specific Nextclade datasets.
+output:
+  nextclade_csv:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - nextclade_csv:
+          type: file
+          description: Nextclade analysis CSV files. Optional output; absent when no applicable result is
+            produced.
+          pattern: "*nextclade.csv"
+  aminoacid_sequence:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - aminoacid_sequence:
+          type: file
+          description: Translated protein FASTA files. Optional output; absent when no applicable result
+            is produced.
+          pattern: "*translation*fasta"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  nextclade_filtered:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - nextclade_filtered:
+          type: file
+          description: Filtered Nextclade mutation CSV files. Optional output; absent when no applicable
+            result is produced.
+          pattern: "*mutation.csv"
+  nextclade_summary_rapport:
+    - nextclade_summary_rapport:
+        type: file
+        description: Nextclade summary CSV files (legacy channel spelling). Optional output; absent when
+          no applicable result is produced.
+        pattern: "*summary.csv"
+  nextclade_report:
+    - nextclade_report:
+        type: file
+        description: Nextclade mutation CSV files for reporting. Optional output; absent when no applicable
+          result is produced.
+        pattern: "*NC_mutation.csv"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

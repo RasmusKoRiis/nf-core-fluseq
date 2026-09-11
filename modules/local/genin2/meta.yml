@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: genin2
+description: Assign influenza genotypes to consensus sequences with GENIN2.
+keywords:
+  - influenza
+  - genin2
+  - sequence analysis
+tools:
+  - GENIN2:
+      description: Influenza genotyping executable provided by the pinned genin2 container.
+      documentation: https://github.com/RasmusKoRiis/nf-core-fluseq/blob/infrastructure/docs/output.md
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+output:
+  genin2_report:
+    - genin2_report:
+        type: file
+        description: GENIN2 genotype calls.
+        pattern: ${meta.id}_genin2.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

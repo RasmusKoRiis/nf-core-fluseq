@@ -13,7 +13,7 @@ data/
 !tests/data/
 !tests/data/**
 testing/
-testing*
+/testing*
 
 # Python and operating-system artifacts
 __pycache__/

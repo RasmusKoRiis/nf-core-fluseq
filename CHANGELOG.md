@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Routine and canonical FASTQ input parsing tests.
 - Reference SHA-256 manifests and controlled-reference documentation.
 - CI coverage for Nextflow 24.10.2 and current stable, Python tests, nf-test, and formatting.
+- Metadata for all 35 local modules, with offline schema and channel-contract validation.
 
 ### `Changed`
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Duplicate lifecycle handlers, stale template tests/workflows, and runtime Nextclade latest-dataset downloads.
 - Hidden input-check exceptions, Nextclade feature-to-reference mapping, HUMANMUTATION staging, and REPORTHUMAN CSV conversion.
 - Global ignored process failures; required process errors now produce a failed workflow status after submitted tasks finish.
+- An ignore rule that excluded `docs/testing.md`, and overly broad advisory lint exceptions that concealed technical migration gaps.
 
 ### `Deprecated`
 

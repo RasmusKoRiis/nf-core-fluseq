@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: reporthuman
+description: Build the human FASTQ run report and combined consensus FASTA, incorporating read statistics
+  and mutation annotations.
+keywords:
+  - influenza
+  - reporthuman
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - subtype:
+      type: file
+      description: Subtype text file or subtype summary CSV files, as required by this process.
+  - coverage:
+      type: file
+      description: Consensus completeness and quality CSV files.
+  - mutation_human:
+      type: file
+      description: Human influenza mutation reports.
+  - mutation_inhibtion:
+      type: file
+      description: Antiviral inhibition mutation reports (legacy input spelling).
+  - lookup:
+      type: file
+      description: Antiviral inhibition workbook lookup results.
+  - nextclade_summary_ha:
+      type: file
+      description: Nextclade HA summary CSV files.
+  - nextclade_sample:
+      type: file
+      description: Per-sample Nextclade mutation CSV files.
+  - mutation_vaccine:
+      type: file
+      description: Vaccine comparison mutation reports.
+  - runid:
+      type: string
+      description: Run identifier used in report names and metadata.
+  - release_version:
+      type: string
+      description: Pipeline release identifier to include in reports.
+  - filtered_fasta:
+      type: file
+      description: Consensus FASTA files passing quality filtering.
+  - irma_depth:
+      type: file
+      description: IRMA read statistics CSV files.
+  - seq_instrument:
+      type: string
+      description: Sequencing instrument label for report metadata.
+  - samplesheet:
+      type: file
+      description: Run sample sheet CSV.
+  - reassortment_report:
+      type: file
+      description: Reassortment summary CSV files.
+  - subclade_nomenclature_report:
+      type: file
+      description: Subclade nomenclature and characterisation CSV files.
+output:
+  report:
+    - report:
+        type: file
+        description: Build the human FASTQ run report and combined consensus FASTA, incorporating read statistics
+          and mutation annotations. Output CSV.
+        pattern: ${runid}.csv
+  filtered_fasta:
+    - filtered_fasta:
+        type: file
+        description: Consensus FASTA files passing the quality threshold, with associated QC data where
+          emitted.
+        pattern: ${runid}.fasta
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: drug_resistance_report
+description: Combine subtype and antiviral resistance annotations, restoring original sample names.
+keywords:
+  - influenza
+  - drug_resistance_report
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - subtype:
+      type: file
+      description: Subtype text file or subtype summary CSV files, as required by this process.
+  - resistance:
+      type: file
+      description: Antiviral resistance annotation tables.
+  - id_map:
+      type: file
+      description: TSV mapping SampleID to OriginalName.
+  - runid:
+      type: string
+      description: Run identifier used in report names and metadata.
+output:
+  report:
+    - report:
+        type: file
+        description: Combine subtype and antiviral resistance annotations, restoring original sample names.
+          Output CSV.
+        pattern: ${runid}_drug_resistance_report.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

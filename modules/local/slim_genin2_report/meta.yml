@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: slim_genin2_report
+description: Select the GENIN2 columns consumed by the combined report.
+keywords:
+  - influenza
+  - slim_genin2_report
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - genin2_csv:
+      type: file
+      description: GENIN2 result CSV to trim.
+output:
+  genin2_report_trimmed:
+    - genin2_report_trimmed:
+        type: file
+        description: Selected GENIN2 report columns.
+        pattern: ${genin2_csv.simpleName}_trimmed.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

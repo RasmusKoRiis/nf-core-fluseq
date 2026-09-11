@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: subclade_nomenclature
+description: Assign influenza subclades and characterisation labels using staged rules and coverage results.
+keywords:
+  - influenza
+  - subclade_nomenclature
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+    - coverage_csv:
+        type: file
+        description: Per-segment consensus completeness CSV files.
+  - rules_dir:
+      type: directory
+      description: Directory containing subclade nomenclature rules and reference sequences.
+  - caller_script:
+      type: file
+      description: Python subclade-calling helper script.
+  - characterisation_script:
+      type: file
+      description: Python characterisation helper script.
+  - characterisation_guidelines:
+      type: file
+      description: Characterisation guideline CSV files.
+output:
+  calls:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - calls:
+          type: file
+          description: Subclade and characterisation calls.
+          pattern: ${meta.id}_subclade_nomenclature.csv
+  report:
+    - report:
+        type: file
+        description: Assign influenza subclades and characterisation labels using staged rules and coverage
+          results. Output CSV.
+        pattern: ${meta.id}_subclade_nomenclature.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

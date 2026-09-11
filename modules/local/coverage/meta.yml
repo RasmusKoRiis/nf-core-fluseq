@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: coverage
+description: Measure consensus sequence completeness and retain segments passing the quality threshold.
+keywords:
+  - influenza
+  - coverage
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - sequences:
+        type: file
+        description: Influenza segment consensus FASTA files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - seq_quality_thershold:
+      type: float
+      description: Minimum consensus completeness percentage required to retain a segment (legacy parameter
+        spelling).
+output:
+  coverage:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - coverage:
+          type: file
+          description: Consensus completeness and quality CSV files.
+          pattern: coverage_reports/*.csv
+  coverage_report:
+    - coverage_report:
+        type: file
+        description: Consensus completeness CSV files for reporting.
+        pattern: coverage_reports/*.csv
+  filtered_fasta:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - filtered_fasta:
+          type: file
+          description: Consensus FASTA files passing the quality threshold, with associated QC data where
+            emitted.
+          pattern: passed/*.fasta
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+      - filtered_fasta_2:
+          type: file
+          description: Consensus FASTA files passing the quality threshold, with associated QC data where
+            emitted.
+          pattern: coverage_reports/*.csv
+  merged_filtered_fasta:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - merged_filtered_fasta:
+          type: file
+          description: Combined FASTA of segments passing quality filtering.
+          pattern: passed/${meta.id}_coverage.fa
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+  filtered_fasta_report:
+    - filtered_fasta_report:
+        type: file
+        description: Quality-filtered consensus FASTA files for reporting.
+        pattern: passed/*.fasta
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: mutationhuman
+description: Compare human influenza protein sequences with subtype references for mutation and antiviral
+  annotations.
+keywords:
+  - influenza
+  - mutationhuman
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - sequence_references:
+      type: directory
+      description: Directory of subtype-specific protein FASTA references for mutation comparison.
+output:
+  human_mutation:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - human_mutation:
+          type: file
+          description: Human influenza mutation comparisons. Optional output; absent when no applicable
+            result is produced.
+          pattern: "*human_mutation.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  inhibtion_mutation:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - inhibtion_mutation:
+          type: file
+          description: Antiviral inhibition mutation comparisons (legacy channel spelling). Optional output;
+            absent when no applicable result is produced.
+          pattern: "*inhibtion_mutation.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  vaccine_mutation:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - vaccine_mutation:
+          type: file
+          description: Vaccine reference mutation comparisons. Optional output; absent when no applicable
+            result is produced.
+          pattern: "*vaccine_mutation.csv"
+  human_mutation_report:
+    - human_mutation_report:
+        type: file
+        description: Human influenza mutation comparisons. CSV for reporting. Optional output; absent when
+          no applicable result is produced.
+        pattern: "*human_mutation_report.csv"
+  inhibtion_mutation_report:
+    - inhibtion_mutation_report:
+        type: file
+        description: Antiviral inhibition mutation comparisons (legacy channel spelling). CSV for reporting.
+          Optional output; absent when no applicable result is produced.
+        pattern: "*inhibtion_mutation_report.csv"
+  vaccine_mutation_report:
+    - vaccine_mutation_report:
+        type: file
+        description: Vaccine reference mutation comparisons. CSV for reporting. Optional output; absent
+          when no applicable result is produced.
+        pattern: "*vaccine_mutation_report.csv"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

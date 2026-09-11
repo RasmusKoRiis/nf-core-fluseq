@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: emit_fasta_record
+description: Write an individual FASTA record with its assigned header and file name.
+keywords:
+  - influenza
+  - emit_fasta_record
+  - sequence analysis
+tools:
+  - BusyBox:
+      description: Shell and file utilities supplied by the Alpine container.
+      homepage: https://busybox.net/
+input:
+  - - sample_id:
+        type: string
+        description: Internal sample identifier.
+    - header_id:
+        type: string
+        description: Header to write in the FASTA record.
+    - file_stem:
+        type: string
+        description: File name stem for the FASTA record.
+    - seq:
+        type: string
+        description: Nucleotide sequence to write.
+    - orig_name:
+        type: string
+        description: Original FASTA record name.
+output:
+  fasta:
+    - - sample_id:
+          type: string
+          description: Internal sample identifier.
+      - orig_name:
+          type: string
+          description: Original FASTA record name.
+      - fasta:
+          type: file
+          description: FASTA sequences emitted by this process.
+          pattern: ${file_stem}.fasta
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

@@ -1,38 +1,36 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
-name: cat_fastq
-description: Concatenate compressed or uncompressed FASTQ inputs into one compressed file per sample.
+name: chopper
+description: Filter long reads by length and quality with Chopper.
 keywords:
   - influenza
-  - cat_fastq
+  - chopper
   - sequence analysis
 tools:
-  - coreutils:
-      description: File concatenation and text output utilities.
-      homepage: https://www.gnu.org/software/coreutils/
+  - Chopper:
+      description: Quality and length filtering for long reads.
+      homepage: https://github.com/wdecoster/chopper
 input:
   - - meta:
         type: map
         description: Sample metadata map containing at least the id key.
-    - reads:
+    - fastq:
         type: file
-        description: FASTQ files for one sample; compressed and uncompressed inputs are supported.
+        description: Input FASTQ reads.
 output:
-  reads:
+  chopperfastq:
     - - meta:
           type: map
           description: Sample metadata map containing at least the id key.
-      - reads:
+      - chopperfastq:
           type: file
-          description: Concatenated gzipped FASTQ reads.
-          pattern: "*.merged.fastq.gz"
+          description: Reads passing length and quality filters.
+          pattern: ${meta.id}_filtered.fastq
   versions:
     - versions:
         type: file
         description: Software versions used by this task.
         pattern: versions.yml
 authors:
-  - "@joseespinosa"
-  - "@drpatelh"
   - "@RasmusKoRiis"
 maintainers:
   - "@RasmusKoRiis"

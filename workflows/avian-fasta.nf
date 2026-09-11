@@ -29,7 +29,9 @@ include { FLUMUT_CONVERSION           } from '../modules/local/flumut_conversion
 include { GENIN2                      } from '../modules/local/genin2/main'
 include { SURVEILLANCE_SUMMARY         } from '../modules/local/surveillance_summary/main'
 include { REFERENCE_PROVENANCE         } from '../modules/local/reference_provenance/main'
-include { EMIT_FASTA_RECORD; WRITE_ID_MAP; REHEADER_TO_UID } from '../modules/local/fasta_records/main'
+include { EMIT_FASTA_RECORD } from '../modules/local/emit_fasta_record/main'
+include { WRITE_ID_MAP } from '../modules/local/write_id_map/main'
+include { REHEADER_TO_UID } from '../modules/local/reheader_to_uid/main'
 include { SLIM_GENIN2_REPORT } from '../modules/local/slim_genin2_report/main'
 
 /* ──────────────────────────────────────────────────────────────────────────

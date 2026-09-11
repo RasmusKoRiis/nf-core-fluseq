@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: depth_analysis
+description: Extract per-position nucleotide counts and depth from aligned reads.
+keywords:
+  - influenza
+  - depth_analysis
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - bam:
+        type: file
+        description: Aligned reads in BAM format.
+    - bai:
+        type: file
+        description: BAM index file.
+output:
+  depth_report:
+    - depth_report:
+        type: file
+        description: Per-position read depth and nucleotide counts.
+        pattern: ${meta.id}_long.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"
