@@ -12,6 +12,16 @@ ROOT = Path(__file__).resolve().parents[1]
 NEXTFLOW = shutil.which("nextflow")
 
 
+def test_avian_fasta_drops_coverage_report_before_nextclade():
+    source = (ROOT / "workflows" / "avian-fasta.nf").read_text(encoding="utf-8")
+    nextclade_call = source.split("/* 11) Nextclade */", 1)[1].split("/* 12) Mutation", 1)[0]
+
+    assert (
+        "COVERAGE.out.filtered_fasta.map { meta, fasta, subtype, report -> tuple(meta, fasta, subtype) }"
+        in nextclade_call
+    )
+
+
 @pytest.mark.skipif(NEXTFLOW is None, reason="Nextflow is not installed")
 @pytest.mark.parametrize(
     ("sample", "subtype", "segment", "dataset"),

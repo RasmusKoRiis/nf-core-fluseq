@@ -151,7 +151,7 @@ workflow AVIANFASTA {
 
   /* 11) Nextclade */
   NEXTCLADE(
-    COVERAGE.out.filtered_fasta,
+    COVERAGE.out.filtered_fasta.map { meta, fasta, subtype, report -> tuple(meta, fasta, subtype) },
     Channel.value(nextclade_dataset_dir)
   )
 
