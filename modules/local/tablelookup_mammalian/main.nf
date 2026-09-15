@@ -42,8 +42,32 @@ process TABLELOOKUP_MAMMALIAN {
 
         type="mammalian"
         filename=\$(basename \$mutation_file)
-        filename_no_ext=\${filename%.*}  
-        segment=\$(echo "\${filename_no_ext}" | awk -F_ '{print \$2}')
+        filename_no_ext=\${filename%.csv}
+        sample_prefix="${meta.id}_"
+        if [[ "\$filename_no_ext" != "\$sample_prefix"* ]]; then
+            echo "Cannot determine segment from \$filename: expected sample prefix \$sample_prefix" >&2
+            exit 1
+        fi
+        segment_and_suffix=\${filename_no_ext#"\$sample_prefix"}
+        case "\$segment_and_suffix" in
+            *_mamailian_mutation_full_mutation_list)
+                segment=\${segment_and_suffix%_mamailian_mutation_full_mutation_list}
+                ;;
+            *_mamailian_mutation)
+                segment=\${segment_and_suffix%_mamailian_mutation}
+                ;;
+            *_nextclade_lookup_mutations)
+                segment=\${segment_and_suffix%_nextclade_lookup_mutations}
+                ;;
+            *)
+                echo "Cannot determine segment from unsupported mammalian mutation filename: \$filename" >&2
+                exit 1
+                ;;
+        esac
+        if [[ -z "\$segment" ]]; then
+            echo "Cannot determine segment from mammalian mutation filename: \$filename" >&2
+            exit 1
+        fi
 
         # Make output name
         output_name=${meta.id}_\${segment}"_mammalian.csv"

@@ -55,6 +55,7 @@ include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATIONHUMAN               } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
+include { REPORT_QC_HTML              } from '../modules/local/report_qc_html/main'
 include { TECHNICAL                   } from '../modules/local/technical/main'
 include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/main'
 include { BASERATIO                   } from '../modules/local/baseratio/main'
@@ -338,6 +339,16 @@ workflow HUMAN {
 
     )
     
+    //
+    // MODULE: HTML run QC assessment from the completed human report
+    //
+    REPORT_QC_HTML (
+        REPORTHUMAN.out.report,
+        Channel.value(file("$projectDir/bin/report_qc_html.py", checkIfExists: true)),
+        Channel.value(file("$projectDir/bin/templates/report_qc.html", checkIfExists: true))
+    )
+    ch_versions = ch_versions.mix(REPORT_QC_HTML.out.versions)
+
     //
     // MODULE: Run FastQC
     //

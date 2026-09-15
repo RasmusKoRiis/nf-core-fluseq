@@ -25,6 +25,12 @@ All four full analysis modes publish their final CSV below `reporthuman/` becaus
 
 The final report combines sample identity, subtype, segment coverage, IRMA statistics, Nextclade assignments, subclade nomenclature, reassortment evidence, and mutation annotations when those results apply. See [report_data_dictionary.md](report_data_dictionary.md) for the column-level contract and missing-value rules.
 
+Human FASTQ runs also publish `reporthuman/<runid>_qc.html` and
+`reporthuman/<runid>_qc.json` automatically. These provide an offline run QC
+assessment, searchable sample review, segment coverage/read-count summaries,
+and an overview of reported subtypes and characterisation. See the
+[HTML QC report guide](run_qc_report.md) for assessment rules and standalone use.
+
 With `--file human-fasta --drug_resistance_only`, `report/<runid>_drug_resistance_report.csv` is the focused antiviral-resistance result.
 
 ## Analysis evidence

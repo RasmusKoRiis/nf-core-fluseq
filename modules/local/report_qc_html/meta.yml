@@ -1,0 +1,40 @@
+name: report_qc_html
+description: Render a final human FASTQ CSV as an offline HTML run QC assessment and JSON summary.
+keywords:
+  - influenza
+  - quality control
+  - html
+tools:
+  - Python:
+      description: Standard-library CSV parsing and self-contained HTML rendering.
+      homepage: https://www.python.org/
+input:
+  - report_csv:
+      type: file
+      description: Final per-sample human FASTQ report from REPORTHUMAN.
+  - report_script:
+      type: file
+      description: Python report_qc_html.py renderer.
+  - report_template:
+      type: file
+      description: HTML template including offline styles and interaction code.
+output:
+  html:
+    - html:
+        type: file
+        description: Searchable run QC assessment and reported findings overview.
+        pattern: '*_qc.html'
+  summary:
+    - summary:
+        type: file
+        description: Machine-readable assessment, source checksum, counts and sample review data.
+        pattern: '*_qc.json'
+  versions:
+    - versions:
+        type: file
+        description: Renderer and Python versions.
+        pattern: versions.yml
+authors:
+  - '@RasmusKoRiis'
+maintainers:
+  - '@RasmusKoRiis'

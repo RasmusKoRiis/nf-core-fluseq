@@ -224,7 +224,8 @@ workflow AVIAN {
     //
 
     AMINOACIDTRANSLATION (
-        COVERAGE.out.filtered_fasta, Channel.value(file(params.nextclade_dataset, checkIfExists: true))
+        COVERAGE.out.filtered_fasta.map { meta, fasta, subtype, report -> tuple(meta, fasta, subtype) },
+        Channel.value(file(params.nextclade_dataset, checkIfExists: true))
     )
    
 

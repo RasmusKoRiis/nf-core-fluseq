@@ -199,7 +199,8 @@ workflow AVIANFASTA {
   def fullPath_inhibition_mutation          = file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)
 
   AMINOACIDTRANSLATION (
-      COVERAGE.out.filtered_fasta, fullPath_nextclade_dataset
+      COVERAGE.out.filtered_fasta.map { meta, fasta, subtype, report -> tuple(meta, fasta, subtype) },
+      fullPath_nextclade_dataset
   )
 
   //
@@ -216,9 +217,13 @@ workflow AVIANFASTA {
   // MODULE: TABLELOOKUP
   //
 
-  def ch_full_mutation_lists = MUTATION.out.full_mutation_list
-  def ch_full_inhib = ch_full_mutation_lists.filter { meta, f, subtype -> FastaUtils.filename(f) ==~ /.*_inhibtion_.*/ }
-  def ch_full_mamm  = ch_full_mutation_lists.filter { meta, f, subtype -> FastaUtils.filename(f) ==~ /.*_mamailian_.*/ }
+  def ch_full_mutation_files = MUTATION.out.full_mutation_list.flatMap { meta, files, subtype ->
+    (files instanceof List ? files : [files]).collect { mutation_file ->
+      tuple(meta, mutation_file, subtype)
+    }
+  }
+  def ch_full_inhib = ch_full_mutation_files.filter { meta, f, subtype -> FastaUtils.filename(f) ==~ /.*_inhibtion_.*/ }
+  def ch_full_mamm  = ch_full_mutation_files.filter { meta, f, subtype -> FastaUtils.filename(f) ==~ /.*_mamailian_.*/ }
 
 
   TABLELOOKUP  (

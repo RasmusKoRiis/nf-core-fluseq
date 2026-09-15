@@ -68,6 +68,10 @@ The operational wrappers in `/home/rasmuskopperud.riis/Coding/flu-wrappers` rema
 
 See [usage](docs/usage.md), [reference-data requirements](docs/reference_data.md), [routine-wrapper contract](docs/routine_wrappers.md), [outputs](docs/output.md), and [testing and private acceptance](docs/testing.md).
 
+Human FASTQ runs automatically produce a [searchable HTML QC report](docs/run_qc_report.md)
+and JSON summary beside the final CSV in `reporthuman/`, with run assessment,
+segment QC and a short overview of reported findings.
+
 ## Reproducibility and tests
 
 - Runtime containers are versioned or digest-pinned.

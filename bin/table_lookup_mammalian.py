@@ -32,8 +32,8 @@ segment_look = "NA1" if segment == "NA" else segment
 # Read mutations data from a CSV file
 mutations_df = pd.read_csv(mutations_file)
 
-# Check if the value in the mutations column is NaN
-if pd.notna(mutations_df.iloc[0, 1]):
+# Check if the value in the mutations column is present
+if not mutations_df.empty and mutations_df.shape[1] > 1 and pd.notna(mutations_df.iloc[0, 1]):
     # Ensure that mutations are consistently stripped of spaces and converted to uppercase
     sample_mutations = [mut.strip().upper() for mut in mutations_df.iloc[0, 1].split(";") if pd.notna(mut)]
 else:
@@ -98,7 +98,7 @@ results = [{"Sample": k, f"{segment} {mutation_type} mutations": ";".join(v)} fo
 # Handle cases where no results are generated for the mutations
 if not results:
     df_output = pd.DataFrame(
-        [{f"{segment} {mutation_type} mutations": "No matching mutations found", "Sample": mutations_df.iloc[0, 0]}]
+        [{f"{segment} {mutation_type} mutations": "No matching mutations found", "Sample": sample_id}]
     )
 else:
     df_output = pd.DataFrame(results)
