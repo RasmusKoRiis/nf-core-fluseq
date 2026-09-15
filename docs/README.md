@@ -10,5 +10,9 @@ The nf-core/fluseq documentation is split into the following pages:
   - Required bundle contents, Nextclade layout, and provenance expectations.
 - [Routine wrappers](routine_wrappers.md)
   - Operational compatibility, branch selection, credentials, and file-safety behavior.
+- [Avian FASTA wrapper file-handling review](avian_fasta_wrapper_review.md)
+  - Publication fixes, operator notes, and verification limits.
+- [Avian FASTA workflow overview](avian_fasta_overview.md)
+  - Workflow purpose, module descriptions, and output orientation.
 
 You can find a lot more documentation about installing, configuring and running nf-core pipelines on the website: [https://nf-co.re](https://nf-co.re)
