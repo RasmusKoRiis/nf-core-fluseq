@@ -78,7 +78,7 @@ workflow AVIANFASTA {
   EMIT_FASTA_RECORD( ch_records )
 
   /* 2) UID ↔ OriginalName map (materialize once) */
-  EMIT_FASTA_RECORD.out
+  EMIT_FASTA_RECORD.out.fasta
     .map { uid, core, f -> tuple(uid?.toString()?.trim(), core?.toString()?.trim()) }
     .distinct()
     .toList()
@@ -88,7 +88,7 @@ workflow AVIANFASTA {
   WRITE_ID_MAP.out.id_map.set { ch_id_map_file }
 
   /* 3) Per-sample bundles (meta + files) — plain tuples only */
-  EMIT_FASTA_RECORD.out
+  EMIT_FASTA_RECORD.out.fasta
     .groupTuple() // -> uid, [core], [files]
     .map { uid, cores, files -> tuple([ id: uid, orig: (cores ? cores[0] : uid) ], files) }
     .set { ch_sample_info }
@@ -121,7 +121,7 @@ workflow AVIANFASTA {
     .set { ch_subtype_pairs }
 
   REHEADER_TO_UID( ch_subtype_pairs )
-  SUBTYPEFINDER( REHEADER_TO_UID.out, ha_db, na_db )
+  SUBTYPEFINDER( REHEADER_TO_UID.out.fasta, ha_db, na_db )
 
   /* 7) GENOTYPING: all FASTAs per sample */
   ch_segments_grouped
