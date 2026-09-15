@@ -197,9 +197,7 @@ process FASTA_CONFIGURATIONFASTA {
     exit 1
   fi
 
-  cat > versions.yml <<-END_VERSIONS
-  "${task.process}":
-      alpine: 3.20.3
-  END_VERSIONS
+  bash_version="$(bash --version | awk 'NR == 1 { print $4 }')"
+  printf 'FASTA_CONFIGURATIONFASTA:\n    bash: "%s"\n' "$bash_version" > versions.yml
   '''
 }
