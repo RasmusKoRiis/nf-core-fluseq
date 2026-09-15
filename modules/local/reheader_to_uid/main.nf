@@ -9,7 +9,7 @@ process REHEADER_TO_UID {
 
     output:
     tuple val(meta), path("HA_${meta.id}.fa"), path("NA_${meta.id}.fa"), emit: fasta
-    path 'versions.yml', emit: versions
+    path 'versions.yml', emit: versions, optional: true
 
     script:
     """

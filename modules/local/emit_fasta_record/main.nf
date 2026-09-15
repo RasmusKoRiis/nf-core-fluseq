@@ -9,7 +9,7 @@ process EMIT_FASTA_RECORD {
 
     output:
     tuple val(sample_id), val(orig_name), path("${file_stem}.fasta"), emit: fasta
-    path 'versions.yml', emit: versions
+    path 'versions.yml', emit: versions, optional: true
 
     script:
     """

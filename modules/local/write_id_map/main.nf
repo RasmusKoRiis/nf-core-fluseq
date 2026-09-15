@@ -9,7 +9,7 @@ process WRITE_ID_MAP {
 
     output:
     path 'id_map.tsv', emit: id_map
-    path 'versions.yml', emit: versions
+    path 'versions.yml', emit: versions, optional: true
 
     script:
     def lines = pairs.collect { row ->
