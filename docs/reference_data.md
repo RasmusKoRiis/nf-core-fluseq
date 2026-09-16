@@ -39,7 +39,12 @@ dataset root. For example, a Victoria HA dataset may be stored as
 directory are supported as well. When a segment contains multiple
 reference-specific datasets, use the flat layout above to select one explicitly.
 
-The pipeline stops if a required local dataset is missing. It does not silently download a moving "latest" Nextclade dataset.
+For every recognized subtype and segment, the pipeline first attempts to download
+the current official Nextclade dataset. If downloading is unavailable or the
+downloaded directory is invalid, it falls back to the controlled local bundle.
+The pipeline stops only when neither source provides a usable dataset. Runs that
+must remain reproducible or network-isolated should therefore provide and retain
+the complete local bundle and restrict task-level network access.
 
 ## Runtime records
 

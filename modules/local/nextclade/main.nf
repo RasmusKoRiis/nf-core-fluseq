@@ -25,6 +25,7 @@ process NEXTCLADE {
     """
     set -euo pipefail
     processed=0
+    dataset_records=''
     # COVERAGE removes the subtype from filenames but preserves the FASTA header.
     subtype_name=\$(tr -d '\\r\\n' < "${subtype}")
     for fasta_file in ${fasta}; do
@@ -89,31 +90,66 @@ process NEXTCLADE {
             )
         fi
 
-        for candidate in "\${dataset_candidates[@]}"; do
-            if [[ -f "\$candidate/pathogen.json" ]]; then
-                dataset_dir="\$candidate"
-                break
-            fi
+        # Keep the HA/NA reference choices used by the production workflow.
+        # Internal segments use the official subtype/segment dataset shortcut.
+        dataset_name=''
+        case "\${dataset_subtype}:\${dataset_segment}" in
+            H1N1:HA) dataset_name='nextstrain/flu/h1n1pdm/ha/california-7-2009' ;;
+            H1N1:NA) dataset_name='nextstrain/flu/h1n1pdm/na/wisconsin-588-2019' ;;
+            H3N2:HA) dataset_name='nextstrain/flu/h3n2/ha/CY163680' ;;
+            H3N2:NA) dataset_name='nextstrain/flu/h3n2/na/EPI1857215' ;;
+            VIC:HA) dataset_name='nextstrain/flu/vic/ha/KX058884' ;;
+            VIC:NA) dataset_name='nextstrain/flu/vic/na/CY073894' ;;
+            H1N1:*|H3N2:*|VIC:*) dataset_name="nextstrain/flu/\${official_subtype}/\${official_segment}" ;;
+            H5*:HA) dataset_name='community/moncla-lab/iav-h5/ha/all-clades' ;;
+        esac
 
-            # Resolve a single reference-specific child directory without
-            # silently choosing between multiple installed reference datasets.
-            nested_dataset=''
-            for pathogen_file in "\$candidate"/*/pathogen.json; do
-                [[ -f "\$pathogen_file" ]] || continue
-                resolved_dataset=\${pathogen_file%/pathogen.json}
-                if [[ -n "\$nested_dataset" && "\$nested_dataset" != "\$resolved_dataset" ]]; then
-                    echo "Multiple local Nextclade datasets found under \$candidate; use the flat <subtype>_<segment> layout to select one" >&2
-                    exit 1
+        # Prefer a freshly downloaded official dataset. If the task has no
+        # network access, retain support for the controlled local bundle.
+        if [[ -n "\$dataset_name" ]]; then
+            download_dir="${meta.id}_\${segment}_nextclade_dataset"
+            echo "Downloading Nextclade dataset \$dataset_name" >&2
+            if nextclade dataset get \
+                --name "\$dataset_name" \
+                --output-dir "\$download_dir"; then
+                if [[ -f "\$download_dir/pathogen.json" ]]; then
+                    dataset_dir="\$download_dir"
+                else
+                    echo "Downloaded dataset \$dataset_name contains no pathogen.json; trying local datasets" >&2
                 fi
-                nested_dataset="\$resolved_dataset"
-            done
-            if [[ -n "\$nested_dataset" ]]; then
-                dataset_dir="\$nested_dataset"
-                break
+            else
+                echo "Could not download \$dataset_name; trying local datasets" >&2
             fi
-        done
+        fi
+
         if [[ -z "\$dataset_dir" ]]; then
-            echo "No local Nextclade dataset for \${dataset_subtype}_\${dataset_segment} under ${datasets}" >&2
+            for candidate in "\${dataset_candidates[@]}"; do
+                if [[ -f "\$candidate/pathogen.json" ]]; then
+                    dataset_dir="\$candidate"
+                    break
+                fi
+
+                # Resolve a single reference-specific child directory without
+                # silently choosing between multiple installed reference datasets.
+                nested_dataset=''
+                for pathogen_file in "\$candidate"/*/pathogen.json; do
+                    [[ -f "\$pathogen_file" ]] || continue
+                    resolved_dataset=\${pathogen_file%/pathogen.json}
+                    if [[ -n "\$nested_dataset" && "\$nested_dataset" != "\$resolved_dataset" ]]; then
+                        echo "Multiple local Nextclade datasets found under \$candidate; use the flat <subtype>_<segment> layout to select one" >&2
+                        exit 1
+                    fi
+                    nested_dataset="\$resolved_dataset"
+                done
+                if [[ -n "\$nested_dataset" ]]; then
+                    dataset_dir="\$nested_dataset"
+                    break
+                fi
+            done
+        fi
+        if [[ -z "\$dataset_dir" ]]; then
+            echo "Unable to download or find a local Nextclade dataset for \${dataset_subtype}_\${dataset_segment}" >&2
+            [[ -n "\$dataset_name" ]] && echo "Download attempted: \$dataset_name" >&2
             echo "Checked candidate roots:" >&2
             for candidate in "\${dataset_candidates[@]}"; do
                 if [[ -d "\$candidate" ]]; then
@@ -131,6 +167,7 @@ process NEXTCLADE {
             --output-all "\$output_dir" \
             "\$fasta_file"
         processed=1
+        dataset_records="\${dataset_records}\${dataset_records:+,}\${segment_name}:\${dataset_dir}"
 
         if compgen -G "\$output_dir/*" > /dev/null; then
             for output_file in "\$output_dir"/*; do
@@ -161,6 +198,7 @@ process NEXTCLADE {
     "${task.process}":
         nextclade: \$(nextclade --version 2>&1 | sed 's/^.*nextclade //; s/ .*\$//')
         dataset_root: ${datasets}
+        datasets: "\$dataset_records"
     END_VERSIONS
     """
 }
