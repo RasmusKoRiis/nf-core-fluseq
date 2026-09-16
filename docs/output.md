@@ -25,6 +25,8 @@ All four full analysis modes publish their final CSV below `reporthuman/` becaus
 
 The final report combines sample identity, subtype, segment coverage, IRMA statistics, Nextclade assignments, subclade nomenclature, reassortment evidence, and mutation annotations when those results apply. See [report_data_dictionary.md](report_data_dictionary.md) for the column-level contract and missing-value rules.
 
+For the full avian FASTA report, see the dedicated [avian FASTA report column dictionary](avian_fasta_report_columns.md), which documents every field in the example operational report and its calculation.
+
 Human FASTQ runs also publish `reporthuman/<runid>_qc.html` and
 `reporthuman/<runid>_qc.json` automatically. These provide an offline run QC
 assessment, searchable sample review, segment coverage/read-count summaries,

@@ -106,8 +106,10 @@ Use sample identity and quality information to establish which records a report
 describes. A missing result is not automatically a negative finding, and a
 completed report does not by itself establish the validity of every biological
 annotation. Consult the existing
-[report data dictionary](report_data_dictionary.md) for column definitions and
-missing-value conventions.
+[avian FASTA report column dictionary](avian_fasta_report_columns.md) for the
+exact avian FASTA fields and calculations. The broader
+[report data dictionary](report_data_dictionary.md) documents shared report
+families and missing-value conventions.
 
 The [output reference](output.md) describes published files across all pipeline
 modes; some entries there apply only to other workflows.

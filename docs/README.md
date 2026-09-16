@@ -14,5 +14,7 @@ The nf-core/fluseq documentation is split into the following pages:
   - Publication fixes, operator notes, and verification limits.
 - [Avian FASTA workflow overview](avian_fasta_overview.md)
   - Workflow purpose, module descriptions, and output orientation.
+- [Avian FASTA report column dictionary](avian_fasta_report_columns.md)
+  - Column-by-column definitions, calculations, value conventions, and interpretation of the example report.
 
 You can find a lot more documentation about installing, configuring and running nf-core pipelines on the website: [https://nf-co.re](https://nf-co.re)
