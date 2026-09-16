@@ -35,6 +35,13 @@ process FLUMUT {
     script:
     """
     set -euo pipefail
+
+    # Always try to retrieve the latest FLUMUT database. A transient network or
+    # update-server failure must not prevent analysis with the bundled database.
+    if ! flumut --update; then
+        echo "WARNING: FLUMUT database update failed; using the database bundled with the container." >&2
+    fi
+
     flumut -m ${meta.id}_markers_output.tsv -M ${meta.id}_mutations_output.tsv -l ${meta.id}_literature_output.tsv $fasta
 
     cat > versions.yml <<-END_VERSIONS
