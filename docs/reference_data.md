@@ -30,7 +30,14 @@ nextclade_datasets/
 └── VIC_NA/
 ```
 
-`B_VIC_<segment>` and `BVIC_<segment>` are accepted alternatives for Victoria-lineage influenza B. H5 datasets use the called H5 subtype, such as `H5N1_HA`. The established H5 path runs Nextclade on HA; other avian segments use the translation workflow.
+`B_VIC_<segment>`, `B-VIC_<segment>`, and `BVIC_<segment>` are accepted alternatives for Victoria-lineage influenza B. H5 datasets use the called H5 subtype, such as `H5N1_HA`. The established H5 path runs Nextclade on HA; other avian segments use the translation workflow.
+
+The official Nextclade collection hierarchy is also accepted below the configured
+dataset root. For example, a Victoria HA dataset may be stored as
+`nextstrain/flu/vic/ha/KX058884/`, and a Victoria matrix dataset as
+`nextstrain/flu/vic/mp/`. Roots containing the collection's leading `data/`
+directory are supported as well. When a segment contains multiple
+reference-specific datasets, use the flat layout above to select one explicitly.
 
 The pipeline stops if a required local dataset is missing. It does not silently download a moving "latest" Nextclade dataset.
 

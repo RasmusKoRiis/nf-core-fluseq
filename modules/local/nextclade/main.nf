@@ -58,17 +58,70 @@ process NEXTCLADE {
         fi
 
         dataset_dir=''
-        for candidate in \
-            "${datasets}/\${dataset_subtype}_\${dataset_segment}" \
-            "${datasets}/B_VIC_\${dataset_segment}" \
-            "${datasets}/BVIC_\${dataset_segment}"; do
-            if [[ -d "\$candidate" && -f "\$candidate/pathogen.json" ]]; then
+        dataset_candidates=("${datasets}/\${dataset_subtype}_\${dataset_segment}")
+
+        # Accept the established flat aliases only for Victoria datasets.
+        if [[ "\$dataset_subtype" == 'VIC' ]]; then
+            dataset_candidates+=(
+                "${datasets}/B_VIC_\${dataset_segment}"
+                "${datasets}/BVIC_\${dataset_segment}"
+                "${datasets}/B-VIC_\${dataset_segment}"
+            )
+        fi
+
+        # Also accept the hierarchy produced by the official Nextclade dataset
+        # collection. HA and NA normally have an additional reference-accession
+        # directory (for example vic/ha/KX058884/pathogen.json).
+        official_subtype=''
+        case "\$dataset_subtype" in
+            H1N1) official_subtype='h1n1pdm' ;;
+            H3N2) official_subtype='h3n2' ;;
+            VIC) official_subtype='vic' ;;
+        esac
+        if [[ -n "\$official_subtype" ]]; then
+            official_segment=\$(printf '%s' "\$dataset_segment" | tr '[:upper:]' '[:lower:]')
+            [[ "\$official_segment" == 'm' ]] && official_segment='mp'
+            dataset_candidates+=(
+                "${datasets}/nextstrain/flu/\${official_subtype}/\${official_segment}"
+                "${datasets}/data/nextstrain/flu/\${official_subtype}/\${official_segment}"
+                "${datasets}/flu/\${official_subtype}/\${official_segment}"
+                "${datasets}/\${official_subtype}/\${official_segment}"
+            )
+        fi
+
+        for candidate in "\${dataset_candidates[@]}"; do
+            if [[ -f "\$candidate/pathogen.json" ]]; then
                 dataset_dir="\$candidate"
+                break
+            fi
+
+            # Resolve a single reference-specific child directory without
+            # silently choosing between multiple installed reference datasets.
+            nested_dataset=''
+            for pathogen_file in "\$candidate"/*/pathogen.json; do
+                [[ -f "\$pathogen_file" ]] || continue
+                resolved_dataset=\${pathogen_file%/pathogen.json}
+                if [[ -n "\$nested_dataset" && "\$nested_dataset" != "\$resolved_dataset" ]]; then
+                    echo "Multiple local Nextclade datasets found under \$candidate; use the flat <subtype>_<segment> layout to select one" >&2
+                    exit 1
+                fi
+                nested_dataset="\$resolved_dataset"
+            done
+            if [[ -n "\$nested_dataset" ]]; then
+                dataset_dir="\$nested_dataset"
                 break
             fi
         done
         if [[ -z "\$dataset_dir" ]]; then
             echo "No local Nextclade dataset for \${dataset_subtype}_\${dataset_segment} under ${datasets}" >&2
+            echo "Checked candidate roots:" >&2
+            for candidate in "\${dataset_candidates[@]}"; do
+                if [[ -d "\$candidate" ]]; then
+                    echo "  exists but contains no resolvable pathogen.json: \$candidate" >&2
+                else
+                    echo "  missing: \$candidate" >&2
+                fi
+            done
             exit 1
         fi
 

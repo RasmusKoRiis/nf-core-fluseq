@@ -30,6 +30,8 @@ def test_avian_fasta_drops_coverage_report_before_nextclade():
         ("sample", "H1N1", "02-NA", "H1N1_NA"),
         ("2786140-INFB", "VICVIC", "03-MP", "VIC_M"),
         ("sample_with_underscores-INFA", "H3N2", "05-PB2", "H3N2_PB2"),
+        ("2756194-INFB", "VIC", "01-HA", "nextstrain/flu/vic/ha/KX058884"),
+        ("2756194-INFB", "VIC", "03-MP", "nextstrain/flu/vic/mp"),
     ],
 )
 def test_nextclade_uses_subtype_file_after_coverage(tmp_path, sample, subtype, segment, dataset):
