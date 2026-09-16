@@ -112,7 +112,7 @@ for col in mutation_columns:
 
 # --- (Optional) Step 7: Replace any remaining commas in cell values with semicolons ---
 # If needed, replace all commas with semicolons to avoid delimiter conflicts.
-nextclade_clean = nextclade_clean.applymap(lambda x: x.replace(",", ";") if isinstance(x, str) else x)
+nextclade_clean = nextclade_clean.map(lambda x: x.replace(",", ";") if isinstance(x, str) else x)
 
 # Make df for mutatins lookup
 

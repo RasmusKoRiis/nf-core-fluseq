@@ -13,7 +13,7 @@ NEXTFLOW = shutil.which("nextflow")
 
 
 @pytest.mark.skipif(NEXTFLOW is None, reason="Nextflow is not installed")
-@pytest.mark.parametrize("segments", [("FIRST",), ("FIRST", "SECOND")])
+@pytest.mark.parametrize("segments", [("FIRST",), ("FIRST", "SECOND"), ("MP",)])
 def test_translation_handles_coverage_names_and_preserves_segment_outputs(tmp_path, segments):
     sample = "sample_with_underscores-INFA"
     inputs = []
@@ -21,7 +21,8 @@ def test_translation_handles_coverage_names_and_preserves_segment_outputs(tmp_pa
         name = f"{sample}_{index:02d}-{segment}-TEST.fa"
         (tmp_path / name).write_text(f">{sample}|{index:02d}-{segment}-TEST\nACGT\n")
         inputs.append(f"file('{name}')")
-        (tmp_path / "datasets" / f"TEST_{segment}").mkdir(parents=True)
+        dataset_segment = "M" if segment == "MP" else segment
+        (tmp_path / "datasets" / f"TEST_{dataset_segment}").mkdir(parents=True)
     (tmp_path / "subtype.txt").write_bytes(b"TEST\r\n")
     (tmp_path / "nextflow.config").write_text(
         "process.executor = 'local'\n"
@@ -40,10 +41,13 @@ def test_translation_handles_coverage_names_and_preserves_segment_outputs(tmp_pa
             'if [[ "$1" == --version ]]; then echo "nextclade 3.0.0"; exit 0; fi\n'
             '[[ "$1" == run && "$2" == --input-dataset && "$4" == --output-all ]]\n'
             '[[ -d "$3" && -f "$6" ]]\n'
-            'segment="${3##*_}"\n'
+            'dataset_segment="${3##*_}"\n'
+            'segment="$dataset_segment"\n'
+            '[[ "$segment" == M ]] && segment=MP\n'
             'mkdir -p "$5/nested"\n'
             'printf "%s\\n" "$segment" > "$5/nextclade.csv"\n'
             'printf "%s\\n" "$segment" > "$5/nextclade.json"\n'
+            'printf "%s\\n" "$3" > "$5/dataset_path.txt"\n'
             # Identical basenames must survive both loop iterations.
             'printf ">synthetic\\nACDE\\n" > "$5/nextclade.cds_translation.shared.fasta"\n'
         ),
@@ -104,3 +108,7 @@ def test_translation_handles_coverage_names_and_preserves_segment_outputs(tmp_pa
     task_dir = next(path.parent for path in task_scripts if "nextclade run" in path.read_text())
     for segment in segments:
         assert (task_dir / f"{sample}_{segment}_nextclade.json").read_text().strip() == segment
+        dataset_segment = "M" if segment == "MP" else segment
+        assert (task_dir / f"{sample}_{segment}_dataset_path.txt").read_text().strip().endswith(
+            f"TEST_{dataset_segment}"
+        )

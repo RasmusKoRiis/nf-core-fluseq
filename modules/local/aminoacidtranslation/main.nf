@@ -38,7 +38,11 @@ process AMINOACIDTRANSLATION {
             exit 1
         fi
 
-        dataset_sample="${dataset}/\${subtype_name}_\${segment_name}"
+        # FASTA headers use MP for the matrix segment, while the local
+        # Nextclade dataset hierarchy uses M (for example H1N1_M).
+        dataset_segment="\$segment_name"
+        [[ "\$dataset_segment" == 'MP' ]] && dataset_segment='M'
+        dataset_sample="${dataset}/\${subtype_name}_\${dataset_segment}"
         output_dir="${meta.id}_\${segment}_nextclade_output"
         
         nextclade run \
