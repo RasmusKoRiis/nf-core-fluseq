@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: tablelookup
+description: Annotate antiviral inhibition mutations using a subtype-specific Excel reference workbook.
+keywords:
+  - influenza
+  - tablelookup
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - inhibition_mutation:
+        type: file
+        description: Antiviral inhibition mutation CSV files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - inhibtion_mutation_table:
+      type: file
+      description: Excel antiviral inhibition reference workbook (legacy input spelling).
+output:
+  inhibtion_mutations:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - inhibtion_mutations:
+          type: file
+          description: Antiviral inhibition mutations annotated from the reference workbook (legacy channel
+            spelling).
+          pattern: "*inhibtion.csv"
+  lookup_report:
+    - lookup_report:
+        type: file
+        description: Mutation workbook lookup CSV files.
+        pattern: "*.csv"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

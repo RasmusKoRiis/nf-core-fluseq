@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: flumut
+description: Annotate influenza sequences with FluMut markers, mutations, and literature references.
+keywords:
+  - influenza
+  - flumut
+  - sequence analysis
+tools:
+  - FluMut:
+      description: Influenza molecular marker annotation.
+      homepage: https://github.com/izsvenezie-virology/FluMut
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+output:
+  markers:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - markers:
+          type: file
+          description: FluMut marker annotations.
+          pattern: ${meta.id}_markers_output.tsv
+  mutations:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - mutations:
+          type: file
+          description: FluMut mutation annotations.
+          pattern: ${meta.id}_mutations_output.tsv
+  literature:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - literature:
+          type: file
+          description: Literature references supporting FluMut annotations.
+          pattern: ${meta.id}_literature_output.tsv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

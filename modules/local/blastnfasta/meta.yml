@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: segmentifentifier
+description: Identify influenza segments with BLAST and split input FASTA records by segment.
+keywords:
+  - influenza
+  - blastnfasta
+  - sequence analysis
+tools:
+  - BLAST+:
+      description: Nucleotide similarity searches against reference sequences.
+      homepage: https://www.ncbi.nlm.nih.gov/books/NBK279690/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+  - reference:
+      type: file
+      description: Influenza segment reference FASTA for BLAST.
+output:
+  fasta_segment:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta_segment:
+          type: file
+          description: Segment FASTA records identified by BLAST.
+          pattern: "*.fasta"
+  fasta_configuration:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta_configuration:
+          type: file
+          description: Segment FASTA files for downstream reformatting.
+          pattern: "*.fa"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

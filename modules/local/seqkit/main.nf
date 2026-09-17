@@ -2,14 +2,13 @@
 process FASTA_CONFIGURATION {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
 
     // TODO nf-core: List required Conda package(s).
     //               Software MUST be pinned to channel (i.e. "bioconda"), version (i.e. "1.10").
     //               For Conda, the build (i.e. "h9402c20_2") must be EXCLUDED to support installation on different operating systems.
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     conda "bioconda::seqkit=2.7.0"
-    container "docker.io/nanozoo/seqkit:latest"
+    container 'docker.io/nanozoo/seqkit@sha256:4257c4136bff15259c3b003b97f30b460b4b6280f9c1299ae302c56ed8a7d240'
 
     input:
     tuple val(meta), path(fasta_files), path(subtype)
@@ -20,6 +19,7 @@ process FASTA_CONFIGURATION {
     tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
     tuple val(meta), path("${meta.id}_genin.fasta"), emit: fasta_genin
     tuple val(meta), path("${meta.id}_genotyping.fasta"), emit: fasta_genotyping
+    path "versions.yml", emit: versions
 
 
     
@@ -41,6 +41,7 @@ process FASTA_CONFIGURATION {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     for fasta_file in \$(ls ${fasta_files}); do
        
        
@@ -153,6 +154,11 @@ process FASTA_CONFIGURATION {
             "\$fasta_file" >> "${meta.id}_genotyping.fasta"
 
     done
+
+    cat > versions.yml <<-END_VERSIONS
+    "${task.process}":
+        seqkit: \$(seqkit version 2>&1 | head -n 1)
+    END_VERSIONS
 
 
     """

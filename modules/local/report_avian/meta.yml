@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: report_avian
+description: Merge avian subtype, genotype, coverage, mutation, and Nextclade CSV tables.
+keywords:
+  - influenza
+  - report_avian
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - subtype:
+      type: file
+      description: Subtype text file or subtype summary CSV files, as required by this process.
+  - genotype:
+      type: file
+      description: Genotype summary CSV files.
+  - coverage:
+      type: file
+      description: Consensus completeness and quality CSV files.
+  - mammalian_mutations:
+      type: file
+      description: Mammalian adaptation mutation annotation CSV files.
+  - nextclade:
+      type: file
+      description: Nextclade result CSV files.
+  - runid:
+      type: string
+      description: Run identifier used in report names and metadata.
+output:
+  report:
+    - report:
+        type: file
+        description: Merge avian subtype, genotype, coverage, mutation, and Nextclade CSV tables. Output
+          CSV.
+        pattern: fluseq_merged_report.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

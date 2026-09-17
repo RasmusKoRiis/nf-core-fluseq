@@ -1,9 +1,7 @@
 process REPORTAVIANFASTA {
     label 'process_single'
 
-    // Python helper scripts live in /project-bin on the container (mounted from repo bin/)
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin"
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     /*
       Use `path` so Nextflow STAGES the files into CWD.
@@ -32,6 +30,7 @@ process REPORTAVIANFASTA {
 
     output:
     path("${runid}.csv"), emit: report
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -44,7 +43,7 @@ echo "[REPORTHUMANFASTA] staged CSVs:"
 ls -1 *.csv || true
 
 # STEP 1: merge all staged CSVs (reportfasta.py handles de-duplication logic)
-python /project-bin/reportfasta.py
+reportfasta.py
 
 # STEP 2: enrich merged report with ID mapping + metadata before QC
 export RUNID='${runid}'
@@ -163,7 +162,12 @@ out.to_csv(f"{runid}_qc_input.csv", index=False)
 PY
 
 # STEP 3: run QC calculation, producing the final CSV
-python /project-bin/report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
+report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
+
+cat > versions.yml <<-END_VERSIONS
+"${task.process}":
+    python: \$(python --version 2>&1)
+END_VERSIONS
 
 # STEP 4: post-process Difference columns for readability on downstream systems
 python - <<'PY'

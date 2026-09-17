@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: flumut_conversion
+description: Convert FluMut marker output to the pipeline reporting CSV format.
+keywords:
+  - influenza
+  - flumut_conversion
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - tsv:
+        type: file
+        description: FluMut marker TSV file.
+output:
+  flumut_report:
+    - flumut_report:
+        type: file
+        description: FluMut annotations converted to report CSV.
+        pattern: ${meta.id}_flumut_report.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

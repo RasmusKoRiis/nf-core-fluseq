@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: aminoacidtranslation
+description: Translate segment consensus sequences and prepare Nextclade mutation lookup tables.
+keywords:
+  - influenza
+  - aminoacidtranslation
+  - sequence analysis
+tools:
+  - Nextclade:
+      description: Sequence alignment, clade assignment, and mutation calling.
+      homepage: https://docs.nextstrain.org/projects/nextclade/en/stable/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - dataset:
+      type: directory
+      description: Nextclade dataset directory.
+output:
+  nextclade_csv:
+    - nextclade_csv:
+        type: file
+        description: Nextclade analysis CSV files.
+        pattern: "*nextclade_mutations.csv"
+  mutation_lookup_csv:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - mutation_lookup_csv:
+          type: file
+          description: Nextclade mutations formatted for workbook lookup.
+          pattern: "*_nextclade_lookup_mutations.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  aminoacid_sequence:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - aminoacid_sequence:
+          type: file
+          description: Translated protein FASTA files.
+          pattern: "*translation*fasta"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

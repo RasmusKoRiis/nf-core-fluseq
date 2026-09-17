@@ -1,7 +1,6 @@
 process REPORT_AVIAN {
 
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions "-v ${baseDir}/bin:/project-bin"   // reportavian.py lives here
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     /*
      * Five lists of CSV paths + run ID.
@@ -20,14 +19,20 @@ process REPORT_AVIAN {
      */
     output:
     path "fluseq_merged_report.csv", emit: report
-    path "*.csv",                    emit: all   // keep originals + merged
+    path "versions.yml", emit: versions
 
     script:
     """
+    set -euo pipefail
     # Merge every CSV in the current directory
-    python /project-bin/reportavian.py
+    reportavian.py
 
     # Rename to a fixed, pipeline-wide name
     mv merged_report.csv fluseq_merged_report.csv
+
+    cat > versions.yml <<-END_VERSIONS
+    "${task.process}":
+        python: \$(python --version 2>&1)
+    END_VERSIONS
     """
 }

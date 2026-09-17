@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: technical
+description: Convert IRMA read-count statistics into per-sample report tables.
+keywords:
+  - influenza
+  - technical
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - irma_stat:
+        type: file
+        description: IRMA READ_COUNTS.txt statistics file.
+output:
+  depth_files:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - depth_files:
+          type: file
+          description: IRMA read statistics converted to CSV.
+          pattern: ${meta.id}_irmastat.csv
+  depth_files_report:
+    - depth_files_report:
+        type: file
+        description: IRMA read statistics CSV for reporting.
+        pattern: ${meta.id}_irmastat.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

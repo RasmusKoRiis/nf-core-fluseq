@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: reheader_to_uid
+description: Rewrite HA and NA FASTA headers using the internal sample identifier.
+keywords:
+  - influenza
+  - reheader_to_uid
+  - sequence analysis
+tools:
+  - awk:
+      description: Text processing for FASTA header conversion.
+      homepage: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - ha:
+        type: file
+        description: HA segment FASTA.
+    - na:
+        type: file
+        description: NA segment FASTA.
+output:
+  fasta:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta:
+          type: file
+          description: FASTA sequences emitted by this process.
+          pattern: HA_${meta.id}.fa
+      - fasta_2:
+          type: file
+          description: FASTA sequences emitted by this process.
+          pattern: NA_${meta.id}.fa
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

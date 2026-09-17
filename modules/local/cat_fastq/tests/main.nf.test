@@ -1,0 +1,55 @@
+nextflow_process {
+
+    name "Test local CAT_FASTQ"
+    script "../main.nf"
+    process "CAT_FASTQ"
+    tag "local"
+    tag "cat_fastq"
+
+    def fixtureDir = new File("tests/data/input_check/fastq/barcode01").canonicalPath
+
+    test("concatenates multiple single-end chunks") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', single_end:true ],
+                    [ file("${fixtureDir}/chunk.fastq.gz"), file("${fixtureDir}/chunk2.fastq.gz") ]
+                ]
+                """
+            }
+        }
+
+        then {
+            def output = path(process.out.reads.get(0)[1])
+            assertAll(
+                { assert process.success },
+                { assert output.fileName.toString() == "test.merged.fastq.gz" },
+                { assert output.text == new File("${fixtureDir}/chunk.fastq.gz").text + new File("${fixtureDir}/chunk2.fastq.gz").text },
+                { assert path(process.out.versions.get(0)).text.contains("cat") }
+            )
+        }
+    }
+
+    test("accepts one single-end chunk") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'single', single_end:true ],
+                    [ file("${fixtureDir}/chunk.fastq.gz") ]
+                ]
+                """
+            }
+        }
+
+        then {
+            def output = path(process.out.reads.get(0)[1])
+            assertAll(
+                { assert process.success },
+                { assert output.fileName.toString() == "single.merged.fastq.gz" },
+                { assert output.text == new File("${fixtureDir}/chunk.fastq.gz").text }
+            )
+        }
+    }
+}

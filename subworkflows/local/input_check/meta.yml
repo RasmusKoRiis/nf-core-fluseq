@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: input_check
+description: Validate supported influenza FASTQ sample sheets and resolve their read files.
+keywords:
+  - fastq
+  - samplesheet
+  - validation
+components: []
+input:
+  - samplesheet:
+      type: file
+      description: CSV sample sheet in routine barcode or explicit FASTQ-path format.
+      pattern: "*.csv"
+output:
+  - reads:
+      type: file
+      description: "Per-sample tuples with metadata and one or more single-end FASTQ files: [ val(meta), [ path(fastq) ] ]."
+      pattern: "*.f{ast,}q.gz"
+authors:
+  - Rasmus Kopperud Riis
+maintainers:
+  - Rasmus Kopperud Riis

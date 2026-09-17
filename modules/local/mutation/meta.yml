@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: mutation
+description: Compare avian influenza protein sequences with references for mammalian adaptation, inhibition,
+  and vaccine annotations.
+keywords:
+  - influenza
+  - mutation
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta:
+        type: file
+        description: Input consensus FASTA sequence file or files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - sequence_references:
+      type: directory
+      description: Directory of subtype-specific protein FASTA references for mutation comparison.
+output:
+  mamailian_mutation:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - mamailian_mutation:
+          type: file
+          description: Mammalian adaptation mutations (legacy channel spelling).
+          pattern: "*mamailian_mutation.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  inhibtion_mutation:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - inhibtion_mutation:
+          type: file
+          description: Antiviral inhibition mutation comparisons (legacy channel spelling).
+          pattern: "*inhibtion_mutation.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  vaccine_mutation:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - vaccine_mutation:
+          type: file
+          description: Vaccine reference mutation comparisons. Optional output; absent when no applicable
+            result is produced.
+          pattern: "*vaccine_mutation.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  full_mutation_list:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - full_mutation_list:
+          type: file
+          description: Full per-position mutation comparisons.
+          pattern: "*full_mutation_list.csv"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  mamailian_mutation_report:
+    - mamailian_mutation_report:
+        type: file
+        description: Mammalian adaptation mutations (legacy channel spelling). CSV for reporting.
+        pattern: "*mamailian_mutation_report.csv"
+  inhibtion_mutation_report:
+    - inhibtion_mutation_report:
+        type: file
+        description: Antiviral inhibition mutation comparisons (legacy channel spelling). CSV for reporting.
+        pattern: "*inhibtion_mutation_report.csv"
+  vaccine_mutation_report:
+    - vaccine_mutation_report:
+        type: file
+        description: Vaccine reference mutation comparisons. CSV for reporting. Optional output; absent
+          when no applicable result is produced.
+        pattern: "*vaccine_mutation_report.csv"
+  full_mutation_list_report:
+    - full_mutation_list_report:
+        type: file
+        description: Full per-position mutation comparisons. CSV for reporting.
+        pattern: "*full_mutation_list_report.csv"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

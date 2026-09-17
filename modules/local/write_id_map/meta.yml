@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: write_id_map
+description: Write a TSV mapping internal sample identifiers to original FASTA record names.
+keywords:
+  - influenza
+  - write_id_map
+  - sequence analysis
+tools:
+  - BusyBox:
+      description: Shell and file utilities supplied by the Alpine container.
+      homepage: https://busybox.net/
+input:
+  - pairs:
+      type: list
+      description: List of internal sample identifier and original-name pairs.
+output:
+  id_map:
+    - id_map:
+        type: file
+        description: TSV mapping internal sample identifiers to original record names.
+        pattern: id_map.tsv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

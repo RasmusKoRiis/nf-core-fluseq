@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: tablelookup_mammalian
+description: Annotate mammalian adaptation mutations using a subtype-specific Excel reference workbook.
+keywords:
+  - influenza
+  - tablelookup_mammalian
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - mammalian_mutation:
+        type: file
+        description: Mammalian adaptation mutation CSV files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+  - mammalian_mutation_table:
+      type: file
+      description: Excel mammalian adaptation reference workbook.
+output:
+  mammalian_mutations:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - mammalian_mutations:
+          type: file
+          description: Mammalian adaptation mutations annotated from the reference workbook.
+          pattern: "*mammalian.csv"
+  lookup_report:
+    - lookup_report:
+        type: file
+        description: Mutation workbook lookup CSV files.
+        pattern: "*.csv"
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

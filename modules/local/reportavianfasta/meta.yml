@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: reportavianfasta
+description: Build the avian FASTA run report from mutation, clade, genotype, and coverage tables.
+keywords:
+  - influenza
+  - reportavianfasta
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - subtype:
+      type: file
+      description: Subtype text file or subtype summary CSV files, as required by this process.
+  - coverage:
+      type: file
+      description: Consensus completeness and quality CSV files.
+  - mutation_mamalian:
+      type: file
+      description: Mammalian adaptation mutation reports (legacy input spelling).
+  - mutation_vaccine:
+      type: file
+      description: Vaccine comparison mutation reports.
+  - mutation_full:
+      type: file
+      description: Full per-position mutation summary tables.
+  - lookup_1:
+      type: file
+      description: First set of mutation workbook lookup results.
+  - lookup_2:
+      type: file
+      description: Second set of mutation workbook lookup results.
+  - nextclade_summary_ha:
+      type: file
+      description: Nextclade HA summary CSV files.
+  - nextclade_sample:
+      type: file
+      description: Per-sample Nextclade mutation CSV files.
+  - id_map:
+      type: file
+      description: TSV mapping SampleID to OriginalName.
+  - runid:
+      type: string
+      description: Run identifier used in report names and metadata.
+  - release_version:
+      type: string
+      description: Pipeline release identifier to include in reports.
+  - filtered_fasta:
+      type: list
+      description: Compatibility input; accepted but not read by this report process.
+  - seq_instrument:
+      type: string
+      description: Sequencing instrument label for report metadata.
+  - samplesheet:
+      type: string
+      description: Compatibility input; accepted but not read by this report process.
+  - genin2:
+      type: file
+      description: GENIN2 genotype result CSV files.
+  - flumut:
+      type: file
+      description: Converted FluMut report CSV files.
+  - reassortment:
+      type: file
+      description: Reassortment summary tables.
+output:
+  report:
+    - report:
+        type: file
+        description: Build the avian FASTA run report from mutation, clade, genotype, and coverage tables.
+          Output CSV.
+        pattern: ${runid}.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

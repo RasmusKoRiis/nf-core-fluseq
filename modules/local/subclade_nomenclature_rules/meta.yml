@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: subclade_nomenclature_rules
+description: Download pinned subclade rules and their reference sequences for downstream nomenclature
+  calls. Requires network access.
+keywords:
+  - influenza
+  - subclade_nomenclature_rules
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input: []
+output:
+  rules_dir:
+    - rules_dir:
+        type: directory
+        description: Downloaded subclade rules and reference sequences.
+        pattern: subclade_nomenclature
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

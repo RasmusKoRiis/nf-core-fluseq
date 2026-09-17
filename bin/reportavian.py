@@ -1,10 +1,15 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import glob
 
-#MERGE ALL DATA
+REFERENCE_COLUMNS = ["Mutation reference", "Vaccine mutation reference"]
+
+
+# MERGE ALL DATA
 
 # Get a list of all CSV files in the current directory
-csv_files = glob.glob('*.csv')
+csv_files = glob.glob("*.csv")
 
 # Initialize an empty DataFrame to store the merged data
 merged_data = None
@@ -21,13 +26,21 @@ for i, file in enumerate(csv_files):
         # Merge the DataFrame with the merged_data DataFrame based on the "Sample" column
         merged_data = pd.concat([merged_data, df], axis=0, ignore_index=True)
 
-# Group by 'Sample' and combine the rows
-merged_data = merged_data.groupby('Sample', as_index=False).first()
+if merged_data is None:
+    pd.DataFrame(columns=["Sample", *REFERENCE_COLUMNS]).to_csv("merged_report.csv", index=False)
+    raise SystemExit(0)
 
-#NIPH spesific adustment
-#replace ! with - in the Sample column 
-merged_data['Sample'] = merged_data['Sample'].str.replace('!', '-')
+# Group by 'Sample' and combine the rows
+merged_data = merged_data.groupby("Sample", as_index=False).first()
+
+# NIPH spesific adustment
+# replace ! with - in the Sample column
+merged_data["Sample"] = merged_data["Sample"].str.replace("!", "-")
+
+for column in REFERENCE_COLUMNS:
+    if column not in merged_data.columns:
+        merged_data[column] = "NA"
 
 
 # Write the merged data to a new CSV file
-merged_data.to_csv('merged_report.csv', index=False)
+merged_data.to_csv("merged_report.csv", index=False)

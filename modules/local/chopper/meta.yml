@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: chopper
+description: Filter long reads by length and quality with Chopper.
+keywords:
+  - influenza
+  - chopper
+  - sequence analysis
+tools:
+  - Chopper:
+      description: Quality and length filtering for long reads.
+      homepage: https://github.com/wdecoster/chopper
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fastq:
+        type: file
+        description: Input FASTQ reads.
+output:
+  chopperfastq:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - chopperfastq:
+          type: file
+          description: Reads passing length and quality filters.
+          pattern: ${meta.id}_filtered.fastq
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

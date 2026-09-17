@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: baseratio
+description: Merge depth and nucleotide-count CSV tables into a combined report.
+keywords:
+  - influenza
+  - baseratio
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - depth:
+      type: file
+      description: Input depth tables.
+output:
+  report:
+    - report:
+        type: file
+        description: Merge depth and nucleotide-count CSV tables into a combined report. Output CSV.
+        pattern: depth_report.csv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

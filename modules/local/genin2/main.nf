@@ -2,7 +2,6 @@
 process GENIN2 {
     tag "$meta.id"
     label 'process_medium'
-    errorStrategy 'ignore'
    
 
 
@@ -12,8 +11,7 @@ process GENIN2 {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     //conda "bioconda::irma=1.0.3"
     //container 'docker.io/rasmuskriis/cdc_irma_custom:1.0'
-    container 'docker.io/rasmuskriis/genin2:latest'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/genin2@sha256:b4ae8e1bf146c7283f973a950988125a51e782513554ee889c5c32bccbf10e5f'
     
 
     //container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -26,6 +24,7 @@ process GENIN2 {
 
     output:
     path("${meta.id}_genin2.csv") , emit: genin2_report
+    path "versions.yml", emit: versions
 
 
 
@@ -34,9 +33,15 @@ process GENIN2 {
 
     script:
     """
+    set -euo pipefail
     genin2 -o ${meta.id}_genin2.tsv "$fasta"
     awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if(\$i=="Genotype") \$i="Genotype_Genin2"}1' OFS='\t' ${meta.id}_genin2.tsv \
     | tr '\t' ',' > ${meta.id}_genin2.csv
+
+    cat > versions.yml <<-END_VERSIONS
+    "${task.process}":
+        genin2: \$(genin2 --version 2>&1 | head -n 1)
+    END_VERSIONS
 
 
     """

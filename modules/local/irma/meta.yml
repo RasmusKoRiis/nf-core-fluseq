@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: irma
+description: Assemble influenza consensus sequences from filtered reads using IRMA FLU-minion.
+keywords:
+  - influenza
+  - irma
+  - sequence analysis
+tools:
+  - IRMA:
+      description: Iterative Refinement Meta-Assembler for viral genomes.
+      homepage: https://wonder.cdc.gov/amd/flu/irma/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fastq:
+        type: file
+        description: Input FASTQ reads.
+output:
+  fasta:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta:
+          type: file
+          description: FASTA sequences emitted by this process.
+          pattern: $meta.id/*.fasta
+  bam:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - bam:
+          type: file
+          description: Read alignment BAM and index files.
+          pattern: $meta.id/*.bam
+      - bam_2:
+          type: file
+          description: Read alignment BAM and index files.
+          pattern: $meta.id/*.bai
+  vcf:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - vcf:
+          type: file
+          description: IRMA variant calls.
+          pattern: $meta.id/*.vcf
+  read_count:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - read_count:
+          type: file
+          description: IRMA read-count statistics.
+          pattern: $meta.id/tables/READ_COUNTS.txt
+  figures:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - figures:
+          type: file
+          description: IRMA diagnostic figures.
+          pattern: $meta.id/figures/*.pdf
+  amended_consensus:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - amended_consensus:
+          type: file
+          description: IRMA amended consensus sequences.
+          pattern: $meta.id/amended_consensus/*.fa
+  secondary:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - secondary:
+          type: directory
+          description: IRMA secondary analysis directory.
+          pattern: $meta.id/secondary
+  alleles:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - alleles:
+          type: file
+          description: IRMA allele and statistics tables.
+          pattern: $meta.id/tables/*txt
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

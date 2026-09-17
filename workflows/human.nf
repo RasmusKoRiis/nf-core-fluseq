@@ -4,16 +4,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
+include { paramsSummaryMap } from 'plugin/nf-schema'
 
-def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
 def summary_params = paramsSummaryMap(workflow)
-
-// Print parameter summary log to screen
-log.info logo + paramsSummaryLog(workflow) + citation
-
-WorkflowFluseq.initialise(params, log)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +28,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { INPUT_CHECK } from '../subworkflows/local/input_check/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,11 +42,12 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
-include { CAT_FASTQ                   } from '../modules/nf-core/cat/fastq/main'
+include { CAT_FASTQ                   } from '../modules/local/cat_fastq/main'
 include { IRMA                        } from '../modules/local/irma/main'
 include { AMINOACIDTRANSLATION        } from '../modules/local/aminoacidtranslation/main'
 include { NEXTCLADE                   } from '../modules/local/nextclade/main'
-include { SUBCLADE_NOMENCLATURE; SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature/main'
+include { SUBCLADE_NOMENCLATURE } from '../modules/local/subclade_nomenclature/main'
+include { SUBCLADE_NOMENCLATURE_RULES } from '../modules/local/subclade_nomenclature_rules/main'
 include { SUBTYPEFINDER               } from '../modules/local/blastn/main'
 include { GENOTYPING                  } from '../modules/local/genotyping/main'
 include { COVERAGE                    } from '../modules/local/coverage/main'
@@ -61,12 +55,14 @@ include { FASTA_CONFIGURATION         } from '../modules/local/seqkit/main'
 include { MUTATIONHUMAN               } from '../modules/local/mutationhuman/main'
 include { TABLELOOKUP                 } from '../modules/local/tablelookup/main'
 include { REPORTHUMAN                 } from '../modules/local/reporthuman/main'
+include { REPORT_QC_HTML              } from '../modules/local/report_qc_html/main'
 include { TECHNICAL                   } from '../modules/local/technical/main'
 include { DEPTH_ANALYSIS              } from '../modules/local/depth_analysis/main'
 include { BASERATIO                   } from '../modules/local/baseratio/main'
 include { CHOPPER                     } from '../modules/local/chopper/main'
 include { REASSORTMENT                } from '../modules/local/reassortment/main'
 include { SURVEILLANCE_SUMMARY        } from '../modules/local/surveillance_summary/main'
+include { REFERENCE_PROVENANCE        } from '../modules/local/reference_provenance/main'
 
 
 
@@ -84,35 +80,25 @@ def multiqc_report = []
 
 
 
-// Function to parse the sample sheet
-def parseSampleSheet(sampleSheetPath) {
-        return Channel
-            .fromPath(sampleSheetPath)
-            .splitCsv(header: true, sep: ',', strip: true)
-            .map { row ->
-                def sampleId = row.SequenceID
-                def files = file("${params.samplesDir}/${row.Barcode}/*.fastq.gz")
-                // Creating a metadata map
-                def meta = [ id: sampleId, single_end: true ]
-                return tuple(meta, files)
-            }
-}
-
 workflow HUMAN {
 
     //
     // INPUT PARSE
     //
 
-    ch_sample_information = parseSampleSheet(params.input)
-    
     ch_versions = Channel.empty()
 
-    ch_sample_information
-        .map { meta, files ->
-            tuple(meta, files.toList())
-        }
-    .set { read_input }
+    REFERENCE_PROVENANCE(Channel.value([
+        file(params.ha_database, checkIfExists: true),
+        file(params.na_database, checkIfExists: true),
+        file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true),
+        file(params.reassortment_database, checkIfExists: true),
+        file(params.sequence_references, checkIfExists: true),
+        file(params.nextclade_dataset, checkIfExists: true)
+    ]))
+
+    INPUT_CHECK(Channel.fromPath(params.input, checkIfExists: true))
+    INPUT_CHECK.out.reads.set { read_input }
 
     //
     // MODULE: CAT_FASTQ
@@ -248,10 +234,10 @@ workflow HUMAN {
     //Calculate the coverage of the sequences and filter out low quality sequences
 
     /// Coverage threshold from the params/user
-    def seq_quality_thershold = params.seq_quality_thershold
+    def seq_quality_threshold = params.seq_quality_thershold ?: params.seq_quality_threshold
 
     COVERAGE (
-         FASTA_CONFIGURATION.out.fasta, seq_quality_thershold
+         FASTA_CONFIGURATION.out.fasta, seq_quality_threshold
     )
 
     ch_versions = ch_versions.mix(COVERAGE.out.versions.first())
@@ -263,12 +249,16 @@ workflow HUMAN {
     SUBCLADE_NOMENCLATURE_RULES()
     ch_subclade_nomenclature_rules = SUBCLADE_NOMENCLATURE_RULES.out.rules_dir.first()
     ch_subclade_nomenclature_script = Channel.value(file("$projectDir/bin/subclade_nomenclature.py", checkIfExists: true))
+    ch_characterisation_script = Channel.value(file("$projectDir/bin/characterise_reference_virus.py", checkIfExists: true))
+    ch_characterisation_guidelines = Channel.value(file("$projectDir/assets/characterisation_guidelines", checkIfExists: true))
     ch_versions = ch_versions.mix(SUBCLADE_NOMENCLATURE_RULES.out.versions.first())
 
     SUBCLADE_NOMENCLATURE (
         COVERAGE.out.filtered_fasta,
         ch_subclade_nomenclature_rules,
-        ch_subclade_nomenclature_script
+        ch_subclade_nomenclature_script,
+        ch_characterisation_script,
+        ch_characterisation_guidelines
     )
 
     ch_versions = ch_versions.mix(SUBCLADE_NOMENCLATURE.out.versions.first())
@@ -279,7 +269,8 @@ workflow HUMAN {
     //Translate the nucleotide sequences to amino acid sequences using Nextclade
 
     NEXTCLADE (
-        filtered_fasta_for_nextclade
+        filtered_fasta_for_nextclade,
+        Channel.value(file(params.nextclade_dataset, checkIfExists: true))
     )
 
     ch_versions = ch_versions.mix(NEXTCLADE.out.versions.first())
@@ -291,7 +282,7 @@ workflow HUMAN {
     //def fullPath_references_2 = "${currentDir}/${params.sequence_references}"
     
     MUTATIONHUMAN  (
-       NEXTCLADE.out.aminoacid_sequence, Channel.value(file(params.sequence_references))
+       NEXTCLADE.out.aminoacid_sequence, Channel.value(file(params.sequence_references, checkIfExists: true))
     )
 
     ch_versions = ch_versions.mix(MUTATIONHUMAN.out.versions.first())
@@ -301,7 +292,7 @@ workflow HUMAN {
     //Check if mutations are annotated in mammalian and inhibition databases
 
     TABLELOOKUP  (
-        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db))
+        MUTATIONHUMAN.out.inhibtion_mutation, Channel.value(file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true))
         
     )
 
@@ -316,7 +307,7 @@ workflow HUMAN {
             .collect(),
         REASSORTMENT.out.genotype_report.collect(),
         TABLELOOKUP.out.lookup_report.collect(),
-        Channel.value([file(params.inhibtion_mutation_db)]),
+        Channel.value([file(params.inhibtion_mutation_db ?: params.inhibition_mutation_db, checkIfExists: true)]),
         Channel.value(file("$projectDir/bin/surveillance_summary.py", checkIfExists: true))
     )
 
@@ -349,6 +340,16 @@ workflow HUMAN {
     )
     
     //
+    // MODULE: HTML run QC assessment from the completed human report
+    //
+    REPORT_QC_HTML (
+        REPORTHUMAN.out.report,
+        Channel.value(file("$projectDir/bin/report_qc_html.py", checkIfExists: true)),
+        Channel.value(file("$projectDir/bin/templates/report_qc.html", checkIfExists: true))
+    )
+    ch_versions = ch_versions.mix(REPORT_QC_HTML.out.versions)
+
+    //
     // MODULE: Run FastQC
     //
     FASTQC (
@@ -374,9 +375,10 @@ workflow HUMAN {
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(NEXTCLADE.out.versions.first().ifEmpty(null))
-    ch_multiqc_files = ch_multiqc_files.mix(SUBTYPEFINDER.out.versions.first().ifEmpty(null))
-    ch_multiqc_files = ch_multiqc_files.mix(MUTATIONHUMAN.out.versions.first().ifEmpty(null))
+    // Failed or skipped processes must not add null paths to MultiQC inputs.
+    ch_multiqc_files = ch_multiqc_files.mix(NEXTCLADE.out.versions.first().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(SUBTYPEFINDER.out.versions.first().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(MUTATIONHUMAN.out.versions.first().ifEmpty([]))
     
 
 
@@ -389,26 +391,3 @@ workflow HUMAN {
     )
     multiqc_report = MULTIQC.out.report.toList()
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMPLETION EMAIL AND SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow.onComplete {
-    if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-    }
-    NfcoreTemplate.dump_parameters(workflow, params)
-    NfcoreTemplate.summary(workflow, params, log)
-    if (params.hook_url) {
-        NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
-    }
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

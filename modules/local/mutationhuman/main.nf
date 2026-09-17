@@ -2,13 +2,11 @@
 process MUTATIONHUMAN  {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
     
     
    
     //conda "bioconda::blast=2.15.0"
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     input:
     tuple val(meta), path(fasta), path(subtype)
@@ -31,11 +29,10 @@ process MUTATIONHUMAN  {
     when:
     task.ext.when == null || task.ext.when
 
-    //errorStrategy 'ignore'
-
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def drugResistanceOnly = params.drug_resistance_only == true
     // TODO nf-core: Where possible, a command MUST be provided to obtain the version number of the software e.g. 1.10
     //               If the software is unable to output a version number on the command-line then it can be manually specified
     //               e.g. https://github.com/nf-core/modules/blob/master/modules/nf-core/homer/annotatepeaks/main.nf
@@ -46,7 +43,9 @@ process MUTATIONHUMAN  {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     subtype_name=\$(cat ${subtype} )
+    drug_resistance_only=${drugResistanceOnly}
   
     #Subtype fix for B (not optimal)
     if [[ "\$subtype_name" == "VIC" ]]; then
@@ -65,6 +64,16 @@ process MUTATIONHUMAN  {
         # Extract 'XX' as the segment assuming it's after the last '_' in segment_subtype
         segment=\$(echo "\${segment_subtype}" | awk -F_ '{print \$NF}')
 
+        # Nextclade translation labels follow dataset feature names, whereas the
+        # mutation reference tree uses protein names.
+        case "\$segment" in
+            HA)       segment=HA1 ;;
+            M)        segment=M1 ;;
+            NA1|NA2)  segment=NA ;;
+            NS)       segment=NS1 ;;
+            SIG)      segment=SigPep ;;
+        esac
+
         # Make output name
         output_name_human=${meta.id}_\${segment}"_human_mutation.csv"
         output_name_mamailian=${meta.id}_\${segment}"_mamailian_mutation.csv"
@@ -81,9 +90,9 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - DEFAULT
 
-        if [[ "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* && "\${segment}" != *"BM2"* ]]; then 
+        if [[ "\$drug_resistance_only" != "true" && "\${segment}" != *"NEP"* && "\${segment}" != *"PA-X"* && "\${segment}" != *"PB1-F2"* && "\${segment}" != *"BM2"* ]]; then
 
-            python /project-bin/mutation_finder.py \
+            mutation_finder.py \
                 \$fasta_file \
                 \$reference_file \
                 \${segment} \
@@ -105,7 +114,7 @@ process MUTATIONHUMAN  {
         if [[ ( "\${segment}" == *"NA"* || ( "\${segment}" == *"PA"* && "\${segment}" != *"PA-X"* ) || "\${segment}" == *"M2"* ) && "\${segment}" != *"BM2"* ]]; then
 
 
-            python /project-bin/mutation_finder.py \
+            mutation_finder.py \
                 \$fasta_file \
                 \$reference_file \
                 \${segment} \
@@ -121,9 +130,9 @@ process MUTATIONHUMAN  {
 
         # HUMAN MUTATIONS - VACCINE
         
-        if [[ ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
+        if [[ "\$drug_resistance_only" != "true" && ("\${segment}" == *"HA"* || "\${segment}" == *"NA"*) ]]; then
 
-        python /project-bin/mutation_finder.py \
+        mutation_finder.py \
             \$fasta_file \
             \$reference_file \
             \${segment} \

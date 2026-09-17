@@ -2,14 +2,12 @@
 process MUTATION {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
    
   
 
 
     //conda "bioconda::blast=2.15.0"
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     input:
     tuple val(meta), path(fasta), path(subtype)
@@ -33,8 +31,6 @@ process MUTATION {
     when:
     task.ext.when == null || task.ext.when
 
-    //errorStrategy 'ignore'
-
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
@@ -48,6 +44,7 @@ process MUTATION {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     subtype_name=\$(cat ${subtype} )
 
     for fasta_file in ${fasta}; do
@@ -75,7 +72,7 @@ process MUTATION {
         inhibition=inhibition
         human_vaccine=human_vaccine
 
-        python /project-bin/mutation_finder.py \
+        mutation_finder.py \
             \$fasta_file \
             \$reference_file \
             \${segment} \
@@ -92,7 +89,7 @@ process MUTATION {
 
 
 
-        python /project-bin/mutation_finder.py \
+        mutation_finder.py \
             \$fasta_file \
             \$reference_file \
             \${segment} \
@@ -112,7 +109,7 @@ process MUTATION {
 
 
 
-        python /project-bin/mutation_finder.py \
+        mutation_finder.py \
             \$fasta_file \
             \$reference_file \
             \${segment} \
@@ -131,7 +128,7 @@ process MUTATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        python: \$(python --version 2>&1 | awk '{print \$2}')
     END_VERSIONS
     """
 }

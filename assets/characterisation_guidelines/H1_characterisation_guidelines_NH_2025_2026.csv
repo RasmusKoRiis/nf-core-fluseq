@@ -1,0 +1,17 @@
+reference_virus,reference_role,clade,subclade,signature_amino_acid_substitutions,ancestor,reporting_category
+A/Victoria/2570/2019,vaccine,5a.2,,"K130N; N156K; A187D; L161I; V250A",A/Victoria/2570/2019 signature baseline,no
+A/Netherlands/10468/2023,reference,5a.2a,C.1,"Clade 5a.2 + I418V",5a.2,yes
+A/Michigan/62/2023,reference,5a.2a,C.1.8,"Clade 5a.2a (C.1) + I418V + T120A + V47I",5a.2a (C.1),no
+A/Lisboa/188/2023,reference,5a.2a,C.1.9,"Clade 5a.2a (C.1) + I418V + T120A + K169Q",5a.2a (C.1),yes
+none assigned,,5a.2a,C.1.9.1,"Clade 5a.2a (C.1.9) + P137S",5a.2a (C.1.9),no
+none assigned,,5a.2a,C.1.9.2,"Clade 5a.2a (C.1.9) + N38D + K153R",5a.2a (C.1.9),no
+A/Hungary/286/2024,reference,5a.2a,C.1.9.3,"Clade 5a.2a (C.1) + I418V + K169Q + S83P + I510T",5a.2a (C.1),yes
+none assigned,,5a.2a,C.1.9.4,"Clade 5a.2a (C.1.9) + Q54K + D86N + N125D + I149V",5a.2a (C.1.9),no
+A/Wisconsin/67/2022,vaccine,5a.2a.1,C.1.1,"Clade 5a.2a + P137S; K142R; D260E; T277A",5a.2a,no
+A/Victoria/4897/2022,vaccine,5a.2a.1,D,"Clade 5a.2a.1 (C.1.1) + T216A",5a.2a.1 (C.1.1),yes
+A/Netherlands/10481/2024,reference,5a.2a.1,D.1,"Clade 5a.2a.1 (D) + R45K",5a.2a.1 (D),no
+A/Bretagne/05126/2024,reference,5a.2a.1,D.2,"Clade 5a.2a.1 (D) + R113K; V427I",5a.2a.1 (D),no
+A/Norway/00926/2025,reference,5a.2a.1,D.3,"Clade 5a.2a.1 (D) + T120A; I372V",5a.2a.1 (D),no
+A/Missouri/11/2025,vaccine,5a.2a.1,D.3.1,"Clade 5a.2a.1 (D.3) + I460T; V520A",5a.2a.1 (D.3),yes
+A/Poland/28/2024,reference,5a.2a.1,D.4,"Clade 5a.2a.1 (D) + T120A",5a.2a.1 (D),no
+A/Norway/06906/2024,reference,5a.2a.1,D.5,"Clade 5a.2a.1 (D) + R45K",5a.2a.1 (D),no

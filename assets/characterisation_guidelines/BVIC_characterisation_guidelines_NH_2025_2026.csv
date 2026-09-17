@@ -1,0 +1,14 @@
+reference_virus,reference_role,clade,subclade,signature_amino_acid_substitutions,ancestor,reporting_category
+B/Washington/02/2019,vaccine,V1A.3,,"I117V; N129D; K136E; del(162-164)",B/Brisbane/60/2008 signature baseline,no
+B/Croatia/7789/2019,reference,V1A.3a,,"Clade V1A.3 + N150K; G184E; N197D (-CHO); R279K",V1A.3,no
+B/Cote d’Ivoire/948/2020,reference,V1A.3a.1,,"Clade V1A.3a + V220M; P241Q",V1A.3a,no
+B/Austria/1359417/2021,vaccine,V1A.3a.2,C,"Clade V1A.3a + A127T; P144L; K203R",V1A.3a,yes
+B/Netherlands/10335/2023,reference,V1A.3a.2,C.2,"Clade V1A.3a.2 (C) + T182A; D197E; T221A",V1A.3a.2 (C),no
+B/Moldova/2030521/2023,reference,V1A.3a.2,C.3,"Clade V1A.3a.2 (C) + E128K; A154E; S208P",V1A.3a.2 (C),no
+B/Kanagawa/AC2414/2025,reference,V1A.3a.2,C.3.1,"Clade V1A.3a.2 (C.3) + D197N (+CHO)",V1A.3a.2 (C.3),yes
+B/Stockholm/3/2022,reference,V1A.3a.2,C.5,"Clade V1A.3a.2 (C) + D197E",V1A.3a.2 (C),yes
+B/Catalonia/2279261NS/2023,reference,V1A.3a.2,C.5.1,"Clade V1A.3a.2 (C.5) + E183K",V1A.3a.2 (C.5),yes
+B/Catalonia/3514402NS/2023,reference,V1A.3a.2,C.5.4,"Clade V1A.3a.2 (C.5) + V117I; E128K; A154T; K326R",V1A.3a.2 (C.5),no
+B/Switzerland/329/2024,reference,V1A.3a.2,C.5.6,"Clade V1A.3a.2 (C.5) + D129N",V1A.3a.2 (C.5),yes
+B/ENG/120/2025,reference,V1A.3a.2,C.5.6.1,"Clade V1A.3a.2 (C.5.6) + T37I; E128D; T199A",V1A.3a.2 (C.5.6),yes
+B/Greece/5509/2024,reference,V1A.3a.2,C.5.7,"Clade V1A.3a.2 (C.5) + E128G",V1A.3a.2 (C.5),yes

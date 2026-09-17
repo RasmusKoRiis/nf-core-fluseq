@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: surveillance_summary
+description: Combine segment QC, reassortment, and antiviral resistance evidence into TSV and JSON surveillance
+  summaries.
+keywords:
+  - influenza
+  - surveillance_summary
+  - sequence analysis
+tools:
+  - FluSeq scripts:
+      description: Repository-specific influenza analysis and reporting helpers.
+      homepage: https://github.com/RasmusKoRiis/nf-core-fluseq
+input:
+  - mode:
+      type: string
+      description: Surveillance mode, human or avian.
+  - fasta:
+      type: file
+      description: Input consensus FASTA sequence file or files.
+  - coverage:
+      type: file
+      description: Consensus completeness and quality CSV files.
+  - subtype:
+      type: file
+      description: Subtype text file or subtype summary CSV files, as required by this process.
+  - subtype_hits:
+      type: file
+      description: HA and NA BLAST hit TSV files.
+  - reassortment:
+      type: file
+      description: Reassortment summary tables.
+  - resistance:
+      type: file
+      description: Antiviral resistance annotation tables.
+  - resistance_databases:
+      type: file
+      description: Excel antiviral resistance reference workbooks.
+  - summary_script:
+      type: file
+      description: Python surveillance-summary helper script.
+output:
+  segment_qc:
+    - segment_qc:
+        type: file
+        description: Per-sample segment completeness and quality summary.
+        pattern: segment_qc.tsv
+  reassortment_summary:
+    - reassortment_summary:
+        type: file
+        description: Segment lineage and reassortment evidence summary.
+        pattern: reassortment_summary.tsv
+  resistance_summary:
+    - resistance_summary:
+        type: file
+        description: Antiviral resistance annotation summary.
+        pattern: resistance_summary.tsv
+  sample_summary:
+    - sample_summary:
+        type: file
+        description: Combined per-sample surveillance results in JSON.
+        pattern: sample_summary.json
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

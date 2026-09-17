@@ -1,0 +1,2 @@
+cat_fastq:
+  - modules/local/cat_fastq/**

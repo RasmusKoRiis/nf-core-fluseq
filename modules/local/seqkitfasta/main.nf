@@ -21,6 +21,7 @@ process FASTA_CONFIGURATIONFASTA {
     tuple val(meta), path("${meta.id}_flumut.fasta"), emit: fasta_flumut
     tuple val(meta), path("${meta.id}_genin.fasta"), emit: fasta_genin
     tuple val(meta), path("${meta.id}_genotyping.fasta"), emit: fasta_genotyping
+    path "versions.yml", emit: versions
 
   /*
     Strategy:
@@ -195,5 +196,8 @@ process FASTA_CONFIGURATIONFASTA {
     echo "No valid segments found for ${META_ID} among staged files." >&2
     exit 1
   fi
+
+  bash_version="$(bash --version | awk 'NR == 1 { print $4 }')"
+  printf 'FASTA_CONFIGURATIONFASTA:\n    bash: "%s"\n' "$bash_version" > versions.yml
   '''
 }

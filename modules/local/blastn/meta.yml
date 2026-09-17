@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: subtypefinder
+description: Determine HA and NA subtype from BLAST hits, retaining status and diagnostic tables.
+keywords:
+  - influenza
+  - blastn
+  - sequence analysis
+tools:
+  - BLAST+:
+      description: Nucleotide similarity searches against reference sequences.
+      homepage: https://www.ncbi.nlm.nih.gov/books/NBK279690/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - ha_fasta:
+        type: file
+        description: HA segment FASTA.
+    - na_fasta:
+        type: file
+        description: NA segment FASTA.
+  - ha_database:
+      type: file
+      description: HA nucleotide reference FASTA used to build the BLAST database.
+  - na_database:
+      type: file
+      description: NA nucleotide reference FASTA used to build the BLAST database.
+output:
+  subtype:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - subtype:
+          type: file
+          description: Called influenza subtype text file.
+          pattern: "*subtype.txt"
+  subtype_file:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - subtype_file:
+          type: file
+          description: Subtype summary CSV.
+          pattern: "*subtype.csv"
+  subtype_report:
+    - subtype_report:
+        type: file
+        description: Subtype summary CSV for reporting.
+        pattern: "*subtype.csv"
+  subtype_status:
+    - subtype_status:
+        type: file
+        description: Subtype call status and diagnostic details.
+        pattern: "*_subtype.status.tsv"
+  subtype_errors:
+    - subtype_errors:
+        type: file
+        description: Subtype search error diagnostics. Optional output; absent when no applicable result
+          is produced.
+        pattern: "*_subtype.errors.txt"
+  subtype_file_test:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - subtype_file_test:
+          type: file
+          description: Subtype search TSV tables.
+          pattern: "*.tsv"
+  subtype_hits:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - subtype_hits:
+          type: file
+          description: HA and NA BLAST hit tables.
+          pattern: ha_${meta.id}.tsv
+      - subtype_hits_2:
+          type: file
+          description: HA and NA BLAST hit tables.
+          pattern: na_${meta.id}.tsv
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

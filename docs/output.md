@@ -1,71 +1,59 @@
-# nf-core/fluseq: Output
+# nf-core-fluseq: Output
 
-## Introduction
+Only stable, user-facing files are published from the Nextflow work directory. Paths below are relative to `--outdir`; not every directory is produced in every mode.
 
-This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarises results at the end of the pipeline.
+| Directory        | Contents                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| `reporthuman/`   | Final human or avian CSV report. This path is a compatibility contract used by all routine wrappers. |
+| `report/`        | Focused human FASTA drug-resistance report when `--drug_resistance_only` is enabled.                 |
+| `irma/`          | IRMA consensus and run outputs for FASTQ modes.                                                      |
+| `subtyping/`     | HA/NA subtype calls and supporting results.                                                          |
+| `genotyping/`    | Avian or full FASTA genotype results.                                                                |
+| `reassortment/`  | Reassortment analysis outputs.                                                                       |
+| `nextclade/`     | Nextclade CSV and sequence outputs.                                                                  |
+| `subclade/`      | Seasonal subclade nomenclature results.                                                              |
+| `flumut/`        | FluMut markers, mutation, literature, and converted files.                                           |
+| `genin2/`        | GenIn2 results and the slim report used by avian reporting.                                          |
+| `surveillance/`  | Segment QC, reassortment, resistance, and sample-level surveillance summaries.                       |
+| `fastqc/`        | Raw-read FastQC results for FASTQ modes.                                                             |
+| `multiqc/`       | MultiQC report and data for FASTQ modes.                                                             |
+| `pipeline_info/` | Execution metadata, software versions, parameters, and reference checksums.                          |
 
-The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
+## Final reports
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
+All four full analysis modes publish their final CSV below `reporthuman/` because routine wrappers depend on that location. The filename is derived from `--runid` for the human and FASTA reports; the avian FASTQ merge currently publishes `fluseq_merged_report.csv`. Human FASTQ reporting also emits a filtered FASTA in the task work directory, but it is not part of the stable published-output contract.
 
-## Pipeline overview
+The final report combines sample identity, subtype, segment coverage, IRMA statistics, Nextclade assignments, subclade nomenclature, reassortment evidence, and mutation annotations when those results apply. See [report_data_dictionary.md](report_data_dictionary.md) for the column-level contract and missing-value rules.
 
-The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
+For the full avian FASTA report, see the dedicated [avian FASTA report column dictionary](avian_fasta_report_columns.md), which documents every field in the example operational report and its calculation.
 
-- [FastQC](#fastqc) - Raw read QC
-- [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
-- [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+Human FASTQ runs also publish `reporthuman/<runid>_qc.html` and
+`reporthuman/<runid>_qc.json` automatically. These provide an offline run QC
+assessment, searchable sample review, segment coverage/read-count summaries,
+and an overview of reported subtypes and characterisation. See the
+[HTML QC report guide](run_qc_report.md) for assessment rules and standalone use.
 
-### FastQC
+With `--file human-fasta --drug_resistance_only`, `report/<runid>_drug_resistance_report.csv` is the focused antiviral-resistance result.
 
-<details markdown="1">
-<summary>Output files</summary>
+## Analysis evidence
 
-- `fastqc/`
-  - `*_fastqc.html`: FastQC report containing quality metrics.
-  - `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
+- `irma/` contains per-sample consensus FASTA, BAM/BAI, VCF, read-count tables, allele tables, figures, amended consensus files, and IRMA secondary outputs for FASTQ modes.
+- `subtyping/` contains HA/NA BLAST hit tables, subtype calls, status records, and diagnostic error text when classification is incomplete.
+- `genotyping/` and `reassortment/` contain per-sample CSV/TSV classifications and the segment-level evidence used by avian and full FASTA reporting.
+- `nextclade/` contains raw Nextclade CSV output, translated coding sequences, filtered mutation tables, summaries, and normalized amino-acid mutation CSV files.
+- `subclade/` contains seasonal nomenclature calls. These depend on the pinned rules and Nextclade results used for the run.
+- `flumut/` and `genin2/` contain tool-native annotations plus the converted or trimmed CSV files consumed by final reporting.
+- `surveillance/` contains `segment_qc.tsv`, `reassortment_summary.tsv`, `resistance_summary.tsv`, and `sample_summary.json`.
+- `fastqc/` and `multiqc/` contain raw-read QC reports for FASTQ modes. MultiQC summarizes technical evidence; it does not replace review of failed tasks or the final influenza report.
 
-</details>
+Missing mode-specific directories can be expected when the corresponding analysis is not selected. A missing required final report is a failed acceptance condition.
 
-[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your sequenced reads. It provides information about the quality score distribution across your reads, per base sequence content (%A/T/G/C), adapter contamination and overrepresented sequences. For further reading and documentation see the [FastQC help pages](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/).
+## Provenance
 
-![MultiQC - FastQC sequence counts plot](images/mqc_fastqc_counts.png)
+`pipeline_info/reference_manifest.tsv` contains a SHA-256 digest for every file staged from the run's controlled reference inputs. Together with the parameter dump and pipeline revision, this identifies the data and code used for the run.
 
-![MultiQC - FastQC mean quality scores plot](images/mqc_fastqc_quality.png)
+Nextflow also writes timestamped execution reports, timelines, traces, and DAGs under `pipeline_info/`. These files are useful for run acceptance, performance tuning, and incident investigation.
 
-![MultiQC - FastQC adapter content plot](images/mqc_fastqc_adapter.png)
+## Publishing behavior
 
-:::note
-The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
-:::
-
-### MultiQC
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `multiqc/`
-  - `multiqc_report.html`: a standalone HTML file that can be viewed in your web browser.
-  - `multiqc_data/`: directory containing parsed statistics from the different tools used in the pipeline.
-  - `multiqc_plots/`: directory containing static images from the report in various formats.
-
-</details>
-
-[MultiQC](http://multiqc.info) is a visualization tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in the report data directory.
-
-Results generated by MultiQC collate pipeline QC from supported tools e.g. FastQC. The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability. For more information about how to use MultiQC reports, see <http://multiqc.info>.
-
-### Pipeline information
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `pipeline_info/`
-  - Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
-  - Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.yml`. The `pipeline_report*` files will only be present if the `--email` / `--email_on_fail` parameter's are used when running the pipeline.
-  - Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
-  - Parameters used by the pipeline run: `params.json`.
-
-</details>
-
-[Nextflow](https://www.nextflow.io/docs/latest/tracing.html) provides excellent functionality for generating various reports relevant to the running and execution of the pipeline. This will allow you to troubleshoot errors with the running of the pipeline, and also provide you with other information such as launch commands, run times and resource usage.
+The default `--publish_dir_mode` is `copy`. `move` is intentionally disallowed because moving task outputs can invalidate Nextflow resume behavior. Intermediate files remain in the configured work directory and are not copied into results unless explicitly listed in the output contract.

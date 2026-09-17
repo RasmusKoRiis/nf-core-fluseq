@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: fasta_configuration
+description: Reformat assembled influenza consensus records for reporting, FluMut, GENIN2, and genotyping.
+keywords:
+  - influenza
+  - seqkit
+  - sequence analysis
+tools:
+  - SeqKit:
+      description: FASTA and FASTQ manipulation.
+      homepage: https://bioinf.shenwei.me/seqkit/
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing at least the id key.
+    - fasta_files:
+        type: file
+        description: Assembled segment FASTA files.
+    - subtype:
+        type: file
+        description: Subtype text file or subtype summary CSV files, as required by this process.
+output:
+  fasta:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta:
+          type: file
+          description: FASTA sequences emitted by this process.
+          pattern: "*.fa"
+      - subtype:
+          type: file
+          description: Subtype text file or subtype summary CSV files, as required by this process.
+  fasta_merge:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta_merge:
+          type: file
+          description: Combined consensus FASTA for the sample.
+          pattern: ${meta.id}.fasta
+  fasta_flumut:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta_flumut:
+          type: file
+          description: FASTA formatted for FluMut.
+          pattern: ${meta.id}_flumut.fasta
+  fasta_genin:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta_genin:
+          type: file
+          description: FASTA formatted for GENIN2.
+          pattern: ${meta.id}_genin.fasta
+  fasta_genotyping:
+    - - meta:
+          type: map
+          description: Sample metadata map containing at least the id key.
+      - fasta_genotyping:
+          type: file
+          description: FASTA with numeric segment identifiers for genotyping.
+          pattern: ${meta.id}_genotyping.fasta
+  versions:
+    - versions:
+        type: file
+        description: Software versions used by this task.
+        pattern: versions.yml
+authors:
+  - "@RasmusKoRiis"
+maintainers:
+  - "@RasmusKoRiis"

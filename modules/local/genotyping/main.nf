@@ -2,12 +2,10 @@
 process GENOTYPING {
     tag "$meta.id"
     label 'process_single'
-    errorStrategy 'ignore'
 
 
     //conda "bioconda::blast=2.15.0"
-    container 'docker.io/rasmuskriis/blast_python_pandas:amd64'
-    containerOptions = "-v ${baseDir}/bin:/project-bin" // Mount the bin directory
+    container 'docker.io/rasmuskriis/blast_python_pandas@sha256:fd100d56162d663949f23a0c26bee52a6d4b0da66235ce0aa53407353185b66a'
 
     input:
     tuple val(meta), path(sequences)
@@ -25,8 +23,6 @@ process GENOTYPING {
     when:
     task.ext.when == null || task.ext.when
 
-    //errorStrategy 'ignore'
-
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
@@ -40,13 +36,14 @@ process GENOTYPING {
     // TODO nf-core: Please replace the example samtools command below with your module's command
     // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
     """
+    set -euo pipefail
     cat ${sequences} > ${meta.id}_sequences.fa
 
     blastn -query ${meta.id}_sequences.fa -subject ${genotype_database} -outfmt 6  > ${meta.id}_genotypes.tsv
 
-    python /project-bin/genotyping.py ${meta.id}_genotypes.tsv ${meta.id}_genotypes_highest_pident.tsv
+    genotyping.py ${meta.id}_genotypes.tsv ${meta.id}_genotypes_highest_pident.tsv
 
-    python /project-bin/genotypeing02.py ${meta.id}_genotypes_highest_pident.tsv ${meta.id}_genotypes.txt
+    genotypeing02.py ${meta.id}_genotypes_highest_pident.tsv ${meta.id}_genotypes.txt
 
     sed "s/^/${meta.id},/" ${meta.id}_genotypes.txt > ${meta.id}_geno.csv
 
@@ -60,7 +57,8 @@ process GENOTYPING {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        : \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' ))
+        blastn: \$(blastn -version 2>&1 | head -n 1 | awk '{print \$3}')
+        python: \$(python --version 2>&1 | awk '{print \$2}')
     END_VERSIONS
     """
 }
