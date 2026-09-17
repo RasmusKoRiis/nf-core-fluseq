@@ -35,7 +35,12 @@ def test_reporthuman_embedded_python_preserves_escaped_delimiters(tmp_path):
         encoding="utf-8",
     )
     (tmp_path / "nextflow.config").write_text(
-        "process.executor = 'local'\n" "process.errorStrategy = 'terminate'\n",
+        f"params.outdir = '{tmp_path / 'published'}'\n"
+        "params.publish_dir_mode = 'copy'\n"
+        "params.multiqc_title = null\n"
+        f"includeConfig '{ROOT / 'conf/modules.config'}'\n"
+        "process.executor = 'local'\n"
+        "process.errorStrategy = 'terminate'\n",
         encoding="utf-8",
     )
 
@@ -110,3 +115,6 @@ def test_reporthuman_embedded_python_preserves_escaped_delimiters(tmp_path):
     output = result.stdout + result.stderr
     assert result.returncode == 0, output
     assert "REPORTHUMAN_COMPLETED" in output
+    published = tmp_path / "published/reporthuman"
+    assert sorted(path.name for path in published.iterdir()) == ["TEST.csv", "TEST.fasta"]
+    assert (published / "TEST.fasta").read_text(encoding="utf-8") == ">SAMPLE01\nACGT\n"
