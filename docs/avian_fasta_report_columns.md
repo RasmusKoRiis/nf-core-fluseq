@@ -203,26 +203,39 @@ identity is selected; bit score and alignment length break ties. The result is:
 
 | Value | Meaning |
 | --- | --- |
-| `ORIGIN|SUBTYPE|STRAIN(percentage%)` | Best hit has at least 80% identity. An unavailable annotation can appear as `UNKNOWN` within the formatted value. |
-| `TooLow(percentage%):ORIGIN|SUBTYPE|STRAIN` | Best hit is below 80% identity. |
+| `ORIGIN\|SUBTYPE\|STRAIN(M:99.9%/N:20.0%)` | Best hit has at least 80% identity. `M` is BLAST alignment identity; `N` is the percentage of Ns in the complete input segment. An unavailable annotation can appear as `UNKNOWN`. |
+| `TooLow(M:79.0%/N:20.0%):ORIGIN\|SUBTYPE\|STRAIN` | Best hit is below 80% identity; N content is still shown. |
 | `Missing` | No segment hit was available. |
 
-There is no explicit minimum query-coverage rule in this screen, so a short
-high-identity alignment can be selected. The percentage is BLAST alignment
-identity, not whole-segment completeness.
+The match threshold is **at least 80.0%**, applied to the unrounded BLAST
+`pident` value. Percentages are displayed to one decimal place. There is no
+additional minimum alignment-length or query-coverage rule in this screen, so
+a short high-identity alignment can be selected. `M` is BLAST alignment
+identity, not whole-segment completeness and not recalculated after removing
+Ns. `N` is `100 × count(N or n) / full input-record length`, including unaligned
+ends and excluding headers and whitespace. N content does not introduce a
+separate acceptance threshold.
+
+Example: `HUMAN-SEASONAL|H3N2|A/Singapore/GP20238/2024(M:99.9%/N:20.0%)`
+reports 99.9% identity over the selected alignment and 20% Ns over the entire
+input segment. See the [reassortment screen contract](report_data_dictionary.md#reassortment-screen)
+for the threshold, reference annotation rules, and FASTA input requirements.
 
 ### Overall reassortment fields
 
 | Column | What it contains | How it is calculated |
 | --- | --- | --- |
 | `Reassortment` | Compact compatibility result: `No`, `Yes`, or `Unknown`. | `Unknown` when any expected segment is missing, below 80%, or lacks reference metadata. Otherwise `No` when all accepted segments match one `(origin, subtype, strain)` profile, and `Yes` when more than one profile is represented. |
-| `Conclusion` | Detailed rule-based interpretation of the segment matches. | Reports incomplete evidence, mixed origins, subtype discordance, non-human origin, or multiple reference strains. Examples include `INCONCLUSIVE`, `ALERT`, `REVIEW`, `FLAG`, and `CONSISTENT` messages. |
+| `Conclusion` | Seasonal-human review decision and reasons. | `CONSISTENT` only when all eight segments have accepted, fully annotated `HUMAN-SEASONAL` matches of one subtype or B lineage; different reference strains are allowed. Every other case is `ALERT`, including missing/low-identity segments, unknown metadata, other origins, and mixed subtypes. |
 | `Origins` | Distinct origins among accepted segment hits. | Unique, sorted database annotations joined with `;`, excluding missing/low hits. |
 | `Subtypes` | Distinct reference subtypes among accepted segment hits. | Unique, sorted database annotations joined with `;`. This can differ from singular `Subtype`. |
 | `ReferenceStrains` | Distinct reference strain names among accepted segment hits. | Unique, sorted accepted reference annotations joined with `;`. |
 
 This is a database-similarity screen, not a phylogenetic reassortment analysis.
 It does not infer an ancestral reassortment event or statistical support.
+`Reassortment` retains its reference-profile rule, so multiple seasonal-human
+reference strains of one subtype can produce `Reassortment=Yes` alongside a
+`CONSISTENT` conclusion.
 
 ## Reference-difference columns
 
@@ -402,7 +415,7 @@ The example row illustrates several independent analyses:
 - `HA=Missing` belongs to the independent reassortment-database screen. It
   does **not** mean the sample lacks an HA consensus: the row has 91.44% HA
   non-`N` coverage and an HA-derived H5 subtype call.
-- `Conclusion=INCONCLUSIVE - missing segments: HA; observed subtype
+- `Conclusion=ALERT - missing segments: HA; subtype
   discordance: H1N1,H3N2` summarises the reassortment reference matches, not
   the direct H5N1 subtype call. The other segments' best database matches were
   annotated as human H1N1 and H3N2 references.
@@ -415,7 +428,7 @@ The example row illustrates several independent analyses:
   Those symbols describe unknown amino acids and alignment gaps relative to
   the configured references and warrant alignment/reference review; they are
   not automatically validated biological mutations.
-- A blank `NGS_QC_Sum` does not clear the reassortment `INCONCLUSIVE` result or
+- A blank `NGS_QC_Sum` does not clear the reassortment `ALERT` result or
   the antiviral `Review` fields because those are outside the final QC formula.
 
 ## Primary implementation files

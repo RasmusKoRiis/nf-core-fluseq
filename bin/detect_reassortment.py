@@ -23,6 +23,7 @@ import pandas as pd
 EXPECTED_SEGMENTS = ["PB2", "PB1", "PA", "HA", "NP", "NA", "MP", "NS"]
 IDENTITY_THRESHOLD = 80.0  # %
 UNKNOWN = "UNKNOWN"
+SEASONAL_HUMAN = "HUMAN-SEASONAL"
 
 SEGMENT_ALIASES = {
     "M": "MP",
@@ -228,14 +229,46 @@ def load_reference_metadata(path: str) -> Dict[str, Dict[str, str]]:
 
 
 def apply_reference_metadata(parsed: Dict[str, str], lookup: Dict[str, Dict[str, str]]) -> Dict[str, str]:
-    """Fill unavailable legacy-header fields from accession metadata."""
+    """Fill missing annotations and refine known seasonal HUMAN references."""
     reference = lookup.get(parsed["accession"])
     if not reference:
         return parsed
     for field in ("origin", "subtype", "strain"):
         if parsed[field] == UNKNOWN and reference[field] != UNKNOWN:
             parsed[field] = reference[field]
+    if (
+        parsed["origin"] == "HUMAN"
+        and reference["origin"] == SEASONAL_HUMAN
+        and parsed["subtype"] == reference["subtype"]
+    ):
+        parsed["origin"] = SEASONAL_HUMAN
     return parsed
+
+
+def read_query_n_content(path: str) -> Dict[str, float]:
+    """Count N/n over each complete FASTA record, keyed by BLAST query ID."""
+    counts = {}
+    query_id = None
+    with open(path, encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith(">"):
+                header = line[1:].split()
+                if not header:
+                    raise ValueError("Query FASTA contains an empty identifier")
+                query_id = header[0]
+                if query_id in counts:
+                    raise ValueError(f"Duplicate query FASTA identifier: {query_id}")
+                counts[query_id] = [0, 0]
+            else:
+                if query_id is None:
+                    raise ValueError("Query FASTA sequence appears before its identifier")
+                sequence = "".join(line.split()).upper()
+                counts[query_id][0] += sequence.count("N")
+                counts[query_id][1] += len(sequence)
+    return {query_id: 100.0 * n / length for query_id, (n, length) in counts.items() if length}
 
 
 def format_reference(hit) -> str:
@@ -253,56 +286,33 @@ def build_conclusion(accepted: List[Dict[str, str]], missing: List[str], low: Li
     """Create an actionable conclusion from all eight segment calls."""
     origins = {hit["origin"] for hit in accepted if hit["origin"] != UNKNOWN}
     subtypes = {hit["subtype"] for hit in accepted if hit["subtype"] != UNKNOWN}
-    strains = {hit["strain"] for hit in accepted if hit["strain"] != UNKNOWN}
     metadata_missing = [hit["segment"] for hit in accepted if UNKNOWN in (hit["origin"], hit["subtype"], hit["strain"])]
-    non_human = sorted(origin for origin in origins if origin != "HUMAN")
+    non_seasonal = sorted(origins - {SEASONAL_HUMAN})
 
-    if missing or low or metadata_missing:
-        reasons = []
-        if missing:
-            reasons.append(f"missing segments: {','.join(missing)}")
-        if low:
-            reasons.append(f"low-identity segments: {','.join(low)}")
-        if metadata_missing:
-            reasons.append(f"reference metadata missing for: {','.join(metadata_missing)}")
-        if non_human:
-            reasons.append(f"observed non-human origin(s): {','.join(non_human)}")
-        if len(origins) > 1:
-            reasons.append(f"observed mixed origins: {','.join(sorted(origins))}")
-        if len(subtypes) > 1:
-            reasons.append(f"observed subtype discordance: {','.join(sorted(subtypes))}")
-        return "INCONCLUSIVE - " + "; ".join(reasons)
-
-    origin_text = ",".join(sorted(origins))
-    subtype_text = ",".join(sorted(subtypes))
-
+    reasons = []
+    if missing:
+        reasons.append(f"missing segments: {','.join(missing)}")
+    if low:
+        reasons.append(f"low-identity segments: {','.join(low)}")
+    if metadata_missing:
+        reasons.append(f"reference metadata missing for: {','.join(metadata_missing)}")
+    if non_seasonal:
+        reasons.append(f"origin(s) not confirmed seasonal human: {','.join(non_seasonal)}")
     if len(origins) > 1:
-        detail = f"ALERT - mixed origins ({origin_text})"
-        if len(subtypes) > 1:
-            detail += f" and subtypes ({subtype_text})"
-        return detail
-
-    origin = next(iter(origins))
-    if origin != "HUMAN":
-        if len(subtypes) > 1:
-            return f"ALERT - non-human origin {origin} with mixed subtypes ({subtype_text})"
-        subtype = next(iter(subtypes))
-        if len(strains) > 1:
-            return f"ALERT - possible {origin} {subtype} reassortment; multiple reference strains"
-        return f"FLAG - all segments match one non-human {origin} {subtype} reference strain"
-
+        reasons.append(f"mixed origins: {','.join(sorted(origins))}")
     if len(subtypes) > 1:
-        return f"ALERT - human subtype discordance ({subtype_text})"
+        reasons.append(f"subtype discordance: {','.join(sorted(subtypes))}")
+    if reasons:
+        return "ALERT - " + "; ".join(reasons)
 
     subtype = next(iter(subtypes))
-    if len(strains) > 1:
-        return f"REVIEW - possible within-subtype reassortment; multiple HUMAN {subtype} reference strains"
-    return f"CONSISTENT - all segments match one HUMAN {subtype} reference strain"
+    return f"CONSISTENT - all eight segments match {SEASONAL_HUMAN} {subtype} references"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--blast", required=True, help="BLAST outfmt 6 table")
+    parser.add_argument("--fasta", required=True, help="Query FASTA used for BLAST; supplies full-segment N content")
     parser.add_argument("--output", required=True, help="Single-line CSV result")
     parser.add_argument("--sample", required=True, help="Sample ID")
     parser.add_argument(
@@ -337,6 +347,7 @@ def read_blast(path: str) -> pd.DataFrame:
 def main() -> None:
     args = parse_args()
     blast = read_blast(args.blast)
+    n_content = read_query_n_content(args.fasta)
     blast["segment"] = blast["qseqid"].apply(infer_segment_from_qseqid)
 
     metadata_lookup = load_reference_metadata(args.metadata)
@@ -366,14 +377,18 @@ def main() -> None:
             continue
 
         hit = candidates.iloc[0]
-        identity = round(float(hit["pident"]), 1)
+        identity = float(hit["pident"])
+        query_id = hit["qseqid"]
+        if query_id not in n_content:
+            raise ValueError(f"BLAST query {query_id!r} is absent or empty in the query FASTA")
+        percentages = f"M:{identity:.1f}%/N:{n_content[query_id]:.1f}%"
         reference = format_reference(hit)
         if identity < IDENTITY_THRESHOLD:
-            row[segment] = f"TooLow({identity}%):{reference}"
+            row[segment] = f"TooLow({percentages}):{reference}"
             low.append(segment)
             continue
 
-        row[segment] = f"{reference}({identity}%)"
+        row[segment] = f"{reference}({percentages})"
         accepted.append(
             {
                 "segment": segment,

@@ -220,20 +220,61 @@ reassortment database. The preferred subject-header forms are
 `ORIGIN|SUBTYPE|STRAIN|ACCESSION` and
 `ORIGIN|SUBTYPE|STRAIN|SEGMENT|ACCESSION`. Legacy headers are supported; the
 tracked `bin/reassortment_reference_metadata.csv` file fills origin and subtype
-from accession for the current database. For every segment, the row with the
-highest percent identity is selected, with bit score and alignment length used
-as tie-breakers:
+from accession for the current database. Seasonal human references use the
+explicit origin label `HUMAN-SEASONAL`. The tracked seasonal-reference metadata
+also refines an existing `HUMAN` header to `HUMAN-SEASONAL` when its accession
+and subtype match. An unannotated `HUMAN` reference is not assumed seasonal;
+explicit conflicting origin or subtype annotations are not overwritten.
 
-- `{segment}` contains `ORIGIN|SUBTYPE|STRAIN(percent_identity%)` at or above
-  80%, `TooLow(identity%):ORIGIN|SUBTYPE|STRAIN` below 80%, or `Missing`.
+The module runs `blastn -outfmt 6 -max_target_seqs 5`. For every segment, the
+reported alignment with the highest percent identity (`pident`) is selected,
+with bit score and alignment length used as tie-breakers. The acceptance
+threshold is **at least 80.0% BLAST alignment identity**, defined by
+`IDENTITY_THRESHOLD` in [`detect_reassortment.py`](../bin/detect_reassortment.py).
+The threshold is applied to the unrounded `pident` value after BLAST; displayed
+percentages are rounded to one decimal place. For example, a 79.99% hit is
+`TooLow` even though its displayed match percentage rounds to 80.0%.
+
+There is **no additional minimum alignment length or query-coverage threshold**.
+Identity is measured over the selected local alignment, not over the entire
+segment. Multiple alignments are not combined into a whole-segment identity.
+
+- `{segment}` contains `ORIGIN|SUBTYPE|STRAIN(M:99.9%/N:20.0%)` for an accepted
+  hit, `TooLow(M:79.0%/N:20.0%):ORIGIN|SUBTYPE|STRAIN` below the threshold, or
+  `Missing` when no hit is available. Missing reference annotations appear as
+  `UNKNOWN`.
+- `M` is the selected BLAST alignment's `pident`; it is not recalculated after
+  excluding Ns. `N` is `100 × count(N or n) / full query-record length`, using
+  the original FASTA record that produced that hit, including unaligned ends.
+  FASTA headers and whitespace are excluded; other sequence symbols remain in
+  the denominator but are not counted as N. N content is displayed for accepted
+  and low-identity hits and has no separate acceptance threshold.
 - `Reassortment` remains a compact compatibility field: `No` for one complete
   reference profile, `Yes` for multiple complete profiles, and `Unknown` for
   missing, low-identity, or unannotated calls.
-- `Conclusion` distinguishes a consistent human profile, possible
-  within-subtype reassortment, human subtype discordance, mixed origins,
-  non-human-only profiles, and inconclusive incomplete results.
+- `Conclusion` is `CONSISTENT` only when all eight expected segments (`PB2`,
+  `PB1`, `PA`, `HA`, `NP`, `NA`, `MP`, `NS`) have accepted, fully annotated
+  `HUMAN-SEASONAL` matches of the **same subtype or B lineage**. Different
+  reference strains within that subtype are allowed. Every other result begins
+  with `ALERT`, including missing segments, low identity, unknown metadata,
+  origins not confirmed seasonal human, or mixed subtypes. The text lists the
+  reasons. This replaces the former `FLAG`, `REVIEW`, and `INCONCLUSIVE`
+  conclusion categories. A same-subtype seasonal result can therefore have
+  `Conclusion=CONSISTENT ...` and `Reassortment=Yes` when multiple reference
+  strains were selected; the latter retains its profile-based meaning.
 - `Origins`, `Subtypes`, and `ReferenceStrains` list the distinct accepted
   values in compact semicolon-separated form.
+
+For example,
+`HUMAN-SEASONAL|H3N2|A/Singapore/GP20238/2024(M:99.9%/N:20.0%)` means that the
+selected alignment has 99.9% identity to the annotated seasonal-human H3N2
+reference, while 20% of the full input segment consists of Ns. These percentages
+use different denominators and do not add up to 100%.
+
+Standalone calls to `detect_reassortment.py` must supply `--fasta` with the same
+query FASTA used for BLAST. The Nextflow module supplies it automatically. A
+matched query that is absent or empty in that file, or a duplicate query ID,
+causes an error rather than reporting an invented zero N content.
 
 This is a database-similarity screen. It does not infer phylogenetic trees,
 ancestral segment exchange, or statistical support; results depend strongly on
