@@ -336,8 +336,8 @@
             "properties": {
                 "primer_check": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "Run optional primer surveillance; technical failures are ignored."
+                    "default": true,
+                    "description": "Run primer surveillance (enabled by default); technical failures are ignored."
                 },
                 "primer_check_pcr": {
                     "type": "string",
