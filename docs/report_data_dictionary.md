@@ -262,6 +262,9 @@ segment. Multiple alignments are not combined into a whole-segment identity.
   conclusion categories. A same-subtype seasonal result can therefore have
   `Conclusion=CONSISTENT ...` and `Reassortment=Yes` when multiple reference
   strains were selected; the latter retains its profile-based meaning.
+  Lists within the conclusion use semicolons, for example
+  `ALERT - missing segments: PB2;PB1;PA;HA;NP;NA;MP;NS`, so list separators
+  do not conflict with the report's comma-separated columns.
 - `Origins`, `Subtypes`, and `ReferenceStrains` list the distinct accepted
   values in compact semicolon-separated form.
 

@@ -104,13 +104,13 @@ def test_legacy_headers_are_enriched_from_accession_metadata(tmp_path, subject, 
         (
             "subtype",
             "Yes",
-            "ALERT - subtype discordance: H1N1,H3N2",
+            "ALERT - subtype discordance: H1N1;H3N2",
         ),
         (
             "origin",
             "Yes",
             "ALERT - origin(s) not confirmed seasonal human: AVIAN; "
-            "mixed origins: AVIAN,HUMAN-SEASONAL; subtype discordance: H1N1,H5N1",
+            "mixed origins: AVIAN;HUMAN-SEASONAL; subtype discordance: H1N1;H5N1",
         ),
     ],
 )
@@ -157,7 +157,48 @@ def test_empty_blast_result_reports_all_segments_missing(tmp_path):
 
     assert all(row[segment] == "Missing" for segment in SEGMENTS)
     assert row["Reassortment"] == "Unknown"
-    assert row["Conclusion"].startswith("ALERT - missing segments:")
+    assert row["Conclusion"] == "ALERT - missing segments: PB2;PB1;PA;HA;NP;NA;MP;NS"
+
+
+@pytest.mark.parametrize("report_script", ["report.py", "reportfasta.py", "reportavian.py"])
+def test_conclusion_segment_lists_remain_in_one_report_column(tmp_path, report_script):
+    hits = enriched_hits()
+    for segment in ("PB2", "PB1"):
+        del hits[segment]
+    for segment in ("PA", "HA"):
+        hits[segment] = (hits[segment][0], 79.0)
+    for segment in ("NP", "NA"):
+        hits[segment] = ("HUMAN-SEASONAL|UNKNOWN|A/Test/1/2026|EPI_TEST", 99.0)
+    run_screen(tmp_path, hits)
+
+    command = [sys.executable, str(REPOSITORY_ROOT / "bin" / report_script)]
+    if report_script == "report.py":
+        samplesheet = tmp_path / "samplesheet.tsv"
+        samplesheet.write_text("SequenceID\nsample\n", encoding="utf-8")
+        command.append(str(samplesheet))
+    subprocess.run(command, cwd=tmp_path, check=True, capture_output=True, text=True)
+    subprocess.run(
+        [
+            sys.executable,
+            str(REPOSITORY_ROOT / "bin/report_QC_calculation.py"),
+            "merged_report.csv",
+            "-o",
+            "final_report.csv",
+        ],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    # Downstream consumers split on commas without interpreting CSV quotes.
+    header, record = (tmp_path / "final_report.csv").read_text(encoding="utf-8").splitlines()
+    columns, values = header.split(","), record.split(",")
+    assert len(values) == len(columns)
+    assert values[columns.index("Conclusion")] == (
+        "ALERT - missing segments: PB2;PB1; low-identity segments: PA;HA; "
+        "reference metadata missing for: NP;NA"
+    )
 
 
 @pytest.mark.parametrize("subtype", ["H1N1", "H3N2", "B/Victoria", "B/Yamagata"])
@@ -205,7 +246,7 @@ def test_incomplete_reference_metadata_alerts(tmp_path, field):
     row = run_screen(tmp_path, enriched_hits(**annotation), use_metadata=False)
 
     assert row["Reassortment"] == "Unknown"
-    assert row["Conclusion"].startswith("ALERT - reference metadata missing for:")
+    assert row["Conclusion"] == "ALERT - reference metadata missing for: PB2;PB1;PA;HA;NP;NA;MP;NS"
 
 
 @pytest.mark.parametrize(("identity", "accepted"), [(79.94, False), (79.99, False), (80.0, True), (80.01, True)])

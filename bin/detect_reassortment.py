@@ -283,7 +283,7 @@ def join_values(values: Iterable[str]) -> str:
 
 
 def build_conclusion(accepted: List[Dict[str, str]], missing: List[str], low: List[str]) -> str:
-    """Create an actionable conclusion from all eight segment calls."""
+    """Create an actionable conclusion with semicolon-separated lists for CSV consumers."""
     origins = {hit["origin"] for hit in accepted if hit["origin"] != UNKNOWN}
     subtypes = {hit["subtype"] for hit in accepted if hit["subtype"] != UNKNOWN}
     metadata_missing = [hit["segment"] for hit in accepted if UNKNOWN in (hit["origin"], hit["subtype"], hit["strain"])]
@@ -291,17 +291,17 @@ def build_conclusion(accepted: List[Dict[str, str]], missing: List[str], low: Li
 
     reasons = []
     if missing:
-        reasons.append(f"missing segments: {','.join(missing)}")
+        reasons.append(f"missing segments: {';'.join(missing)}")
     if low:
-        reasons.append(f"low-identity segments: {','.join(low)}")
+        reasons.append(f"low-identity segments: {';'.join(low)}")
     if metadata_missing:
-        reasons.append(f"reference metadata missing for: {','.join(metadata_missing)}")
+        reasons.append(f"reference metadata missing for: {';'.join(metadata_missing)}")
     if non_seasonal:
-        reasons.append(f"origin(s) not confirmed seasonal human: {','.join(non_seasonal)}")
+        reasons.append(f"origin(s) not confirmed seasonal human: {';'.join(non_seasonal)}")
     if len(origins) > 1:
-        reasons.append(f"mixed origins: {','.join(sorted(origins))}")
+        reasons.append(f"mixed origins: {';'.join(sorted(origins))}")
     if len(subtypes) > 1:
-        reasons.append(f"subtype discordance: {','.join(sorted(subtypes))}")
+        reasons.append(f"subtype discordance: {';'.join(sorted(subtypes))}")
     if reasons:
         return "ALERT - " + "; ".join(reasons)
 
