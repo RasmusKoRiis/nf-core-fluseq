@@ -29,6 +29,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK } from '../subworkflows/local/input_check/main'
+include { PRIMER_CHECK_RUN } from '../subworkflows/local/primer_check/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,6 +219,14 @@ workflow HUMAN {
     FASTA_CONFIGURATION (
          fasta_subtype 
     )
+
+    if (params.primer_check) {
+        PRIMER_CHECK_RUN(
+            FASTA_CONFIGURATION.out.fasta,
+            [virus: 'Influenza', run_id: params.runid, assays: ['pcr'],
+             ngs_dir: null, ngs_scheme: '', offline: false]
+        )
+    }
 
     //
     // MODULE: REASSORTMENT

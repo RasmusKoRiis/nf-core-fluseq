@@ -28,6 +28,7 @@ include { SURVEILLANCE_SUMMARY } from '../modules/local/surveillance_summary/mai
 include { REFERENCE_PROVENANCE } from '../modules/local/reference_provenance/main'
 include { EMIT_FASTA_RECORD } from '../modules/local/emit_fasta_record/main'
 include { WRITE_ID_MAP } from '../modules/local/write_id_map/main'
+include { PRIMER_CHECK_RUN } from '../subworkflows/local/primer_check/main'
 include { REHEADER_TO_UID } from '../modules/local/reheader_to_uid/main'
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -134,6 +135,14 @@ workflow HUMANFASTA {
 
     // Call the new robust module
     FASTA_CONFIGURATIONFASTA( ch_segments_with_subtype )
+
+    if (params.primer_check) {
+      PRIMER_CHECK_RUN(
+        FASTA_CONFIGURATIONFASTA.out.fasta,
+        [virus: 'Influenza', run_id: params.runid, assays: ['pcr'],
+         ngs_dir: null, ngs_scheme: '', offline: false]
+      )
+    }
 
   /* 9-11) Select the smallest valid input path to Nextclade. */
   def ch_nextclade_input

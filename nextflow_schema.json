@@ -329,12 +329,44 @@
                     "hidden": true
                 }
             }
+        },
+        "primer_check_options": {
+            "title": "Primer checker",
+            "type": "object",
+            "properties": {
+                "primer_check": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run optional primer surveillance; technical failures are ignored."
+                },
+                "primer_check_pcr": {
+                    "type": "string",
+                    "description": "PCR JSON file or directory of JSON databases (assets remain relative to each JSON)."
+                },
+                "primer_check_ngs_dir": {
+                    "type": "string",
+                    "description": "SARS selected scheme directory, or RSV root containing RSVA/<scheme> and RSVB/<scheme>."
+                },
+                "primer_check_container": {
+                    "type": "string",
+                    "default": "ghcr.io/rasmuskoriis/primer-checker:latest",
+                    "description": "CLI container, explicitly pulled for each online primer-check task."
+                },
+                "primer_check_source": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Optional local primer-checker source tree for tests/offline development."
+                }
+            }
         }
     },
     "allOf": [
         { "$ref": "#/$defs/input_output_options" },
         { "$ref": "#/$defs/reference_options" },
         { "$ref": "#/$defs/analysis_options" },
-        { "$ref": "#/$defs/generic_options" }
+        { "$ref": "#/$defs/generic_options" },
+        {
+            "$ref": "#/$defs/primer_check_options"
+        }
     ]
 }
