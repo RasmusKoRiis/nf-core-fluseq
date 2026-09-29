@@ -158,7 +158,6 @@ workflow HUMAN {
         IRMA.out.read_count
     )
 
-
     /// SUBTYPE CHANNEL
     /// This channel is used to store the fasta files for each segment
     IRMA.out.amended_consensus
@@ -220,14 +219,6 @@ workflow HUMAN {
          fasta_subtype 
     )
 
-    if (params.primer_check) {
-        PRIMER_CHECK_RUN(
-            FASTA_CONFIGURATION.out.fasta,
-            [virus: 'Influenza', run_id: params.runid, assays: ['pcr'],
-             ngs_dir: null, ngs_scheme: '', offline: false]
-        )
-    }
-
     //
     // MODULE: REASSORTMENT
     //Configure the fasta file names for reporting
@@ -236,7 +227,6 @@ workflow HUMAN {
     REASSORTMENT (
          FASTA_CONFIGURATION.out.fasta_flumut, Channel.value(file(params.reassortment_database))
     )
-
 
     //
     // MODULE: COVERAGE
@@ -347,6 +337,15 @@ workflow HUMAN {
         SUBCLADE_NOMENCLATURE.out.report.collect()
 
     )
+
+    if (params.primer_check) {
+        PRIMER_CHECK_RUN(
+            REPORTHUMAN.out.filtered_fasta,
+            FASTA_CONFIGURATION.out.fasta,
+            [virus: 'Influenza', run_id: params.runid, assays: ['pcr'],
+             ngs_dir: null, ngs_scheme: '', offline: false]
+        )
+    }
     
     //
     // MODULE: HTML run QC assessment from the completed human report

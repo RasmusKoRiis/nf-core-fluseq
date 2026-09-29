@@ -19,7 +19,7 @@ process REPORTHUMANFASTA {
     path id_map                    // single TSV (SampleID \t OriginalName)
     val  runid
     val  release_version
-    val  filtered_fasta            // ignored here
+    path(filtered_fasta, stageAs: 'consensus??.fa')
     val  seq_instrument
     val  samplesheet               // ignored here
     path reassortment_report       // list
@@ -27,6 +27,7 @@ process REPORTHUMANFASTA {
 
     output:
     path("${runid}.csv"), emit: report
+    path("${runid}.fasta"), emit: filtered_fasta
     path "versions.yml", emit: versions
 
     when:
@@ -160,6 +161,11 @@ PY
 
 # 3) QC calculation -> FINAL report (adds DR_* + Sekvens_Resultat)
 report_QC_calculation.py ${runid}_qc_input.csv -o ${runid}.csv
+
+: > ${runid}.fasta
+for fasta in consensus*.fa; do
+    if [ -f "\$fasta" ]; then cat "\$fasta" >> ${runid}.fasta; fi
+done
 
 cat > versions.yml <<-END_VERSIONS
 "${task.process}":

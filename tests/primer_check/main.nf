@@ -19,7 +19,7 @@ workflow {
               sample.fasta.collect { file(it, checkIfExists: true) },
               sample.subtype_file ? file(sample.subtype_file, checkIfExists: true) : [])
     }
-    PRIMER_CHECK_RUN(samples,
+    PRIMER_CHECK_RUN(Channel.value(file(params.test_fasta, checkIfExists: true)), samples,
         [virus: params.test_virus, run_id: 'SYNTHETIC',
          assays: params.test_virus == 'Influenza' ? ['pcr'] : ['pcr', 'ngs'],
          ngs_dir: params.primer_check_ngs_dir, ngs_scheme: 'TEST', offline: true])

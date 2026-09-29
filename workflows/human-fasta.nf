@@ -136,14 +136,6 @@ workflow HUMANFASTA {
     // Call the new robust module
     FASTA_CONFIGURATIONFASTA( ch_segments_with_subtype )
 
-    if (params.primer_check) {
-      PRIMER_CHECK_RUN(
-        FASTA_CONFIGURATIONFASTA.out.fasta,
-        [virus: 'Influenza', run_id: params.runid, assays: ['pcr'],
-         ngs_dir: null, ngs_scheme: '', offline: false]
-      )
-    }
-
   /* 9-11) Select the smallest valid input path to Nextclade. */
   def ch_nextclade_input
   if ( drugResistanceOnly ) {
@@ -197,7 +189,8 @@ workflow HUMANFASTA {
       SUBTYPEFINDER.out.subtype_report.collect(),
       TABLELOOKUP.out.lookup_report.collect(),
       ch_id_map_file,
-      params.runid
+      params.runid,
+      FASTA_CONFIGURATIONFASTA.out.fasta.map { meta, fastas, subtype -> fastas }.flatten().collect()
     )
   } else {
     SURVEILLANCE_SUMMARY(
@@ -233,6 +226,15 @@ workflow HUMANFASTA {
       Channel.value(file(params.input ?: params.fasta)),
       REASSORTMENT.out.genotype_report.collect(),
       SUBCLADE_NOMENCLATURE.out.report.collect()
+    )
+  }
+
+  if (params.primer_check) {
+    PRIMER_CHECK_RUN(
+      drugResistanceOnly ? DRUG_RESISTANCE_REPORT.out.final_fasta : REPORTHUMANFASTA.out.filtered_fasta,
+      FASTA_CONFIGURATIONFASTA.out.fasta,
+      [virus: 'Influenza', run_id: params.runid, assays: ['pcr'],
+       ngs_dir: null, ngs_scheme: '', offline: false]
     )
   }
 

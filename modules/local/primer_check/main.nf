@@ -8,7 +8,7 @@ process PRIMER_CHECK {
     containerOptions { workflow.containerEngine == 'docker' && !settings.offline && !checker_source ? '--pull=always' : '' }
 
     input:
-    tuple val(records), path(consensus, stageAs: 'consensus??/*'), path(subtypes, stageAs: 'subtypes??/*'), val(assay)
+    tuple val(records), path(consensus), path(subtypes, stageAs: 'subtypes??/*'), val(assay)
     path pcr_database, stageAs: 'pcr_database'
     path ngs_directory, stageAs: 'ngs_primers'
     path checker_source, stageAs: 'checker_source'
@@ -22,17 +22,16 @@ process PRIMER_CHECK {
 
     script:
     def asList = { value -> value instanceof List ? value : [value] }
-    def sequences = asList(consensus)
     def types = asList(subtypes)
     def manifest = records.collect { record ->
         [sample_id: record.id, subtype: record.subtype,
-         fasta: record.fasta_indices.collect { sequences[it].toString() },
+         sequence_ids: record.sequence_ids,
          subtype_file: record.subtype_index == null ? null : types[record.subtype_index].toString()]
     }
     def encoded = groovy.json.JsonOutput.toJson(manifest).bytes.encodeBase64().toString()
     def quote = { value -> "'" + value.toString().replace("'", "'\\''") + "'" }
     def source = checker_source ? checker_source.toString() : '/opt/primer-checker'
-    def arguments = ['--manifest', 'input_manifest.json', '--virus', settings.virus,
+    def arguments = ['--manifest', 'input_manifest.json', '--fasta', consensus.toString(), '--virus', settings.virus,
                      '--assay-type', assay, '--run-id', settings.run_id,
                      '--ngs-scheme', settings.ngs_scheme ?: '',
                      '--output-prefix', "${assay}_primer_report"]

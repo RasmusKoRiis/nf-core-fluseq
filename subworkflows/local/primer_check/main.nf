@@ -3,7 +3,8 @@ include { PRIMER_CHECK } from '../../../modules/local/primer_check/main'
 
 workflow PRIMER_CHECK_RUN {
     take:
-    samples // tuple(meta, consensus file/list, subtype file or [])
+    final_consensus // final combined FASTA emitted by the report process
+    samples // tuple(meta, original FASTAs for header-to-sample mapping only, subtype file or [])
     settings // virus, run_id, ngs_dir, ngs_scheme, offline, assays
 
     main:
@@ -20,23 +21,27 @@ workflow PRIMER_CHECK_RUN {
 
     ch_inputs = samples.toList().map { entries ->
         def records = []
-        def sequences = []
         def subtypes = []
         entries.sort { a, b -> a[0].id <=> b[0].id }.each { meta, fastas, subtype ->
             def files = fastas instanceof List ? fastas : [fastas]
-            def indices = files.collect { fasta ->
-                sequences.add(fasta)
-                sequences.size() - 1
-            }
+            // Carry only identifiers from upstream files; all sequence data
+            // analysed by the checker comes from the final combined FASTA.
+            def sequenceIds = files.collectMany { fasta ->
+                fasta.readLines().findAll { it.startsWith('>') }.collect {
+                    it.substring(1).trim().tokenize()[0]
+                }
+            }.unique()
             def subtypeIndex = null
             if (subtype) {
                 subtypes.add(subtype)
                 subtypeIndex = subtypes.size() - 1
             }
             records.add([id: meta.id, subtype: meta.subtype ?: '',
-                         fasta_indices: indices, subtype_index: subtypeIndex])
+                         sequence_ids: sequenceIds, subtype_index: subtypeIndex])
         }
-        tuple(records, sequences, subtypes)
+        tuple(records, subtypes)
+    }.combine(final_consensus).map { records, subtypes, fasta ->
+        tuple(records, fasta, subtypes)
     }.combine(Channel.fromList(settings.assays))
 
     PRIMER_CHECK(ch_inputs, pcr, ngs, source, settings)
