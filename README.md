@@ -72,6 +72,11 @@ Human FASTQ runs automatically produce a [searchable HTML QC report](docs/run_qc
 and JSON summary beside the final CSV in `reporthuman/`, with run assessment,
 segment QC and a short overview of reported findings.
 
+The [reassortment screen documentation](docs/report_data_dictionary.md#reassortment-screen)
+defines the 80% BLAST identity threshold, full-segment N percentage, and the
+`ALERT` conclusion for every result that is not a complete seasonal-human
+profile of one subtype.
+
 ## Reproducibility and tests
 
 - Runtime containers are versioned or digest-pinned.

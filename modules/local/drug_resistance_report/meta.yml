@@ -22,6 +22,9 @@ input:
   - runid:
       type: string
       description: Run identifier used in report names and metadata.
+  - consensus:
+      type: file
+      description: Consensus FASTAs concatenated into the final run export.
 output:
   report:
     - report:
@@ -29,6 +32,11 @@ output:
         description: Combine subtype and antiviral resistance annotations, restoring original sample names.
           Output CSV.
         pattern: ${runid}_drug_resistance_report.csv
+  final_fasta:
+    - final_fasta:
+        type: file
+        description: Final combined consensus FASTA used for primer checking.
+        pattern: ${runid}.fasta
   versions:
     - versions:
         type: file

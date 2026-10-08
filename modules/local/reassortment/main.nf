@@ -23,6 +23,7 @@ process REASSORTMENT {
 
     detect_reassortment.py \\
         --blast ${prefix}_blast.tsv \\
+        --fasta ${sequences} \\
         --output ${prefix}_reassortment_summary.csv \\
         --sample ${prefix} \\
         --metadata "\$(dirname "\$(command -v detect_reassortment.py)")/reassortment_reference_metadata.csv"

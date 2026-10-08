@@ -45,8 +45,8 @@ input:
       type: string
       description: Pipeline release identifier to include in reports.
   - filtered_fasta:
-      type: list
-      description: Compatibility input; accepted but not read by this report process.
+      type: file
+      description: Filtered consensus FASTAs concatenated into the final run export.
   - seq_instrument:
       type: string
       description: Sequencing instrument label for report metadata.
@@ -66,6 +66,11 @@ output:
         description: Build the human FASTA run report, restoring original sample names and incorporating
           mutation and subclade annotations. Output CSV.
         pattern: ${runid}.csv
+  filtered_fasta:
+    - filtered_fasta:
+        type: file
+        description: Final combined consensus FASTA used for primer checking.
+        pattern: ${runid}.fasta
   versions:
     - versions:
         type: file

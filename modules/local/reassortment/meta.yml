@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: reassortment
-description: Compare segment consensus sequences with lineage references and summarize potential reassortment.
+description: Screen segment reference matches, report alignment identity and N content, and alert on incomplete or non-seasonal-human profiles.
 keywords:
   - influenza
   - reassortment
@@ -26,12 +26,12 @@ output:
           description: Sample metadata map containing at least the id key.
       - genotype:
           type: file
-          description: Genotype or lineage assignment summary.
+          description: Segment reference matches with alignment identity, full-query N content, and a seasonal-human review conclusion.
           pattern: ${meta.id}_reassortment_summary.csv
   genotype_report:
     - genotype_report:
         type: file
-        description: Genotype or lineage assignment CSV for reporting.
+        description: Segment reference matches with alignment identity, full-query N content, and a seasonal-human review conclusion.
         pattern: ${meta.id}_reassortment_summary.csv
   versions:
     - versions:
