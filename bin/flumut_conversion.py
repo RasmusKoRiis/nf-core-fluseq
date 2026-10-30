@@ -94,7 +94,11 @@ for sample, group in grouped:
         # Remove segment and colon from the mutation
         mutation_raw = str(row.get("Mutations in your sample", "")).strip()
         mutation = re.sub(r"^[^:]+:", "", mutation_raw).strip()
-        effect = str(row.get("Effect", "")).strip()
+        # A source row may contain several comma-separated values. Keep those
+        # values grouped so that each semicolon-delimited entry still matches
+        # one effect, and avoid embedded CSV delimiters.
+        mutation = "+".join(part.strip() for part in mutation.split(","))
+        effect = re.sub(r"\s*,\s*", " / ", str(row.get("Effect", "")).strip())
 
         if not mutation:
             continue
