@@ -170,15 +170,14 @@ segment FASTA and returns marker mutations and literature-derived effect text.
 | PB1 | `Flumut_PB1` | `Effect_PB1` |
 | PB2 | `Flumut_PB2` | `Effect_PB2` |
 
-For each FluMut marker row, the converter removes the marker prefix from
-`Mutations in your sample`, assigns it to the matching protein column, removes
-duplicate mutation strings within that protein, and joins values with `;`.
-Effect strings are joined in the corresponding order. Repeated effect text is
-possible when different mutations have the same literature annotation.
-When one source entry contains multiple comma-separated values, they are
-joined with `+` in the report, keeping the entry aligned with its single
-effect. Commas in effect text are replaced with ` / ` so they do not add CSV
-delimiters for downstream consumers that split lines on commas.
+For each FluMut marker row, the converter splits `Mutations in your sample`
+into individual values, removes each value's marker prefix, and assigns the
+values to the matching protein column. Unique values are joined with `;` in
+their first-seen order. The corresponding effect is repeated for each new
+value from the same source row; if a value occurs again, its first effect is
+retained. Effect strings are joined in the same order. Commas in effect text
+are replaced with ` / ` so they do not add CSV delimiters for downstream
+consumers that split lines on commas.
 
 
 ## GenIn2 genotype column
