@@ -91,19 +91,19 @@ for sample, group in grouped:
         if not mutation_column or not effect_column:
             continue
 
-        # Remove segment and colon from the mutation
-        mutation_raw = str(row.get("Mutations in your sample", "")).strip()
-        mutation = re.sub(r"^[^:]+:", "", mutation_raw).strip()
-        effect = str(row.get("Effect", "")).strip()
-
-        if not mutation:
+        mutation_raw = row.get("Mutations in your sample", "")
+        if pd.isna(mutation_raw):
             continue
+        effect = re.sub(r"\s*,\s*", " / ", str(row.get("Effect", "")).strip())
 
-        # Deduplicate mutations within each mutation column
-        if mutation not in seen[mutation_column]:
-            seen[mutation_column].add(mutation)
-            mut_lists[mutation_column].append(mutation)
-            eff_lists[effect_column].append(effect)
+        # Normalize and deduplicate individual values, including values shared
+        # by different source rows. Repeat the source effect for each new value.
+        for part in re.split(r"[,;+]", str(mutation_raw)):
+            mutation = re.sub(r"^[^:]+:", "", part.strip()).strip()
+            if mutation and mutation not in seen[mutation_column]:
+                seen[mutation_column].add(mutation)
+                mut_lists[mutation_column].append(mutation)
+                eff_lists[effect_column].append(effect)
 
     # Create final row
     row_data = {col: "" for col in desired_columns}

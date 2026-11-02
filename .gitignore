@@ -24,6 +24,9 @@ __pycache__/
 assets/*
 !assets/characterisation_guidelines/
 !assets/characterisation_guidelines/*.csv
+!assets/master_csv/
+!assets/master_csv/*.xml
+!assets/master_csv/columns.txt
 !assets/methods_description_template.yml
 !assets/multiqc_config.yml
 !assets/schema_input.json

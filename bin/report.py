@@ -72,7 +72,6 @@ required_columns = [
     "Vaccine mutation reference",
     "Sekvens_Resultat",
     "Coverage-HA",
-    "Coverage-M",
     "Coverage-NA",
     "Coverage-NP",
     "Coverage-NS",

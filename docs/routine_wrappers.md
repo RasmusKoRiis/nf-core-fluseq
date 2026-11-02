@@ -17,6 +17,12 @@ The launchers are:
 
 The infrastructure changes preserve their historical parameter names and the `<outdir>/reporthuman/*.csv` upload location.
 
+The `ngs_scripts` human wrappers also support merging their completed CSV into
+the shared master database. See [Master CSV merge](master_csv.md) for XML mapping
+rules, shared-drive configuration, previews, backups, and retry instructions.
+Updates activate when a metadata location is configured and are skipped for
+validation runs.
+
 ## Selecting pipeline code
 
 The human wrappers and avian FASTQ wrapper accept `-b <branch-or-tag>`. The avian FASTA wrapper uses `-g <branch-or-tag>` because `-b` already denotes its source option. Use `infrastructure` for acceptance testing. After merge, use a release tag for routine production.
