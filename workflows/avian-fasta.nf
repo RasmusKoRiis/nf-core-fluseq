@@ -65,9 +65,10 @@ workflow AVIANFASTA {
   /* 1) Split multi-FASTA → per-record UID FASTAs */
   Channel
     .fromPath(params.fasta, checkIfExists: true)
-    .splitFasta(record: [ id: true, seqString: true ])
+    .splitFasta(record: [ header: true, seqString: true ])
     .map { rec ->
-      def hdrFull  = rec.id as String
+      // The id field stops at whitespace, losing sample names and segment tokens.
+      def hdrFull  = rec.header as String
       def core     = FastaUtils.coreFromHeader(hdrFull)
       def uid      = FastaUtils.uidFromCore(core)
       def fileStem = hdrFull.replaceAll(/[^A-Za-z0-9._-]+/, '_')
