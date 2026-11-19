@@ -2,7 +2,7 @@
 
 Wrapper copies are maintained outside this repository in
 `/home/rasmuskopperud.riis/Coding/flu-wrappers` and
-`/home/rasmuskopperud.riis/Coding/ngs_scripts/fluseq`. These are separate files and
+`/home/rasmuskopperud.riis/Coding/projects/ngs_scripts/fluseq`. These are separate files and
 currently differ in reference validation and download behaviour. The
 `ngs_scripts/fluseq/README.md` run examples use
 `/home/ngs/ngs_scripts/fluseq/` on the server. Check the path of the wrapper you
