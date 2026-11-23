@@ -113,9 +113,9 @@ for c in required:
 
 
 # Vectorized resistance classification
-def classify_res(df: pd.DataFrame, src_col: str, ok_code: str) -> pd.Series:
+def classify_res(df: pd.DataFrame, src_col: str, ok_code: str, match_code: str) -> pd.Series:
     s = df[src_col].fillna("NA").astype(str)
-    return np.where(s.eq("NA"), "NA", np.where(s.str.contains("No matching mutations", na=False), ok_code, "Review"))
+    return np.where(s.eq("NA"), "NA", np.where(s.str.contains("No matching mutations", na=False), ok_code, match_code))
 
 
 # Normalize mutation columns
@@ -123,34 +123,34 @@ for src in ["M2 inhibtion mutations", "NA inhibtion mutations", "PA inhibtion mu
     merged[src] = merged[src].fillna("NA").astype(str)
 
 # DR_Res_* outputs
-merged["DR_Res_Adamantine"] = classify_res(merged, "M2 inhibtion mutations", "AANI")
-merged["DR_Res_Oseltamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Zanamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Peramivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Laninamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI")
-merged["DR_Res_Baloxavir"] = classify_res(merged, "PA inhibtion mutations", "AANS")
+merged["DR_Res_Adamantine"] = classify_res(merged, "M2 inhibtion mutations", "AANI", "AAHRI")
+merged["DR_Res_Oseltamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI", "AARI")
+merged["DR_Res_Zanamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI", "AARI")
+merged["DR_Res_Peramivir"] = classify_res(merged, "NA inhibtion mutations", "AANI", "AARI")
+merged["DR_Res_Laninamivir"] = classify_res(merged, "NA inhibtion mutations", "AANI", "AARI")
+merged["DR_Res_Baloxavir"] = classify_res(merged, "PA inhibtion mutations", "AANS", "AARS")
 
 # DR mutation detail columns
 merged["DR_M2_Mut"] = np.where(
     merged["M2 inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(merged["DR_Res_Adamantine"].eq("Review"), merged["M2 inhibtion mutations"], "No Mutations"),
+    np.where(merged["DR_Res_Adamantine"].eq("AAHRI"), merged["M2 inhibtion mutations"], "No Mutations"),
 )
-any_review_na = (
-    merged["DR_Res_Oseltamivir"].eq("Review")
-    | merged["DR_Res_Zanamivir"].eq("Review")
-    | merged["DR_Res_Peramivir"].eq("Review")
-    | merged["DR_Res_Laninamivir"].eq("Review")
+any_match_na = (
+    merged["DR_Res_Oseltamivir"].eq("AARI")
+    | merged["DR_Res_Zanamivir"].eq("AARI")
+    | merged["DR_Res_Peramivir"].eq("AARI")
+    | merged["DR_Res_Laninamivir"].eq("AARI")
 )
 merged["DR_NA_Mut"] = np.where(
     merged["NA inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(any_review_na, merged["NA inhibtion mutations"], "No Mutations"),
+    np.where(any_match_na, merged["NA inhibtion mutations"], "No Mutations"),
 )
 merged["DR_PA_Mut"] = np.where(
     merged["PA inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(merged["DR_Res_Baloxavir"].eq("Review"), merged["PA inhibtion mutations"], "No Mutations"),
+    np.where(merged["DR_Res_Baloxavir"].eq("AARS"), merged["PA inhibtion mutations"], "No Mutations"),
 )
 
 # Sekvens_Resultat from Subtype

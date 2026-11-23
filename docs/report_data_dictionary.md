@@ -36,7 +36,7 @@ must not be interpreted as a new algorithm without a corresponding source row.
 | `Nextclade QC <PROTEIN>`; `Nextclade Mixed Sites <PROTEIN>`                                              | Segment/protein QC status and mixed-site count                                                             | Nextclade `qc.overallStatus` and `qc.mixedSites.totalMixedSites`      | HA and M values are copied into both protein columns, so downstream mixed-site sums double them                                   |
 | `aaDeletions <PROTEIN>`; `aaInsertions <PROTEIN>`; `frameShifts <PROTEIN>`                               | Reference-relative amino-acid indels and coding-frame disruptions                                          | Nextclade alignment, translation, and mutation calling                | Calls depend on consensus quality, reference coordinates, and alignment                                                           |
 | `<PROTEIN> Differences <REFERENCE>`; `NS1 Differences human`; `SigPep Differences human`                 | Amino-acid substitutions relative to a named reference family                                              | Nextclade translations followed by `mutation_finder.py`               | These are reference differences, not necessarily important or causal mutations                                                    |
-| `M2 inhibtion mutations`; `NA inhibtion mutations`; `PA inhibtion mutations`; `DR_Res_*`; `DR_*_Mut`     | Lookup matches, drug review codes, and mutation detail                                                     | Local Excel lookup table, `table_lookup.py`, and `report.py`          | Genotypic lookup is not a phenotypic susceptibility test; historical `inhibtion` spelling is retained                             |
+| `M2 inhibtion mutations`; `NA inhibtion mutations`; `PA inhibtion mutations`; `DR_Res_*`; `DR_*_Mut`     | Lookup matches, drug reporting codes, and mutation detail                                                     | Local Excel lookup table, `table_lookup.py`, and `report.py`          | Genotypic lookup is not a phenotypic susceptibility test; historical `inhibtion` spelling is retained                             |
 | `<SEGMENT>` reassortment fields; `Reassortment`; `Conclusion`; `Origins`; `Subtypes`; `ReferenceStrains` | Best annotated reference/identity per segment and an overall screening interpretation                      | BLASTN, accession metadata, and `detect_reassortment.py`              | Similarity-based screen, not a phylogenetic reassortment analysis                                                                 |
 | `Subclade_Nomenclature_<ATTRIBUTE>`                                                                      | Seasonal HA clade/subclade rule match, evidence, closest match, and source                                 | Local rule caller and influenza-clade-nomenclature YAML definitions   | Rules are downloaded from unpinned `main` branches                                                                                |
 | `Characterisation_<ATTRIBUTE>`                                                                           | Guideline-based reference-virus category, closest guideline reference, and additional amino-acid mutations | Seasonal subclade call and local NH 2025/2026 characterisation tables | Genetic classification only; incomplete subclade calls are provisional                                                            |
@@ -186,7 +186,7 @@ mismatch defaults are not set explicitly, results can vary with the installed
 Biopython version. A difference only means “different from this reference”; it
 does not establish antigenic, clinical, or resistance significance.
 
-### Resistance lookup and derived review codes
+### Resistance lookup and derived reporting codes
 
 `table_lookup.py` filters the configured Excel database by subtype and protein
 (`M2`, `NA1`, or `PA`). It compares each sample substitution with database
@@ -199,16 +199,16 @@ ignored. Matches become `{M2,NA,PA} inhibtion mutations`; otherwise the value is
 
 | Source | Drug fields                                                                        | No database match | At least one match |
 | ------ | ---------------------------------------------------------------------------------- | ----------------- | ------------------ |
-| M2     | `DR_Res_Adamantine`                                                                | `AANI`            | `Review`           |
-| NA     | `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, `DR_Res_Laninamivir` | `AANI`            | `Review`           |
-| PA     | `DR_Res_Baloxavir`                                                                 | `AANS`            | `Review`           |
+| M2     | `DR_Res_Adamantine`                                                                | `AANI`            | `AAHRI`           |
+| NA     | `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, `DR_Res_Laninamivir` | `AANI`            | `AARI`           |
+| PA     | `DR_Res_Baloxavir`                                                                 | `AANS`            | `AARS`           |
 
 If the lookup source is absent, the classification is `NA`. `DR_M2_Mut`,
-`DR_NA_Mut`, and `DR_PA_Mut` contain the matched mutation text when review is
-required, `No Mutations` when no lookup match was found, and `NA` when the
+`DR_NA_Mut`, and `DR_PA_Mut` contain the matched mutation text when a lookup match is
+found, `No Mutations` when no lookup match was found, and `NA` when the
 source is absent.
 
-These are workflow review codes, not susceptible/resistant phenotypes. The NA
+These are workflow reporting codes, not susceptible/resistant phenotypes. The NA
 classification applies the same mutation list to four drugs and does not model
 mutation-specific evidence strength, mixtures, background effects, or assay
 results. Reproducibility requires archiving the exact Excel lookup database.

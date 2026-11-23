@@ -12,15 +12,15 @@ def ensure_column(df: pd.DataFrame, column_name: str, fill="NA"):
         df[column_name] = fill
 
 
-def classify_res(df: pd.DataFrame, src_col: str, ok_code: str) -> pd.Series:
+def classify_res(df: pd.DataFrame, src_col: str, ok_code: str, match_code: str) -> pd.Series:
     """
     Vectorized resistance classification:
     - 'NA' -> 'NA'
     - contains 'No matching mutations' -> ok_code
-    - else -> 'Review'
+    - else -> match_code
     """
     s = df[src_col].fillna("NA").astype(str)
-    return np.where(s.eq("NA"), "NA", np.where(s.str.contains("No matching mutations", na=False), ok_code, "Review"))
+    return np.where(s.eq("NA"), "NA", np.where(s.str.contains("No matching mutations", na=False), ok_code, match_code))
 
 
 # ────────────────────────── I/O ─────────────────────────────
@@ -174,38 +174,38 @@ for src in ["M2 inhibtion mutations", "NA inhibtion mutations", "PA inhibtion mu
     merged_data[src] = merged_data[src].fillna("NA").astype(str)
 
 # DR_Res_* columns
-merged_data["DR_Res_Adamantine"] = classify_res(merged_data, "M2 inhibtion mutations", "AANI")
-merged_data["DR_Res_Oseltamivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI")
-merged_data["DR_Res_Zanamivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI")
-merged_data["DR_Res_Peramivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI")
-merged_data["DR_Res_Laninamivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI")
-merged_data["DR_Res_Baloxavir"] = classify_res(merged_data, "PA inhibtion mutations", "AANS")
+merged_data["DR_Res_Adamantine"] = classify_res(merged_data, "M2 inhibtion mutations", "AANI", "AAHRI")
+merged_data["DR_Res_Oseltamivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI", "AARI")
+merged_data["DR_Res_Zanamivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI", "AARI")
+merged_data["DR_Res_Peramivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI", "AARI")
+merged_data["DR_Res_Laninamivir"] = classify_res(merged_data, "NA inhibtion mutations", "AANI", "AARI")
+merged_data["DR_Res_Baloxavir"] = classify_res(merged_data, "PA inhibtion mutations", "AANS", "AARS")
 
 # DR_M2_Mut
 merged_data["DR_M2_Mut"] = np.where(
     merged_data["M2 inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(merged_data["DR_Res_Adamantine"].eq("Review"), merged_data["M2 inhibtion mutations"], "No Mutations"),
+    np.where(merged_data["DR_Res_Adamantine"].eq("AAHRI"), merged_data["M2 inhibtion mutations"], "No Mutations"),
 )
 
 # DR_PA_Mut
 merged_data["DR_PA_Mut"] = np.where(
     merged_data["PA inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(merged_data["DR_Res_Baloxavir"].eq("Review"), merged_data["PA inhibtion mutations"], "No Mutations"),
+    np.where(merged_data["DR_Res_Baloxavir"].eq("AARS"), merged_data["PA inhibtion mutations"], "No Mutations"),
 )
 
-# DR_NA_Mut (any NA drug flagged Review → include mutation list)
-any_review_na = (
-    merged_data["DR_Res_Oseltamivir"].eq("Review")
-    | merged_data["DR_Res_Zanamivir"].eq("Review")
-    | merged_data["DR_Res_Peramivir"].eq("Review")
-    | merged_data["DR_Res_Laninamivir"].eq("Review")
+# DR_NA_Mut (any NA drug coded AARI → include mutation list)
+any_match_na = (
+    merged_data["DR_Res_Oseltamivir"].eq("AARI")
+    | merged_data["DR_Res_Zanamivir"].eq("AARI")
+    | merged_data["DR_Res_Peramivir"].eq("AARI")
+    | merged_data["DR_Res_Laninamivir"].eq("AARI")
 )
 merged_data["DR_NA_Mut"] = np.where(
     merged_data["NA inhibtion mutations"].eq("NA"),
     "NA",
-    np.where(any_review_na, merged_data["NA inhibtion mutations"], "No Mutations"),
+    np.where(any_match_na, merged_data["NA inhibtion mutations"], "No Mutations"),
 )
 
 # ────────────────────────── SUBTYPE column ─────────────────

@@ -130,21 +130,21 @@ match a table entry ending in `143G`.
 | `NA inhibtion mutations` | Sample NA substitutions matching the inhibition table. Upstream `NA1 inhibtion mutations` is normalised to this column name. |
 | `PA inhibtion mutations` | Sample PA substitutions matching the inhibition table. |
 
-### Derived review-code columns
+### Derived reporting-code columns
 
 | Column | Source and rule |
 | --- | --- |
-| `DR_Res_Adamantine` | From `M2 inhibtion mutations`: `NA` if source unavailable, `AANI` for `No matching mutations found`, otherwise `Review`. |
-| `DR_Res_Oseltamivir` | From `NA inhibtion mutations` using the same rule, with no-match code `AANI`. |
+| `DR_Res_Adamantine` | From `M2 inhibtion mutations`: `NA` if source unavailable, `AANI` for `No matching mutations found`, otherwise `AAHRI`. |
+| `DR_Res_Oseltamivir` | From `NA inhibtion mutations`: `NA` if source unavailable, `AANI` for no table match, otherwise `AARI`. |
 | `DR_Res_Zanamivir` | Same source and calculation as Oseltamivir. |
 | `DR_Res_Peramivir` | Same source and calculation as Oseltamivir. |
 | `DR_Res_Laninamivir` | Same source and calculation as Oseltamivir. |
-| `DR_Res_Baloxavir` | From `PA inhibtion mutations`: `NA` if unavailable, `AANS` for no table match, otherwise `Review`. |
-| `DR_M2_Mut` | Matching M2 mutation text when Adamantine is `Review`; `No Mutations` after a completed no-match lookup; otherwise `NA`. |
-| `DR_NA_Mut` | Matching NA mutation text when any of the four NA drug fields is `Review`; `No Mutations` after a completed no-match lookup; otherwise `NA`. |
-| `DR_PA_Mut` | Matching PA mutation text when Baloxavir is `Review`; `No Mutations` after a completed no-match lookup; otherwise `NA`. |
+| `DR_Res_Baloxavir` | From `PA inhibtion mutations`: `NA` if unavailable, `AANS` for no table match, otherwise `AARS`. |
+| `DR_M2_Mut` | Matching M2 mutation text when Adamantine is `AAHRI`; `No Mutations` after a completed no-match lookup; otherwise `NA`. |
+| `DR_NA_Mut` | Matching NA mutation text when any of the four NA drug fields is `AARI`; `No Mutations` after a completed no-match lookup; otherwise `NA`. |
+| `DR_PA_Mut` | Matching PA mutation text when Baloxavir is `AARS`; `No Mutations` after a completed no-match lookup; otherwise `NA`. |
 
-`AANI`, `AANS`, and `Review` are literal workflow reporting codes. The pipeline
+`AANI`, `AANS`, `AAHRI`, `AARI`, and `AARS` are literal workflow reporting codes. The pipeline
 does not calculate a drug-specific MIC, inhibition value, susceptible/resistant
 phenotype, evidence grade, or clinical recommendation. In particular, all four
 NA-inhibitor columns are derived from the same undifferentiated NA mutation
@@ -425,14 +425,14 @@ The example row illustrates several independent analyses:
 - `Reassortment=Unknown` follows automatically because an expected segment was
   missing from that screen.
 - `DR_Res_Oseltamivir`, `DR_Res_Zanamivir`, `DR_Res_Peramivir`, and
-  `DR_Res_Laninamivir` are all `Review` because they are all derived from the
+  `DR_Res_Laninamivir` are all `AARI` because they are all derived from the
   same matched NA mutation list containing `S247N`.
 - The long HA difference/full-list fields contain many `X` and `-` tokens.
   Those symbols describe unknown amino acids and alignment gaps relative to
   the configured references and warrant alignment/reference review; they are
   not automatically validated biological mutations.
 - A blank `NGS_QC_Sum` does not clear the reassortment `ALERT` result or
-  the antiviral `Review` fields because those are outside the final QC formula.
+  the antiviral reporting fields because those are outside the final QC formula.
 
 ## Primary implementation files
 

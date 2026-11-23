@@ -77,20 +77,20 @@ def merge_value(target, column, value):
         target[column] = value
 
 
-def classify(value, no_mutation_code):
+def classify(value, no_mutation_code, match_code):
     value = clean_value(value)
     if value == "NA":
         return "NA"
     if "no matching mutations" in value.lower():
         return no_mutation_code
-    return "Review"
+    return match_code
 
 
 def mutation_detail(value, classification):
     value = clean_value(value)
     if value == "NA":
         return "NA"
-    return value if classification == "Review" else "No Mutations"
+    return value if classification in {"AAHRI", "AARI", "AARS"} else "No Mutations"
 
 
 def build_report(id_map, subtype_files, resistance_files):
@@ -122,10 +122,10 @@ def build_report(id_map, subtype_files, resistance_files):
         for column in RAW_COLUMNS:
             row[column] = clean_value(row.get(column))
 
-        row["DR_Res_Adamantine"] = classify(row["M2 inhibtion mutations"], "AANI")
+        row["DR_Res_Adamantine"] = classify(row["M2 inhibtion mutations"], "AANI", "AAHRI")
         for drug in ("Oseltamivir", "Zanamivir", "Peramivir", "Laninamivir"):
-            row[f"DR_Res_{drug}"] = classify(row["NA inhibtion mutations"], "AANI")
-        row["DR_Res_Baloxavir"] = classify(row["PA inhibtion mutations"], "AANS")
+            row[f"DR_Res_{drug}"] = classify(row["NA inhibtion mutations"], "AANI", "AARI")
+        row["DR_Res_Baloxavir"] = classify(row["PA inhibtion mutations"], "AANS", "AARS")
 
         row["DR_M2_Mut"] = mutation_detail(row["M2 inhibtion mutations"], row["DR_Res_Adamantine"])
         row["DR_NA_Mut"] = mutation_detail(row["NA inhibtion mutations"], row["DR_Res_Oseltamivir"])
